@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Device Time</title>
+    <meta charset="utf-8" />
+    <script type="text/javascript">
+        window.onload = function () {
+            setTime();
+        }
+
+        function setTime() {
+            setTimeout(function () {
+                var d = new Date();
+                document.body.innerText = "\r" +
+                    zeroFill(d.getHours()) + ":" + zeroFill(d.getMinutes()) + ":" + zeroFill(d.getSeconds()) + "\n\n" +
+                    d.getFullYear() + "-" + zeroFill(d.getMonth() + 1) + "-" + zeroFill(d.getDate());
+                setTime();
+            }, 100);
+        };
+
+        function zeroFill(i) {
+            if (i < 10) return "0" + i;
+            return i;
+        };
+    </script>
+</head>
+<body style="font-family:Tahoma; font-size:128px; text-align:center;">
+</body>
+</html>

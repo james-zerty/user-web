@@ -1,0 +1,239 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>user-web - home</title>
+    <style type="text/css">
+        article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary {
+            display: block;
+        }
+
+        body {
+            font: 12px/18px Consolas, Verdana;
+            text-align: justify;
+        }
+
+        .wrapper {
+            min-width: 500px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+
+        /* Header
+        -----------------------------------------------------------------------------*/
+        .header {
+            background: #FEFFDA;
+            padding: 1px 10px;
+        }
+
+        .nav {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav li {
+            display: table-cell;
+            padding: 0 30px 0 0;
+            margin: 0;
+        }
+
+        /* Middle
+        -----------------------------------------------------------------------------*/
+        .middle {
+            border-right: 270px solid #E2E7FF;
+            position: relative;
+        }
+
+        .middle:after {
+            display: table;
+            clear: both;
+            content: '';
+        }
+
+        .container {
+            width: 100%;
+            float: left;
+            overflow: hidden;
+            margin-right: -100%;
+            /* background: #AAFFAA; */
+        }
+
+        .content {
+            padding: 20px 40px;
+        }
+
+        .rightFloat {
+            float: right;
+            margin: 0 0 0 10px;
+            padding: 10px;
+            border: solid 1px #888;
+            max-width: 200px;
+        }
+
+
+        /* Right Sidebar
+        -----------------------------------------------------------------------------*/
+        .right-sidebar {
+            float: right;
+            margin-right: -270px;
+            width: 250px;
+            position: relative;
+            background: #FFEDEC;
+            padding: 10px;
+        }
+
+        .right-sidebar ul {
+            list-style: none;
+            margin: 10px 0;
+            padding: 0;
+        }
+
+        .right-sidebar li {
+            margin: 0;
+        }
+
+        /* Footer
+        -----------------------------------------------------------------------------*/
+        .footer {
+            background: #BFF08E;
+            padding: 1px 10px;
+        }
+
+        .fixed {
+            position: fixed;
+        }
+
+        /* Alignment tests
+        -----------------------------------------------------------------------------*/
+        .align-container {
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="fixed">Fixed</div>
+
+    <div class="wrapper">
+        <header class="header">
+            <ul class="nav">
+                <li>
+                    <h1>
+                        <a href="Home.htm">Home</a>
+                    </h1>
+                </li>
+                <li><a href="TestLocal.htm">TestLocal</a></li>
+                <li><a href="Simple.htm">Simple</a></li>
+                <li><a href="Layout.htm">Layout</a></li>
+                <li><a href="Fonts.htm">Fonts</a></li>
+                <li><a href="about:blank">blank</a></li>
+                <li><a href="http://m.bbc.co.uk/news">BBC News</a></li>
+            </ul>
+            <h1 class="some-ad">Some ad</h1>
+            <h1>Aenean malesuada porttitor laoreet quisque eu consectetur sapien</h1>
+            <h2>Praesent dignissim scelerisque tellus, et lobortis turpis viverra quis</h2>
+        </header><!-- .header-->
+        <div class="middle">
+            <div class="container">
+                <main class="content">
+                    <p>
+                        <strong>Content:</strong> Sed placerat accumsan ligula. <a href="choice.exe">Aliquam felis magna</a>, congue quis, tempus eu, aliquam vitae, ante. Cras neque justo, ultrices at, rhoncus a, facilisis eget, nisl. Quisque vitae pede. Nam et augue. Sed a elit. Ut vel massa. Suspendisse nibh pede, ultrices vitae, ultrices nec, mollis non, nibh. In sit amet pede quis leo vulputate hendrerit. Cras laoreet leo et justo auctor condimentum. Integer id enim. Suspendisse egestas, dui ac egestas mollis, libero orci hendrerit lacus, et malesuada lorem neque ac libero. Morbi tempor pulvinar pede. Donec vel elit.
+                    </p>
+                    <p><strong>Wikipedia</strong> began as a complementary project for Nupedia, a free online English-language encyclopedia project whose articles were written by experts and reviewed under a formal process. Nupedia was founded on March 9, 2000, under the ownership of Bomis, a web portal company. Its main figures were the Bomis CEO Jimmy Wales and Larry Sanger, editor-in-chief for Nupedia and later Wikipedia. Nupedia was licensed initially under its own Nupedia Open Content License, switching to the GNU Free Documentation License before Wikipedia's founding at the urging of Richard Stallman. Sanger and Wales founded Wikipedia. While Wales is credited with defining the goal of making a publicly editable encyclopedia, Sanger is credited with the strategy of using a wiki to reach that goal. On January 10, 2001, Sanger proposed on the Nupedia mailing list to create a wiki as a "feeder" project for Nupedia.</p>
+                    <div style="display:none">none</div>
+                    <p>Wikipedia was formally launched on January 15, 2001, as a single English-language edition at www.wikipedia.com, and announced by Sanger on the Nupedia mailing list. Wikipedia's policy of "neutral point-of-view" was codified in its first months. Otherwise, there were relatively few rules initially and Wikipedia operated independently of Nupedia. Originally, Bomis intended to make Wikipedia a business for profit.</p>
+                    <div style="visibility:hidden">hidden</div>
+                    <p>Wikipedia gained early contributors from Nupedia, Slashdot postings, and web search engine indexing. By August 8, 2001, Wikipedia had over 8,000 articles. On September 25, 2001, Wikipedia had over 13,000 articles. And by the end of 2001 it had grown to approximately 20,000 articles and 18 language editions. It had reached 26 language editions by late 2002, 46 by the end of 2003, and 161 by the final days of 2004. Nupedia and Wikipedia coexisted until the former's servers were taken down permanently in 2003, and its text was incorporated into Wikipedia. English Wikipedia passed the mark of two million articles on September 9, 2007, making it the largest encyclopedia ever assembled, surpassing even the 1408 Yongle Encyclopedia, which had held the record for almost 600 years.</p>
+                    <p>Citing fears of commercial advertising and lack of control in Wikipedia, users of the Spanish Wikipedia forked from Wikipedia to create the Enciclopedia Libre in February 2002. These moves encouraged Wales to announce that Wikipedia would not display advertisements, and to change Wikipedia's domain from wikipedia.com to wikipedia.org.</p>
+                    <p>Though the English Wikipedia reached three million articles in August 2009, the growth of the edition, in terms of the numbers of articles and of contributors, appears to have peaked around early 2007. Around 1,800 articles were added daily to the encyclopedia in 2006; by 2013 that average was roughly 800. A team at the Palo Alto Research Center attributed this slowing of growth to the project's increasing exclusivity and resistance to change. Others suggest that the growth is flattening naturally because articles that could be called "low-hanging fruit"—topics that clearly merit an article—have already been created and built up extensively.</p>
+                    <div class="rightFloat">
+                        Some side content. Aenean magna ligula, consequat sed faucibus et, sollicitudin
+                        et sapien.
+                    </div>
+                    <p>In November 2009, a researcher at the Rey Juan Carlos University in Madrid (Spain) found that the English Wikipedia had lost 49,000 editors during the first three months of 2009; in comparison, the project lost only 4,900 editors during the same period in 2008. The Wall Street Journal cited the array of rules applied to editing and disputes related to such content among the reasons for this trend. Wales disputed these claims in 2009, denying the decline and questioning the methodology of the study. Two years later, Wales acknowledged the presence of a slight decline, noting a decrease from "a little more than 36,000 writers" in June 2010 to 35,800 in June 2011. In the same interview, Wales also claimed the number of editors was "stable and sustainable", a claim which was questioned by MIT's Technology Review in a 2013 article titled "The Decline of Wikipedia." In July 2012, the Atlantic reported that the number of administrators is also in decline. In the November 25, 2013, issue of New York magazine, Katherine Ward stated "Wikipedia, the sixth-most-used website, is facing an internal crisis. In 2013, MIT's Technology Review revealed that since 2007, the site has lost a third of the volunteer editors who update and correct the online encyclopedia's millions of pages and those still there have focused increasingly on minutiae."</p>
+                    <div>
+                        <textarea id="output" rows="10" cols="90" style="width: 100%; height: 300px;"></textarea>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td style="width: 145px;">
+                                        <input type="text" value="Lorem ipsum" id="txt1" />
+                                    </td>
+                                    <td rowspan="3">
+                                        <textarea id="txta" rows="3" cols="50" style="height: 67px; width: 100%;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo, felis vitae malesuada lobortis, metus massa condimentum nisi, at faucibus dolor sem et metus.</textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="text" value="Consectetur adipiscing " id="txt2" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="text" value="Consectetur adipiscing " id="Text1" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <p>
+                                            Phasellus ac justo quam. Suspendisse congue ultrices venenatis. Etiam in mauris
+                                            ipsum. Sed convallis scelerisque lectus, vel venenatis velit posuere nec. Nunc accumsan
+                                            luctus pretium. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
+                                            posuere cubilia Curae; Aliquam erat volutpat. Duis tincidunt venenatis ante sodales
+                                            posuere. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur
+                                            ridiculus mus.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="align-container">
+                        <div>Hello</div>
+                        <div>Hi</div>
+                        <hr />
+                        <div>
+                            <h4>An Image</h4>
+                            <img src="Styles/images/sample.png" alt="An image, yesterday" />
+                            <p>A p caption, yesterday</p>
+                            <span>A sub caption</span>
+                        </div>
+                    </div>
+                </main><!-- .content -->
+            </div><!-- .container-->
+            <aside class="right-sidebar">
+                <ul>
+                    <li><a href="styles">styles</a></li>
+                </ul>
+                <ul>
+                    <li><a href="scripts/firefox-new-tab.user.js">firefox-new-tab</a></li>
+                    <li><a href="scripts/google-search.user.js">google-search</a></li>
+                    <li><a href="scripts/google-calendar.user.js">google-calendar</a></li>
+                    <li><a href="scripts/met-weather.user.js">met-weather</a></li>
+                    <li><a href="scripts/outlook-auto.user.js">outlook-auto</a></li>
+                    <li><a href="scripts/pocket-add-redirect.user.js">pocket-add-redirect</a></li>
+                    <li><a href="scripts/template-script.user.js">template-script</a></li>
+                    <li><a href="scripts/user-web.user.js">user-web</a></li>
+                </ul>
+                <ul>
+                    <li><a href="Settings/firegestures.sqlite">firegestures.sqlite</a></li>
+                    <li><a href="Settings/user.js">user.js</a></li>
+                </ul>
+                <hr />
+                <h4>An Image</h4>
+                <img src="Styles/images/sample.png" alt="An image, yesterday" />
+                <p>A p caption, yesterday</p>
+                <span>A sub caption</span>
+            </aside><!-- .right-sidebar -->
+        </div><!-- .middle-->
+        <footer class="footer">
+            <p><strong>Footer:</strong> Mus elit Morbi mus enim lacus at quis Nam eget morbi. Et semper urna urna non at cursus dolor vestibulum neque enim. Tellus interdum at laoreet laoreet lacinia lacinia sed Quisque justo quis. Hendrerit scelerisque lorem elit orci tempor tincidunt enim Phasellus dignissim tincidunt. Nunc vel et Sed nisl Vestibulum odio montes Aliquam volutpat pellentesque. Ut pede sagittis et quis nunc gravida porttitor ligula.</p>
+            <p>HTML + CSS layout from <a href="http://csslayoutgenerator.com/">http://csslayoutgenerator.com/</a></p>
+        </footer><!-- .footer -->
+    </div>
+</body>
+</html>
