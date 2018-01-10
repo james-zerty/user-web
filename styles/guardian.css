@@ -1,0 +1,49 @@
+xxhtml {
+    margin: 0 auto !important;
+}
+xx* {
+	max-width: 800px !important;
+}
+
+xx.content__main-column,
+xx.fc-container__body {
+    max-width: 800px !important;
+	margin: 0 !important;
+}
+
+.facia-page, .facia-page *, article, article * {
+    font-family: Verdana, Corbel, URW Gothic L, Ubuntu Light, DejaVu Sans, Arial, Courier New !important;
+}
+
+.content__article-body * {
+    /* reading font 16/24... */
+    font-family: Ubuntu, Verdana, Corbel, Arial, Ubuntu Light, URW Gothic L, DejaVu Sans, Courier New !important;
+    font-size: 16px !important;
+    line-height: 24px !important;
+    font-weight: 300 !important;
+    font-style: normal !important;
+    text-align: justify !important;
+    color: #000 !important;
+    /* ...end */
+}
+
+x#header.l-header--is-slim {
+    position: absolute !important;
+}
+
+.top-banner-ad-container,
+.xnavigation-container--collapsed,
+.submeta,
+.contributions__epic,
+aside,
+.content-footer,
+footer {
+    display: none !important;
+}
+
+.drop-cap, .drop-cap * {
+    height: auto !important;
+    margin: 0 !important;
+    float: none !important;
+    vertical-align: baseline !important;
+}

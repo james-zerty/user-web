@@ -1,0 +1,27 @@
+﻿.onegoogle {
+    position: absolute !important;
+    top: 0px !important;
+    left: 99% !important;
+    width: 10px !important;
+}
+
+.onegoogle #gbz, .onegoogle #gbq, .onegoogle #gbu {
+    display: none !important;
+}
+
+#gbx1 {
+    top: 29px !important;
+}
+
+.onegoogle:hover {
+    position: absolute !important;
+    top: 0px !important;
+    left: 0px !important;
+    width: 100% !important;
+    height: 500px !important;
+    background-color: white !important;
+}
+
+.onegoogle:hover #gbz, .onegoogle:hover #gbq, .onegoogle:hover #gbu {
+    display: block !important;
+}

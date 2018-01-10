@@ -1,0 +1,98 @@
+/* reading... */
+.story-body p,
+.story-body li,
+.story-body p *,
+.layout-main p,
+.layout-main p *,
+.story-body h2,
+.layout-main h2 {
+    /* reading font 16/24... */
+    font-family: Ubuntu, Verdana, Corbel, Arial, Ubuntu Light, URW Gothic L, DejaVu Sans, Courier New !important;
+    font-size: 16px !important;
+    line-height: 24px !important;
+    font-weight: 300 !important;
+    font-style: normal !important;
+    text-align: justify !important;
+    color: #000 !important;
+    /* ...end */
+}
+
+.story-body h2,
+.layout-main h2 {
+    font-weight: bold !important;
+}
+
+.story-body a,
+.layout-main a {
+    font-weight: normal !important;
+    text-decoration: none !important;
+    border-bottom: 1px dotted #aaa !important;
+}
+
+.story-body p {
+    margin: 20px 0 !important;
+}
+
+/* ...reading */
+
+.story-body figure {
+    max-width: 785px !important;
+}
+
+.story-body__inner {
+    margin: 0 auto !important;
+}
+
+.column--primary, .container, .container-width-only {
+    width: 800px !important;
+}
+
+.section-header__orb,
+.navigation__orb-stuck,
+.column--secondary,
+.pullout {
+    display: none !important;
+}
+
+/* top nav bar... */
+.navigation--primary {
+    min-height: 40px !important;
+}
+#brand {
+    margin-bottom: 2px !important;
+    margin-top: 5px !important;
+}
+.find-local-wide {
+    margin-top: 3px !important;
+}
+/* ...top nav bar */
+
+
+/********** small window... **********/
+@media (max-width: 800px) {
+    .story-body p,
+    .story-body li,
+    .story-body p *,
+    .layout-main p,
+    .layout-main p *,
+    .story-body h2,
+    .layout-main h2 {
+        /* reading font 14/21... */
+        font-size: 14px !important;
+        line-height: 21px !important;
+        /* ...end */
+    }
+
+    .column--primary,
+    .container,
+    .container-width-only {
+        width: auto !important;
+    }
+
+    .story-body .body-width.lead, .story-body .full-width.lead {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+}
+/*************************************/

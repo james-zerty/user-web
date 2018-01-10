@@ -1,0 +1,34 @@
+.daily-forecast.daily-forecast--carousel.b-g-p,
+.daily-forecast.daily-forecast--list.b-g-p,
+.location-forecast__selected-day.selected-day {
+    -moz-transform: scale(0.82);
+    max-width: 9999px;
+    width: 117%;
+    left: -120px;
+}
+
+.weather .location-forecast .day--active .day__wind-speed,
+.weather .day--active .day__wind-speed,
+.weather .enhanced .day--active .day__wind-speed,
+.weather .enhanced .day--active .day__weather-type,
+.weather .day--active .day__weather-type,
+.weather .enhanced .day--active .day__weather-type-icon,
+.weather .day--active .day__weather-type-icon,
+.weather .enhanced .day--active .day__max-temp,
+.weather .day--active .day__max-temp,
+.weather .enhanced .day--active .day__min-temp,
+.weather .day--active .day__min-temp {
+    height: auto !important;
+    width: auto !important;
+    position: relative !important;
+    clip: auto !important;
+    padding: 0 !important;
+    border: 0 !important;
+}
+
+.weather .location-forecast .day--active .day__wind-speed,
+.weather .day--active .day__wind-speed,
+.weather .enhanced .day--active .day__wind-speed {
+    width: 39px !important;
+    overflow: visible !important;
+}

@@ -1,0 +1,14 @@
+html {
+    margin: 0 auto !important;
+    border-style: solid !important;
+    border-color: #fff !important;
+    border-width: 0 30px !important;
+}
+
+* {
+    max-width: 1200px !important;
+}
+
+#weatherHolder td {
+    min-width: 49px !important;
+}

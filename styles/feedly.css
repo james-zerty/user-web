@@ -1,0 +1,41 @@
+
+
+.tagsHolder.decoration-holder,
+.visitWebsiteButton,
+.col-xl-3 {
+	display: none !important;
+}
+
+.headerInfo.headerInfo-article {
+    margin-top: 0 !important;
+}
+
+.shareBarHolder {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.entryBody img {
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+}
+
+.entryholder {
+    padding-bottom: 0 !important;
+}
+
+.inlineFrame .u100Entry .title {
+    margin-bottom: 5px !important;
+}
+
+.content, .entryBody, .entryBody * {
+    /* reading font 14/20... */
+    font-family: Ubuntu, Verdana, Corbel, Arial, Ubuntu Light, URW Gothic L, DejaVu Sans, Courier New !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+    font-weight: 300 !important;
+    font-style: normal !important;
+    text-align: justify !important;
+    color: #000 !important;
+    /* ...end */
+}

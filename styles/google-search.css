@@ -1,0 +1,126 @@
+﻿.logocont,
+.blockLink,
+#ab_ctls {
+    display: none;
+}
+
+#hdtb-msb,
+#cnt,
+div.sfbg,
+div.sfbgg,
+.sfbgx,
+#top_nav,
+#fbar,
+#appbar,
+#rhscol,
+div#searchform {
+    min-width: 200px !important;
+}
+
+/* buttons... */
+.hdtb-mitem.hdtb-msel.hdtb-imb,
+.hdtb-mitem a.q.qs,
+#hdtb-msb a.q.qs,
+a.hdtb-tl,
+a.hdtb-dd-b {
+    outline-width: 0 !important;
+    outline: none !important;
+    text-decoration: none !important;
+    border: 0 !important;
+    border-right: solid 1px #4285F4 !important;
+    display: inline-block !important;
+    text-align: center !important;
+    border-radius: 0 !important;
+    line-height: 19px !important;
+    cursor: pointer !important;
+    padding: 4px 5px !important;
+    margin: 0 !important;
+    color: #777 !important;
+}
+
+.hdtb-mitem.hdtb-msel {
+    height: 19px !important;
+}
+
+#hdtb-msb .hdtb-mitem.hdtb-imb:first-child {
+    margin-left: 150px !important;
+}
+
+.hdtb-tsel {
+    color: #4285F4 !important;
+}
+/* ...buttons */
+
+/********** small window... **********/
+@media (max-width: 830px) {
+    #hdtb-msb .hdtb-mitem.hdtb-msel:first-child,
+    #hdtb-msb .hdtb-mitem.hdtb-msel-pre:first-child,
+    .tsf-p,
+    #hdtb-msb > .hdtb-mitem:first-child,
+    .ab_tnav_wrp,
+    #cnt #center_col,
+    .mw #center_col {
+        margin-left: 10px !important;
+        padding-left: 0 !important;
+    }
+
+    #res,
+    #taw > div,
+    #resultStats  {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    #center_col .kp-blk,
+    #center_col, #resultStats {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    /* buttons... */
+    .hdtb-mitem,
+    .hdtb-imb {
+        margin: 0 !important;
+    }
+    #hdtbMenus,
+    #hdtb-msb .hdtb-mitem.hdtb-imb:first-child {
+        margin-left: 10px !important;
+    }
+	#rhscol,
+    #hdtb-mn-gp {
+        display: none !important;
+    }
+    /* ...buttons */
+}
+
+li.g {
+    border-top: solid 1px #ddd;
+    padding: 10px 0;
+}
+
+span.st,
+div.st {
+    /* reading font 13/17... */
+    font-family: Verdana, Corbel, URW Gothic L, Ubuntu Light, DejaVu Sans, Arial, Courier New !important;
+    font-style: normal !important;
+    font-size: 13px !important;
+    line-height: 17px !important;
+    text-align: justify !important;
+    color: #222 !important;
+    /* ...end */
+    display: block;
+    padding-top: 3px;
+    padding-bottom: 6px;
+}
+
+/* cite, cite *, cite a {
+    color: #bbb !important;
+} */
+
+span.mn-dwn-arw {
+    border-color: #bbb transparent !important;
+}
+
+/* more news links */
+/* a._Eu._H2, ._XFe a.fl {
+    padding-left: 15px;
+}*/

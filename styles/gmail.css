@@ -1,0 +1,10 @@
+﻿xximg[goomoji] {
+    display: none !important;
+}
+
+/********** small window... **********/
+@media (max-width: 1200px) {
+    .Bu.y3 {
+        display: none !important;
+    }
+}

@@ -1,0 +1,17 @@
+header, footer, .fdbkLinks, #id_h {
+    display: none !important;
+}
+
+#container {
+    top: 0 !important;
+    bottom: 0 !important;
+}
+
+.taskBar,
+.NavBar_Container,
+.CopyrightContainer,
+.feedbackPopOut,
+.bm_fdbkLinks,
+.slideout {
+	display: none !important;
+}

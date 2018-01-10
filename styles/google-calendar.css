@@ -1,0 +1,17 @@
+/* grey top for days not in the current month */
+.st-dtitle-nonmonth {
+    background-color: #ffffa4 !important;
+    color: #000 !important;
+}
+
+/* event text */
+.wgIOqb-XPtOyb {
+    font-family: Verdana !important;
+    line-height: 19px !important;
+    font-weight: normal !important;
+}
+
+/* event bg image */
+.i5a7ie.t09REd {
+    background-image: none !important;   
+}

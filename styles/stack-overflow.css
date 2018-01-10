@@ -1,0 +1,35 @@
+#mainbar, #question, #answers, .answer, .post-text, .question-status, .comments {
+    /* reading font 13/20... */
+    font-family: Verdana, Corbel, URW Gothic L, Ubuntu Light, DejaVu Sans, Arial, Courier New !important;
+    font-style: normal !important;
+    font-size: 13px !important;
+    line-height: 20px !important;
+    text-align: justify !important;
+    color: #222 !important;
+    /* ...end */
+    width: auto !important;
+    max-width: 900px !important;
+}
+
+/* header, */
+.nav, .top-bar, ._fixed, .aside-cta,
+#sidebar, #herobox, #post-form, .bottom-notice, #footer, #feed-link, noscript,
+#noscript-warning, #noscript-padding, .topbar, #adzerk-user-match,
+.__noscriptPlaceholder__, .__noscriptObjectPatchMe__, .__noscriptPlaceholder__1, .__noscriptPlaceholder__2, #header
+ {
+    display: none !important;
+}
+
+html, body, #header, #content, #answers-header, .topbar .topbar-wrapper {
+	width: auto !important;
+	min-width: 0 !important;
+}
+
+.so-header ~ .container {
+    padding-top: 0 !important;
+}
+
+body, ._full {
+    margin-top: 0 !important;
+    background: none !important;
+}

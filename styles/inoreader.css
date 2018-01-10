@@ -1,0 +1,154 @@
+/********** reading... **********/
+#reader_pane,
+.article_content,
+.article_content * {
+    /* reading font 16/24... */
+    font-family: Ubuntu, Verdana, Corbel, Arial, Ubuntu Light, URW Gothic L, DejaVu Sans, Courier New !important;
+    font-size: 16px !important;
+    line-height: 24px !important;
+    font-weight: 300 !important;
+    font-style: normal !important;
+    text-align: justify !important;
+    color: #000 !important;
+    /* ...end */
+}
+
+.article_content h4 {
+	font-weight: bold !important;
+}
+
+.article_content p {
+	margin: 20px 0 !important;
+}
+
+.article_content a {
+    text-decoration: none !important;
+    border-bottom: 1px dotted #aaa !important;
+}
+
+.article_content a:hover {
+    text-decoration: none !important;
+}
+
+.article_content {
+    max-width: 9999px !important;
+    padding-right: 12px !important;
+}
+
+#article_dialog .article_title {
+    padding-right: 45px !important;
+}
+
+/******************************/
+
+/* LHS Tree */
+#subscriptions_fieldset legend span.sf_refresh {
+    margin-left: -6px; !important;
+}
+#subscriptions_fieldset legend span.subscriptions_legend {
+    color: #bbb !important;
+}
+
+#subscription_options_peek_wrapper,
+#parent_dashboard,
+#parent_all_articles,
+#parent_web_pages {
+    display: none !important;
+}
+
+.feed_favicon {
+    display: none;
+}
+
+.tree_node {
+    margin: 0 !important;
+    padding: 0;
+}
+/* */
+
+/* whole page... */
+#wraper {
+    min-width: 0 !important;
+}
+
+#sinner_container {
+    display: none !important;
+}
+
+.inno_dialog_modal_overlay {
+    opacity: 1.0 !important;
+}
+
+
+/********** small window... **********/
+@media (max-width: 840px) {
+    
+    body {
+        background-color: #fff !important;;
+    }
+    
+    #reader_pane,
+    .article_content,
+    .article_content *,
+    .article_magazine_title,
+    .article_magazine_title_link,
+    .article_magazine_content,
+    .article_title {
+        /* reading font 14/21... */
+        font-size: 14px !important;
+        line-height: 21px !important;
+        /* ...end */
+    }
+
+    .article_magazine_content {
+        max-height: none !important;
+    }
+    
+    .article_content img,
+    .article_magazine_picture,
+    .article_content iframe {
+        display: none !important;
+    }
+    
+    #article_dialog_wrapper {
+        width: 100% !important;
+        left: auto !important;
+    }
+    
+    .article_magazine_content_wraper {
+        padding-left: 0 !important;
+    }
+
+    .inno_dialog_content {
+        padding: 5px 15px 35px 5px !important;
+    }
+    
+    .inno_dialog, .inno_dialog_content_scrollable {
+        top: 0 !important;
+        height:100% !important;
+    }
+    
+    #xxreader_pane {
+        left: 0px !important;
+    }
+    
+    /* main view top buttons, left tree */
+    #subscriptions_buttons,
+    #sb_rp_tools,
+    #xxtree_pane {
+        display: none !important;
+    }
+    
+    /* article title */
+    .article_title .article_title_link {
+        font-size: 13px !important;
+        line-height: 16px !important;
+        font-family: verdana;
+        color: #222 !important;
+    }
+        
+    #article_dialog .article_title {
+        padding-right: 50px !important;
+    }
+}
+/******************************/

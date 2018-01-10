@@ -1,0 +1,216 @@
+/********** reading... **********/
+.text_body *,
+.reader_content h1 {
+    /* reading font 16/24... */
+    font-family: Ubuntu, Verdana, Corbel, Arial, Ubuntu Light, URW Gothic L, DejaVu Sans, Courier New !important;
+    font-size: 16px !important;
+    line-height: 24px !important;
+    font-weight: 300 !important;
+    font-style: normal !important;
+    text-align: justify !important;
+    color: #000 !important;
+    /* ...end */
+}
+
+body * {
+    font-family: Ubuntu, Verdana, Corbel, Arial, Ubuntu Light, URW Gothic L, DejaVu Sans, Courier New !important;
+    font-weight: 300 !important;
+}
+
+nav.pkt-nav.readr-container a,
+#page_queue.readr-container a {
+    border-bottom: 0 !important;
+}
+
+.text_body p {
+    text-align: justify !important;
+    margin: 15px 0 !important;
+}
+
+.reader_content .text_body a {
+    text-decoration: none !important;
+    border-bottom: 1px dotted #aaa !important;
+}
+
+.text_body a:hover {
+    text-decoration: none !important;
+}
+
+.title,
+.readr-container .title,
+.reader_content h1,
+.text_body h1,
+.text_body h2,
+.text_body h3,
+.text_body h4,
+.text_body h5,
+.text_body h6 {
+    font-weight: bold !important;
+}
+
+.text_body div {
+    font-style: italic;
+}
+
+.text_body blockquote {
+    border-left-width: 0 !important;
+}
+
+.text_body blockquote, .text_body pre {
+    margin: 0 !important;
+    padding: 0 10px !important;
+}
+
+.content__standfirst:nth-child(n+3) {
+    color: #fff !important;
+}
+._RIL_KEEPER_CLASS_:nth-child(n+3) {
+    color: #fff !important;
+}
+
+    .item .thumb,
+    #page_queue .tags,
+    .topic {
+        display: none !important;
+    }
+
+/******************************************/
+
+/********** reading container... **********/
+.page-reader {
+    background-color: #000 !important;
+}
+
+.reader_content {
+    max-width: 800px !important;
+    margin: 0 auto !important;
+    padding: 50px !important;
+    background-color: #fff !important;
+}
+
+div.reader_content_wrapper {
+    margin-bottom: 600px !important;
+}
+/********************************/
+
+/********** general... **********/
+
+/* chat window, top colour bar */
+.reader_explore_bar,
+.alt-tooltip,
+.side-nav,
+#livechat-compact-container,
+.reading_progress,
+.nav-premupgrade,
+aside.quote, /*bbc*/
+figure.media-primary /*guardian?*/
+{
+    display: none !important;
+}
+
+/* top colour banner*/
+.page-reader .toolbar_queue_rainbow {
+    position: relative !important;
+}
+
+/* top toolbar */
+#page .pkt-nav {
+    position: relative !important;
+}
+
+/* tags - inoreader + best-of */
+a[href='/a/queue/list/inoreader'], .topic_1 {
+    background-color: #fff !important;
+    color: #ccc !important;
+    border: solid 1px #ddd !important;
+}
+
+::selection {
+    background-color: #3297FD !important;
+    color: #fff !important;
+}
+
+::-moz-selection {
+    background-color: #3297FD !important;
+    color: #fff !important;
+}
+
+/* top-right profile dropdown on list page
+   causes hoz scroll on load */
+.page-queue .popover-new {
+    display: none !important;
+}
+.page-queue .popover-active {
+    display: block !important;
+}
+.page-queue #pagenav_options_container .popover-new {
+    xposition: absolute !important;
+    left: -150px !important;
+}
+
+/*************************************/
+
+/********** small window... **********/
+@media (max-width: 801px) {
+    .reader_content {
+        padding: 10px !important;
+    }
+
+    .text_body *,
+    .reader_content h1 {
+        /* reading font 14/21... */
+        font-size: 14px !important;
+        line-height: 21px !important;
+        /* ...end */
+    }
+
+    #page_queue * {
+        font-size: 13px !important;
+        line-height: 20px !important;
+    }
+
+    #page_queue a.title {
+        margin-left: 0px !important;
+    }
+
+    /* .text_body * {
+        font-size: 13px !important;
+        line-height: 20px !important;
+    } */
+
+    .text_body sup, #page_queue sup {
+        font-size: 10px !important;
+    }
+
+    #page_reader {
+        padding: 0 !important;
+    }
+
+    .searchtoolbar_queue {
+        width: 96% !important;
+    }
+
+    .item .title {
+        padding: 20px 20px .1em 20px !important;
+    }
+
+    .text_body * {
+        color: #222 !important;
+    }
+
+    .sub.clearfix {
+        margin-bottom: 18px !important;
+    }
+
+    .buttons {
+        position: relative !important;
+        width: 149px !important;
+        margin-bottom: 7px !important;
+    }
+
+    .buttons li {
+        float: right !important;
+    }
+
+}
+/*************************************/

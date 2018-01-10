@@ -1,0 +1,17 @@
+body.mainWindow {
+    min-width: 0 !important;
+}
+
+._rp_V4._rp_U4 {
+    margin-left: 0 !important;
+}
+
+img {
+    max-width:680px !important;
+    height: auto !important;
+}
+
+._n_Q4,
+.groupsPadding {
+    display: none !important;
+}
