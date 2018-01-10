@@ -1412,7 +1412,7 @@ log(600, url);
             };
 
             me.loadUserStyleSheet = function (name) {
-                var url = me.getUrl("Styles/" + name + ".css");
+                var url = me.getUrl("styles/" + name + ".css");
 
                 //console.log(logPrefix + "inserting style     :", url);
                 log("inserting style", url); //qq-log
@@ -1662,7 +1662,7 @@ log(600, url);
 
                     doc.push("<head>");
                     doc.push("<title>" + title + "</title>");
-                    doc.push("<link rel='stylesheet' type='text/css' href='" + userWeb.getUrl("Styles/readr.css") + "'>");
+                    doc.push("<link rel='stylesheet' type='text/css' href='" + userWeb.getUrl("styles/readr.css") + "'>");
                     doc.push("</head>");
                     doc.push("<body>");
                     doc.push("<div class='readr-inner" + containerClass + "'>");

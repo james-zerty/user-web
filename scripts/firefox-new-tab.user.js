@@ -133,7 +133,7 @@ try {
                     .addElement(link, "img");
 
                 if (me.binaries[image] == null) {
-                    //img.attr("src", me.getRoot() + "Styles/buttons/" + image.replace("_", "-") + ".png");
+                    //img.attr("src", me.getRoot() + "styles/buttons/" + image.replace("_", "-") + ".png");
                 }
                 else {
                     img.attr("src", "data:image/jpeg;base64," + me.getBinary(image));
