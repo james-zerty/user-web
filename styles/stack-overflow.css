@@ -1,4 +1,11 @@
-#mainbar, #question, #answers, .answer, .post-text, .question-status, .comments {
+#answers,
+#mainbar,
+#question,
+.answer,
+.comments,
+.post-text,
+.question-status
+{
     /* reading font 13/20... */
     font-family: Verdana, Corbel, URW Gothic L, Ubuntu Light, DejaVu Sans, Arial, Courier New !important;
     font-style: normal !important;
@@ -12,24 +19,46 @@
 }
 
 /* header, */
-.nav, .top-bar, ._fixed, .aside-cta,
-#sidebar, #herobox, #post-form, .bottom-notice, #footer, #feed-link, noscript,
-#noscript-warning, #noscript-padding, .topbar, #adzerk-user-match,
-.__noscriptPlaceholder__, .__noscriptObjectPatchMe__, .__noscriptPlaceholder__1, .__noscriptPlaceholder__2, #header
- {
+#announcement-banner,
+#feed-link,
+#footer,
+#header,
+#herobox,
+#post-form,
+#sidebar,
+.aside-cta,
+.bottom-notice,
+.nav,
+.top-bar,
+.topbar,
+._fixed,
+noscript
+{
     display: none !important;
 }
 
-html, body, #header, #content, #answers-header, .topbar .topbar-wrapper {
-	width: auto !important;
-	min-width: 0 !important;
+#answers-header,
+#content,
+#header,
+.topbar,
+.topbar-wrapper
+body,
+html
+{
+    width: auto !important;
+    min-width: 0 !important;
 }
 
-.so-header ~ .container {
+.so-header ~
+.container
+{
     padding-top: 0 !important;
 }
 
-body, ._full {
+body,
+._full,
+.container
+{
     margin-top: 0 !important;
     background: none !important;
 }
