@@ -5,10 +5,9 @@ xx* {
 	max-width: 800px !important;
 }
 
-xx.content__main-column,
-xx.fc-container__body {
+.content__main-column {
     max-width: 800px !important;
-	margin: 0 !important;
+	margin-right: 0 !important;
 }
 
 .facia-page, .facia-page *, article, article * {
@@ -31,6 +30,9 @@ x#header.l-header--is-slim {
     position: absolute !important;
 }
 
+.content__meta-container,
+.site-message--banner,
+.site-message--cookies,
 .top-banner-ad-container,
 .xnavigation-container--collapsed,
 .submeta,

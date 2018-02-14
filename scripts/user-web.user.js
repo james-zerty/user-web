@@ -5,6 +5,7 @@
 // @version     15
 // @author      2010+, james_zerty
 // @grant       GM.setClipboard
+// @noframes
 // @include     http*://*/*
 // @exclude     https://mailxx.google.com*
 // @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-2.1.0.js
@@ -12,16 +13,15 @@
 "use strict";
 
 try {
+    var loadAfter = 1000;
     var logPrefix = "[user-web] ";
     var url = document.location.href;
     var isTop = window.top == window.self || url.toLowerCase().indexOf("inoreader") > -1 || url.toLowerCase().indexOf("home.htm") > -1;
-log("url", url);
-log("istop", isTop);
+    log("url", url.substr(0, 100));
+    log("istop", isTop);
 
     if (isTop) {
-log(100, url);
         var userWeb = new function () {
-log(200, url);
             var me = this;
 
             // config...
@@ -33,7 +33,7 @@ log(200, url);
                 { exp: /tumblr\.com/i, filter: ".tumblr_controls, #notes" },
                 { exp: /amazon\.co/i, filter: "#dp-ads-middle-3psl, #tellAFriendBox_feature_div, #quickPromoBucketContent, #quickPromoDivId, #sc-new-upsell, #nav-swmslot, #hqpWrapper, #huc-v2-cobrand-stripe, #nav-upnav, #detail-ilm_div" },
             ];
-log(300, url);
+
             me.adblock = function () {
                 for (var i in me.adblockConfig) {
                     var cfg = me.adblockConfig[i];
@@ -54,7 +54,6 @@ log(300, url);
             }
 
             me.load = function () {
-log(600, url);
                 me.url = document.location.href;
                 me.isLinux = navigator.userAgent.indexOf("Linux") > -1;
                 me.fontSize = 16; //fnt
@@ -63,7 +62,6 @@ log(600, url);
                 me.menuTimeoutTime = 1000;
                 me.noRead = me.url.match(/:9000/i) != null;
 
-                log("page url", me.url.substr(0, 100)); //qq-log
                 //log("navigator.userAgent", navigator.userAgent);
 
                 me.debug = { localUrls: 0, uniqueUrls: 0, reloader: 0, autoShow: 0 };
@@ -222,7 +220,7 @@ log(600, url);
                                 me.createMenu();
                                 me.tidyUp();
                                 var $target = $(e.target);
-                                me.doRead($target.width(), "readr-container");
+                                me.doRead($target.width(), 50, "readr-container");
                                 me.markElementAndBind(e);
                                 me.hideMenu();
                             }
@@ -267,6 +265,7 @@ log(600, url);
                 }
             };
 
+            me.countGrave = 0;
             me.onKeyDown = function (e) {
                 //log("onKeyDown", e.keyCode, e.ctrlKey);
                 me.run(function () {
@@ -312,8 +311,25 @@ log(600, url);
                                 return;
                             }
                             else { //read lite...
-                                log("`", "Read Lite");
-                                me.readLite();
+                                if (me.countGrave == 0) { //qqqqq
+                                    log("`", "Read Lite");
+                                    me.readLite();
+                                }
+                                else if (me.countGrave == 1) {
+                                    me.run(function () { //Medium = hide fixed + style all p's
+                                        me.tidyUp();
+                                    me.setFont(0);
+                                        me.doRead(500, 400, "readr-container");
+                                    });
+                                }
+                                else if (me.countGrave == 2) {
+                                  me.setFontSize(2);
+                                    me.setFont(1);
+                                }
+                                else {
+                                    me.setFont(1);
+                                }
+                                me.countGrave++;
                             }
                             break;
                         case 16: // shift
@@ -614,7 +630,7 @@ log(600, url);
                             var $target = $(me.clickEvent.target);
                             var w = $target.width();
                             log("w", w);
-                            me.doRead(w, "readr-container");
+                            me.doRead(w, 50, "readr-container");
                             me.markElementAndBind(me.clickEvent);
                         });
                     }, null, "Tidy and set font family + size - everything of same width - and mark paragraph");
@@ -626,7 +642,7 @@ log(600, url);
                             var $target = $(me.clickEvent.target);
                             var w = $target.width();
                             log("w", w);
-                            me.doRead(w, "readr-container");
+                            me.doRead(w, 50, "readr-container");
                             me.clearSelection();
                             me.scrollToElement($target);
                         });
@@ -639,7 +655,7 @@ log(600, url);
                             var $target = $(me.clickEvent.target);
                             var w = $(me.clickEvent.target).width();
                             log("w", w);
-                            me.doRead(w, "readr-med");
+                            me.doRead(w, 50, "readr-med");
                             me.clearSelection();
                             me.scrollToElement($target);
                         });
@@ -1102,11 +1118,11 @@ log(600, url);
                 me.refreshMenu();
             };
 
-            me.doRead = function(width, parentClass) { //qq-readr
+            me.doRead = function(width, widthMargin, parentClass) { //qq-readr
                 if (me.url.match(/mail\.google/i) == null) {
                     $("*").filter(function() {
                         var w = $(this).width();
-                        return w <= width + 50 && w >= width - 50;
+                        return w <= width + widthMargin && w >= width - widthMargin;
                     }).addClass(parentClass);
                 }
                 else {
@@ -1134,9 +1150,21 @@ log(600, url);
 
             me.fonts = [
                 "Ubuntu",
-                "Verdana", //qq-font //fnt
                 "Segoe UI",
+                "Kalinga",
+                "Leelawadee UI",
                 "Corbel",
+                "Century Gothic",
+                "Euphemia",
+                "Gadugi",
+                "Yu Gothic",
+                "Yu Mincho",
+                "Comic Sans MS", //qq-font //fnt
+                "Gisha",
+                "Candara",
+                "SimSun-ExtB",
+                "Sitka Display",
+                "Verdana",
                 "Arial Nova",
                 "Aharoni",
                 "Aldhabi",
@@ -1152,8 +1180,6 @@ log(600, url);
                 "Calisto MT",
                 "Cambria",
                 "Cambria Math",
-                "Candara",
-                "Century Gothic",
                 "Comic Sans MS",
                 "Consolas",
                 "Constantia",
@@ -1173,18 +1199,15 @@ log(600, url);
                 "Ebrima",
                 "Estrangelo Edessa",
                 "EucrosiaUPC",
-                "Euphemia",
                 "FangSong",
                 "Franklin Gothic Medium",
                 "FrankRuehl",
                 "FreesiaUPC",
                 "Gabriola",
-                "Gadugi",
                 "Gautami",
                 "Georgia",
                 "Georgia Pro",
                 "Gill Sans Nova",
-                "Gisha",
                 "Gulim",
                 "GulimChe",
                 "Gungsuh",
@@ -1194,7 +1217,6 @@ log(600, url);
                 "Iskoola Pota",
                 "JasmineUPC",
                 "KaiTi",
-                "Kalinga",
                 "Kartika",
                 "Khmer UI",
                 "KodchiangUPC",
@@ -1202,7 +1224,6 @@ log(600, url);
                 "Lao UI",
                 "Latha",
                 "Leelawadee",
-                "Leelawadee UI",
                 "Levenim MT",
                 "LilyUPC",
                 "Lucida Console",
@@ -1253,10 +1274,6 @@ log(600, url);
                 "Segoe MDL2 Assets",
                 "Segoe Print",
                 "Segoe Script",
-                "Segoe UI v5.00",
-                "Segoe UI v5.01",
-                "Segoe UI v5.27",
-                "Segoe UI v5.35",
                 "Segoe UI Historic",
                 "Segoe UI Symbol",
                 "Shonar Bangla",
@@ -1265,9 +1282,7 @@ log(600, url);
                 "SimKai",
                 "Simplified Arabic",
                 "SimSun",
-                "SimSun-ExtB",
                 "Sitka Banner",
-                "Sitka Display",
                 "Sitka Heading",
                 "Sitka Small",
                 "Sitka Subheading",
@@ -1288,9 +1303,7 @@ log(600, url);
                 "Webdings",
                 "Westminster",
                 "Wingdings",
-                "Yu Gothic",
-                "Yu Gothic UI",
-                "Yu Mincho"
+                "Yu Gothic UI"
             ];
 
             me.currentFont = 0;
@@ -1634,7 +1647,7 @@ log(600, url);
                     var rem = me.el.find("iframe, script, link, button, input, form, textarea").remove();
 
                     /*rem.each(function () {
-                    log($(this).html());
+                        log($(this).html());
                     });*/
 
                     var hid = me.el.find("*").filter(function (a, b, c) {
@@ -1645,7 +1658,7 @@ log(600, url);
                     });
 
                     /*hid.each(function () {
-                    log($(this).html());
+                        log($(this).html());
                     });*/
 
                     hid.remove();
@@ -1767,21 +1780,17 @@ log(600, url);
 
         /* ================================================== */
 
-log(500, url);
         window.self.setTimeout(function () {
-console.log(510);
             try {
-log(520, url);
                 userWeb.load();
-log(530, url);
             }
             catch (ex) {
                 log(ex);
             }
-        }, 100);
+        }, loadAfter);
     }
     else {
-        //log("skipping frame", "'", document.location.href, "'");
+        log("skipping frame", "'", document.location.href, "'");
     }
 }
 catch (ex) {
