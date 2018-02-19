@@ -7,16 +7,31 @@
 // @grant       GM.setClipboard
 // @noframes
 // @include     http*://*/*
-// @exclude     https://mailxx.google.com*
+// @exclude     https://localhost:44300/dev*
 // @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-2.1.0.js
 // ==/UserScript==
 "use strict";
-
 try {
     var loadAfter = 1000;
     var logPrefix = "[user-web] ";
     var url = document.location.href;
     var isTop = window.top == window.self || url.toLowerCase().indexOf("inoreader") > -1 || url.toLowerCase().indexOf("home.htm") > -1;
+
+    var settings = { localUrls: 0, uniqueUrls: 0, reloader: 0, autoShow: 0, handleErrors: 1 };
+    if (url.match(/localhost.*\/(home|dev).*\.htm/i) != null) {
+        settings = { localUrls: 0, uniqueUrls: 0, reloader: 1, autoShow: 0, handleErrors: 0 };
+    }
+    /*
+        Windows NT 10.0 > Windows 10
+        Windows NT 6.3  > Windows 8.1
+        Windows NT 6.2  > Windows 8
+        Windows NT 6.1  > Windows 7
+    */
+    //log("navigator.userAgent", navigator.userAgent);
+    if (navigator.userAgent.indexOf("Mozilla/5.0 (Windows NT 6.3; Win64; x64;" > -1)) {
+        settings.localUrls = 1;
+    }
+
     log("url", url.substr(0, 100));
     log("istop", isTop);
 
@@ -56,31 +71,17 @@ try {
             me.load = function () {
                 me.url = document.location.href;
                 me.isLinux = navigator.userAgent.indexOf("Linux") > -1;
-                me.fontSize = 16; //fnt
-                me.fontSizeSmall = 14;
+                me.fontSize = 18; //fnt
+                me.fontSizeSmall = 15;
                 me.fontRatio = 1.5;
                 me.menuTimeoutTime = 1000;
                 me.noRead = me.url.match(/:9000/i) != null;
+                me.options = {};
+                me.el0 = null;
+                me.el = null;
+                me.els = [];
 
-                //log("navigator.userAgent", navigator.userAgent);
-
-                me.debug = { localUrls: 0, uniqueUrls: 0, reloader: 0, autoShow: 0 };
-
-                if (me.url.match(/localhost.*\/(home|testlocal)\.htm/i) != null) {
-                    me.debug = { localUrls: 0, uniqueUrls: 0, reloader: 0, autoShow: 0 };
-                }
-
-                /*
-                    Windows NT 10.0 > Windows 10
-                    Windows NT 6.3  > Windows 8.1
-                    Windows NT 6.2  > Windows 8
-                    Windows NT 6.1  > Windows 7
-                */
-                if (navigator.userAgent.indexOf("Mozilla/5.0 (Windows NT 6.3; Win64; x64;" > -1)) {
-                    me.debug.localUrls = 1;
-                }
-
-                if (me.debug.reloader) {
+                if (settings.reloader) {
                     document.oncontextmenu = function (e) {
                         document.location.reload(true);
                         return false;
@@ -90,32 +91,30 @@ try {
                 me.loadUserStyle();
                 me.bindMouse();
                 me.adblock();
-                me.bindOnKeyDown();//qq1
+                me.bindOnKeyDown();
 
-                if (me.debug.autoShow) {
+                if (settings.autoShow) { //qq
                     me.run(function () {
-                        var e = {
-                            pageX: 400,
-                            pageY: 300,
-                            target: $("p")[0]
-                        };
+                        // me.testFonts();
 
-                        //TODO: wrap this up...
-                        me.selectedText = "test";
-                        me.showMenu(e);
-                        me.hideMenu();
-                        me.tidyUp();
-                        me.runReadr(e);
-                        me.markElementAndBind(e);
+                        me.autoPopout();
+
+                        // throw new Error("test!");
+
+                        // var e = {
+                            // pageX: 400,
+                            // pageY: 300,
+                            // target: $("p")[0]
+                        // };
+                        // me.tidyUp();
+                        // me.runReadr(e);
+                        // me.markElementAndBind(e);
                     });
                 }
-
-                // me.addStyles();
-                // me.showHelp();
             };
 
             me.getRoot = function () {
-                return me.debug.localUrls ? "https://localhost:44300/" : "https://rawgit.com/james-zerty/user-web/master/";
+                return settings.localUrls ? "https://localhost:44300/" : "https://rawgit.com/james-zerty/user-web/master/";
             }
 
             me.isSmall = function () {
@@ -123,11 +122,16 @@ try {
             }
 
             me.run = function (fn) {
-                try {
-                    fn();
+                if (settings.handleErrors) {
+                    try {
+                        fn();
+                    }
+                    catch (ex) {
+                        log(ex);
+                    }
                 }
-                catch (ex) {
-                    log(ex);
+                else {
+                    fn();
                 }
             };
 
@@ -213,8 +217,7 @@ try {
                             // 0 —— x
                             // |
                             // y
-                            if (x < 0 && text.length < 10) { //backwards selection //qq
-                            //if (((x < 0 && y <= 10) || (y <= -10)) && text.length < 100) { //backwards selection //qq-selection
+                            if (x < 0 && text.length < 10) { //backwards selection
                                 if (me.noRead) return;
                                 if (tagName == "INPUT" || tagName == "TEXTAREA") return;
                                 me.createMenu();
@@ -289,13 +292,13 @@ try {
                                 }
                                 else
                                 {
-                                    me.debug.uniqueUrls = 1;
+                                    settings.uniqueUrls = 1;
                                     me.loadUserStyle();
                                 }
                             }
                             else if (e.shiftKey) { //undo read...
                                 log("Shift+`", "undo read");
-                                me.undoReadr(); //qq1
+                                me.undoReadr();
                                 if (me.marking) {
                                     me.markElementCancel();
                                 }
@@ -311,22 +314,26 @@ try {
                                 return;
                             }
                             else { //read lite...
-                                if (me.countGrave == 0) { //qqqqq
-                                    log("`", "Read Lite");
+                                if (me.countGrave == 0) { //qq
+                                    log("`", "read lite");
                                     me.readLite();
                                 }
                                 else if (me.countGrave == 1) {
-                                    me.run(function () { //Medium = hide fixed + style all p's
+                                    log("`", "read medium");
+                                    me.run(function () { //medium = hide fixed + style all p's
                                         me.tidyUp();
-                                    me.setFont(0);
+                                        me.setFont(0);
                                         me.doRead(500, 400, "readr-container");
                                     });
                                 }
                                 else if (me.countGrave == 2) {
-                                  me.setFontSize(2);
-                                    me.setFont(1);
+                                    log("`", "read popout");
+                                    if (!me.autoPopout()) {
+                                        break;
+                                    }
                                 }
                                 else {
+                                    log("`", "set font");
                                     me.setFont(1);
                                 }
                                 me.countGrave++;
@@ -501,7 +508,7 @@ try {
                 var offsetY = 0;
                 var offsetX = 0;
 
-                var ePageX = e.pageX; //qq1
+                var ePageX = e.pageX;
                 var ePageY = e.pageY;
                 log("", "ePageX: ", ePageX, "; ePageY: ", ePageY)
                 if (isNaN(ePageY)) {
@@ -623,7 +630,7 @@ try {
 
                 me.menu.append(me.ulReadr);
 
-                me.linkRunReadrFullAndMark = //qq-readr
+                me.linkRunReadrFullAndMark =
                     me.addLink(me.ulReadr, "Read & Mark", function () {
                         me.run(function () { //Medium = hide fixed + style all p's
                             me.tidyUp();
@@ -635,7 +642,7 @@ try {
                         });
                     }, null, "Tidy and set font family + size - everything of same width - and mark paragraph");
 
-                me.linkRunReadrFull = //qq-readr
+                me.linkRunReadrFull =
                     me.addLink(me.ulReadr, "Read", function () {
                         me.run(function () { //Medium = hide fixed + style all p's
                             me.tidyUp();
@@ -648,7 +655,7 @@ try {
                         });
                     }, null, "Tidy and set font family + size - everything of same width");
 
-                me.linkRunReadrMed = //qq-readr
+                me.linkRunReadrMed =
                     me.addLink(me.ulReadr, "Read Medium", function () {
                         me.run(function () { //Medium = hide fixed + style all p's
                             me.tidyUp();
@@ -693,12 +700,19 @@ try {
                         });
                     }).hide();
 
+                me.linkUndoPopout =
+                    me.addLink(me.ulReadr, "Undo Popout", function () {
+                        me.run(function () {
+                            me.undoPopout();
+                        });
+                    }).hide();
+
                 me.userStyleSeparator = me.addSeparator(me.ulReadr);
 
                 me.linkReloadStyle =
                     me.addLink(me.ulReadr, "Reload style", function () {
                         me.run(function () {
-                            me.debug.uniqueUrls = 1;
+                            settings.uniqueUrls = 1;
                             me.loadUserStyle();
                         });
                     }).hide();
@@ -707,7 +721,7 @@ try {
                     me.addLink(me.ulReadr, "Reload dblclick", function () {
                         $('body').bind("dblclick.uws", function () {
                             me.run(function () {
-                                me.debug.uniqueUrls = 1;
+                                settings.uniqueUrls = 1;
                                 me.loadUserStyle();
                             });
 
@@ -720,7 +734,7 @@ try {
                         me.linkReloadStyleOnDblClickOff.show();
 
                         me.run(function () {
-                            me.debug.uniqueUrls = 1;
+                            settings.uniqueUrls = 1;
                             me.loadUserStyle();
                         });
                     }).hide();
@@ -747,14 +761,14 @@ try {
                     }).hide();
 
                 me.addSeparator(me.ulReadr);
-                
-                me.linkImagesHide = //qqq
+
+                me.linkImagesHide =
                     me.addLink(me.ulReadr, "Hide Images", function () {
                         me.run(function () {
                             me.hideImages();
                         });
                     });
-                
+
                 me.linkImagesShow =
                     me.addLink(me.ulReadr, "Show Images", function () {
                         me.run(function () {
@@ -794,6 +808,11 @@ try {
                         });
                     });
                 me.addSeparator(me.ulSearch);
+                var u = encodeURIComponent(window.location.href);
+                var title = encodeURIComponent(window.document.title);
+                var prefix = 'https://getpocket.com/edit?';
+                var pocketUrl = prefix + 'url=' + u + '&title=' + title;
+                me.addLink(me.ulSearch, "Add to Pocket", null, pocketUrl);
                 me.addSeparator(me.ulSearch);
                 me.linkNavigateTo = me.addLink(me.ulSearch, "Go to", function () { me.navigateTo(me.selectedText); });
                 me.addSeparator(me.ulSearch);
@@ -821,7 +840,7 @@ try {
                     .append($("<a>" + text + "</a>")
                         .click(fn));
 
-                if (href != null) li.prop("href", href);
+                if (href != null) li.find("a").prop("href", href);
                 if (title != null) li.prop("title", title);
 
                 parent.append(li);
@@ -888,6 +907,13 @@ try {
                         me.linkFontUp.hide();
                         me.linkFontDown.hide();
                     }
+
+                    if (me.activePopout) {
+                        me.linkUndoPopout.show();
+                    }
+                    else {
+                        me.linkUndoPopout.hide();
+                    }
                 }
             };
 
@@ -901,6 +927,9 @@ try {
             };
 
             me.addStyles = function () {
+                if (me.addStylesDone) return;
+                me.addStylesDone = true;
+
                 me.addStyle(
                     '.user-web-help { ' +
                         'position: fixed; top: 10px; left: 10px; border: solid 1px #000; background-color: #fff; z-index: 9999999; padding: 10px;' +
@@ -985,6 +1014,7 @@ try {
                     '.readr-container h1, .readr-container h2, .readr-container h3, .readr-container h4 {' +
                         'font-family: ' + me.fonts[me.currentFont] + ', Verdana, Corbel, Ubuntu Light, URW Gothic L, DejaVu Sans, Courier New, Arial !important;' +
                         'font-weight: bold !important;' +
+                        'margin: 30px 0 10px !important;' +
                     '}' +
                     '.readr-container img + * {' +
                         'font-style: italic !important;' +
@@ -993,26 +1023,52 @@ try {
                         'color: #000 !important;' +
                     '}' +
                     '.readr-marked {' +
-                        //'border-left: solid 1px #888 !important; padding-left: 5px !important;' +
                         'border-top: dotted 1px #f8f !important; padding-top: 5px !important;' +
                         'border-bottom: dotted 1px #f8f !important; padding-bottom: 8px !important;' +
                     '}' +
                     '.readr-highlight {' +
                         'background-color: #ffff80 !important;' +
                     '}' +
+                    '.readr-popout {' + //qq
+                        "min-width: 500px;" +
+                        "max-width: 800px;" +
+                        "margin: 40px auto 800px !important;" +
+                        "background-color: #fff;" +
+                        "border: solid 1px #000;" +
+                        "border-radius: 7px !important;" +
+                        "padding: 70px;" +
+                        "z-index: 99999999;" +
+                    '}' +
+                    '.readr-links h1 {' +
+                        ' margin: 0 0 20px !important;' +
+                        ' font-size: 20px !important;' +
+                        ' font-style: italic !important;' +
+                    '}' +
+                    '.readr-links a:visited {' +
+                        ' color: #000 !important;' +
+                    '}' +
+                    '.readr-popout p {' +
+                        "margin: 10px 0 !important;" +
+                    '}' +
+                    '.readr-popout * {' +
+                        "position: relative !important;" +
+                        "float: none !important;" +
+                        "width: auto !important;" +
+                        "max-width: 99999px !important;" +
+                    '}' +
                     me.getReadrFont()
                 );
             };
 
             me.getReadrFont = function (match) {
-                log("setFont", me.fonts[me.currentFont], " (", me.fontSize, "/", me.getLineHeight(), ")");
-                if ( match == null) match = '*';
-                    return '' +
+                var msg = me.fonts[me.currentFont] + " (" + me.fontSize + "/" + me.getLineHeight() + ")";
+                log("setFont", msg);
+
+                if (match == null) match = '*';
+
+                return '' +
                     '.readr-container, .readr-container ' + match + ' {' +
                         'font-family: ' + me.fonts[me.currentFont] + ', Verdana, Corbel, Arial, Ubuntu Light, URW Gothic L, DejaVu Sans, Courier New !important;' +
-                        //'font-family: ' + me.fonts[me.currentFont] + ', Comic Sans MS !important;' +
-                        //'border: solid 1px #f0f !important;' +
-                        //'background-color: #fffff4 !important;' +
                         'text-align: justify !important;' +
                         'font-size: ' + me.fontSize + 'px !important;' +
                         'font-weight: 300 !important;' +
@@ -1034,7 +1090,7 @@ try {
             /* menu actions ********************************************************************************************************************** */
 
             me.markElementAndBind = function (e) {
-                if (!me.marking) { //qq-readr
+                if (!me.marking) {
                     me.marking = true;
                     me.markElement($(e.target));
                     //log("readr binding", "markElement");
@@ -1051,7 +1107,7 @@ try {
             };
 
             me.keyUpMarkElement = function (e) {
-                userWeb.run(function () {
+                me.run(function () {
                     switch (e.keyCode) {
                         case 27: //esc
                             me.markElementCancel();
@@ -1061,14 +1117,14 @@ try {
             };
 
             me.markElementCancel = function () {
-                userWeb.run(function () {
-                    userWeb.marking = false;
+                me.run(function () {
+                    me.marking = false;
                     $('body').unbind("mouseup.uw-markElement");
                     $('body').unbind("keyup.uw-keyUpMarkElement");
                 });
             };
 
-            me.markElement = function (target) { //qq-readr
+            me.markElement = function (target) {
                 me.clearSelection();
                 $(".readr-marked").removeClass("readr-marked");
                 if (target.prop("tagName") != "P" && target.parent().prop("tagName") == "P") target = target.parent();
@@ -1076,7 +1132,7 @@ try {
                 me.scrollToElement(target);
             };
 
-            me.highlightElement = function (target) { //qq-readr
+            me.highlightElement = function (target) {
                 me.clearSelection();
                 if (target.prop("tagName") != "P" && target.parent().prop("tagName") == "P") target = target.parent();
                 target.addClass("readr-highlight");
@@ -1090,13 +1146,13 @@ try {
 
                 switch (e.button) {
                     case 0: //chrome
-                        userWeb.run(function () {
+                        me.run(function () {
                             me.markElement($(e.target));
                         });
                         break;
                     case 1:
                         if (document.all) { //IE
-                            userWeb.run(function () {
+                            me.run(function () {
                                 me.markElement($(e.target));
                             });
                         }
@@ -1106,7 +1162,7 @@ try {
                 }
             };
 
-            me.hideImages = function () { //qqq
+            me.hideImages = function () {
                 $("img").hide();
                 me.imageHide = true;
                 me.refreshMenu();
@@ -1118,7 +1174,7 @@ try {
                 me.refreshMenu();
             };
 
-            me.doRead = function(width, widthMargin, parentClass) { //qq-readr
+            me.doRead = function(width, widthMargin, parentClass) {
                 if (me.url.match(/mail\.google/i) == null) {
                     $("*").filter(function() {
                         var w = $(this).width();
@@ -1133,24 +1189,24 @@ try {
                 me.refreshMenu();
             };
 
-            me.runReadr = function (e, options) { //qq-readr
+            me.runReadr = function (e, options) {
                 me.clearSelection();
 
                 var target = e ? e.target : null;
 
-                userWebStyle.load(target, options);
+                me.loadReadr(target, options);
                 me.refreshMenu();
             };
 
             me.undoReadr = function () {
-                userWebStyle.unload();
+                me.unloadReadr();
                 $(".readr-marked").removeClass("readr-marked");
                 me.refreshMenu();
             };
 
-            me.fonts = [
+            me.fonts = [ //fnt
+                "Segoe UI", //qqq
                 "Ubuntu",
-                "Segoe UI",
                 "Kalinga",
                 "Leelawadee UI",
                 "Corbel",
@@ -1159,90 +1215,57 @@ try {
                 "Gadugi",
                 "Yu Gothic",
                 "Yu Mincho",
-                "Comic Sans MS", //qq-font //fnt
+                "Comic Sans MS",
                 "Gisha",
                 "Candara",
                 "SimSun-ExtB",
                 "Sitka Display",
                 "Verdana",
-                "Arial Nova",
                 "Aharoni",
-                "Aldhabi",
                 "Arial",
                 "Arial Black",
                 "Batang",
                 "BatangChe",
                 "Book Antiqua",
-                "Browallia New",
-                "BrowalliaUPC",
                 "Calibri",
                 "Calibri Light",
-                "Calisto MT",
                 "Cambria",
                 "Cambria Math",
-                "Comic Sans MS",
                 "Consolas",
                 "Constantia",
-                "Copperplate Gothic Bold",
-                "Copperplate Gothic Light",
-                "Cordia New",
-                "CordiaUPC",
                 "Courier New",
-                "DaunPenh",
                 "David",
-                "Dengxian",
-                "DFKai-SB",
-                "DilleniaUPC",
                 "DokChampa",
                 "Dotum",
                 "DotumChe",
                 "Ebrima",
                 "Estrangelo Edessa",
-                "EucrosiaUPC",
                 "FangSong",
                 "Franklin Gothic Medium",
-                "FrankRuehl",
-                "FreesiaUPC",
                 "Gabriola",
                 "Gautami",
-                "Georgia",
-                "Georgia Pro",
-                "Gill Sans Nova",
                 "Gulim",
                 "GulimChe",
                 "Gungsuh",
-                "GungsuhChe",
-                "Impact",
-                "IrisUPC",
-                "Iskoola Pota",
-                "JasmineUPC",
                 "KaiTi",
                 "Kartika",
                 "Khmer UI",
-                "KodchiangUPC",
-                "Kokila",
                 "Lao UI",
                 "Latha",
                 "Leelawadee",
                 "Levenim MT",
-                "LilyUPC",
                 "Lucida Console",
-                "Lucida Handwriting Italic",
                 "Lucida Sans Unicode",
                 "Malgun Gothic",
                 "Mangal",
-                "Manny ITC",
-                "Marlett",
                 "Meiryo",
                 "Meiryo UI",
-                "Microsoft Himalaya",
                 "Microsoft JhengHei",
                 "Microsoft JhengHei UI",
                 "Microsoft New Tai Lue",
                 "Microsoft PhagsPa",
                 "Microsoft Sans Serif",
                 "Microsoft Tai Le",
-                "Microsoft Uighur",
                 "Microsoft YaHei",
                 "Microsoft YaHei UI",
                 "Microsoft Yi Baiti",
@@ -1252,34 +1275,26 @@ try {
                 "MingLiU_HKSCS-ExtB",
                 "Miriam, Miriam Fixed",
                 "Mongolian Baiti",
-                "MoolBoran",
                 "MS Gothic, MS PGothic",
                 "MS Mincho, MS PMincho",
                 "MS UI Gothic",
                 "MV Boli",
                 "Myanmar Text",
                 "Narkisim",
-                "Neue Haas Grotesk Text Pro",
-                "News Gothic MT",
                 "Nirmala UI",
                 "NSimSun",
                 "Nyala",
                 "Palatino Linotype",
                 "Plantagenet Cherokee",
                 "Raavi",
-                "Rockwell Nova",
                 "Rod",
                 "Sakkal Majalla",
-                "Sanskrit Text",
-                "Segoe MDL2 Assets",
                 "Segoe Print",
                 "Segoe Script",
                 "Segoe UI Historic",
                 "Segoe UI Symbol",
-                "Shonar Bangla",
                 "Shruti",
                 "SimHei",
-                "SimKai",
                 "Simplified Arabic",
                 "SimSun",
                 "Sitka Banner",
@@ -1288,22 +1303,15 @@ try {
                 "Sitka Subheading",
                 "Sitka Text",
                 "Sylfaen",
-                "Symbol",
                 "Tahoma",
                 "Times New Roman",
                 "Traditional Arabic",
                 "Trebuchet MS",
-                "Tunga",
                 "Urdu Typesetting",
-                "Utsaah",
                 "Vani",
-                "Verdana Pro",
-                "Vijaya",
                 "Vrinda",
-                "Webdings",
                 "Westminster",
-                "Wingdings",
-                "Yu Gothic UI"
+                "Comic Sans MS"
             ];
 
             me.currentFont = 0;
@@ -1351,7 +1359,6 @@ try {
                     }
 
                     window.open(url, "", "");
-
                 });
             };
 
@@ -1382,7 +1389,7 @@ try {
                     reddit: { exp: /reddit\.com/i },
                     sonar: { exp: /\:9000/i },
                     stack_overflow: { exp: /(stackoverflow|stackexchange|superuser)\.com/i },
-                    test: { exp: /(testlocal|home|testinject|testxx)\.htm/i },
+                    test: { exp: /(testlocal|home|dev|testinject|testxx)\.htm/i },
                     tutorials_point: { exp: /tutorialspoint\.com/i },
                     yammer: { exp: /yammer\.com/i },
                     wikipedia: { exp: /wikipedia\.org/i }
@@ -1420,7 +1427,7 @@ try {
             };
 
             me.getUrl = function (path) {
-                var unique = me.debug.uniqueUrls ? "?" + new Date().valueOf() : "";
+                var unique = settings.uniqueUrls ? "?" + new Date().valueOf() : "";
                 return me.getRoot() + path + unique;
             };
 
@@ -1428,7 +1435,7 @@ try {
                 var url = me.getUrl("styles/" + name + ".css");
 
                 //console.log(logPrefix + "inserting style     :", url);
-                log("inserting style", url); //qq-log
+                log("inserting style", url);
 
                 if (me.userStyleSheet == null) {
                     me.userStyleSheet = $('<link>')
@@ -1453,19 +1460,9 @@ try {
                 window.open(me.userStyleSheet.attr('href'));
             };
 
-       };
+            /* readr... --------------------------------------------------------------- */
 
-        /* --------------------------------------------------------------- */
-
-        var userWebStyle = new function () {
-            var me = this;
-            me.url = document.location.href;
-            me.loadAttempts = 0;
-            me.el0 = null;
-            me.el = null;
-            me.els = [];
-
-            me.load = function (target, options) { //qq-readr
+            me.loadReadr = function (target, options) {
                 me.options = options || {};
 
                 if (target == null) {
@@ -1478,13 +1475,13 @@ try {
                 }
             };
 
-            me.unload = function () {
+            me.unloadReadr = function () {
                 $(".readr-container").removeClass("readr-container").removeClass("readr-container-forced");
-                userWeb.activeReadr = false;
+                me.activeReadr = false;
             };
 
             me.mouseUpStart = function (e) {
-                userWeb.run(function () {
+                me.run(function () {
                     $('body').unbind("mouseup.uws");
                     me.find(e.target);
                 });
@@ -1518,22 +1515,171 @@ try {
                 }
             };
 
-            me.findMain = function (el, original) { //qq-readr
-                log("findMain", me.elToString(el));
+            me.findMain = function (el, original) {
+                //log("findMain", me.elToString(el));
                 var parent = el.parent();
 
-                if (parent.length == 0) {
+                if (parent.length == 0 || parent[0].tagName.toUpperCase() == "BODY") {
                     log("parent null, return", me.elToString(el));
                     return el;
                 }
 
                 if (parent.width() > el.width() + 30) {
                     if (el == original) el = parent;
-                    log("main found", me.elToString(el));
+                    //log("main found", me.elToString(el));
                     return el;
                 }
 
                 return me.findMain(parent, original);
+            };
+
+            me.autoPopout = function() {
+                me.el = me.findMainAuto();
+                if (me.el && me.el.length > 0) {
+                    me.doPopout();
+                    return true;
+                }
+            };
+
+            me.doPopout = function () { //qq
+                me.addStyles();
+
+                var rem = me.el.find("iframe, script, link, button, input, form, textarea, aside").remove();
+                // rem.each(function () {
+                    // log($(this).html());
+                // });
+
+                var exclude = /share|sharing|social|twitter|tool|^side|related|comment|discussion|extra|contentWellBottom|kudo|^ad|keywords|secondary-column$|furniture|hidden|embedded-hyper/gi;
+                var hid = me.el.find("*").filter(function () {
+                    return (typeof (this.className) == "string" && this.className.match(exclude) !== null) ||
+                        (typeof (this.id) == "string" && this.id.match(exclude) !== null) ||
+                        $(this).css('visibility') == 'hidden' ||
+                        $(this).css('display') == 'none';
+                });
+                // hid.each(function () {
+                    // log("removed", $(this).html().substr(0, 100));
+                // });
+                hid.remove();
+
+                me.el.find('*').attr('style', '');
+
+                var inner = me.el.html();
+                var doc = [];
+                doc.push("<div class='readr-popout readr-container'>");
+                doc.push(" <div class='readr-links'>");
+                doc.push("  <a href='" + document.location.href + "'><h1>" + document.title + "</h1></a>");
+                doc.push(" </div>");
+                doc.push(" <div>");
+                doc.push(inner);
+                doc.push(" </div>");
+                doc.push("</div>");
+                var html = doc.join("");
+
+                document.body.insertAdjacentHTML("afterbegin", html);
+                me.popoutDiv = $(".readr-popout");
+                me.scrollToElement(me.popoutDiv);
+
+                me.el = null;
+                me.el0 = null;
+                me.els = [];
+                me.activePopout = true;
+                me.refreshMenu();
+            };
+
+            me.undoPopout = function () {
+                if (me.popoutDiv != null) {
+                    me.popoutDiv.remove();
+                }
+
+                me.activePopout = false;
+                me.refreshMenu();
+            };
+
+            me.testFonts = function () {
+                me.fontSize = 18;
+                me.addStyles();
+
+                var doc = [];
+                doc.push("<div class='readr-popout readr-container'>");
+                var len = me.fonts.length;
+                for (var i = 0; i < len; i++) {
+                    var msg = me.fonts[i] + " (" + me.fontSize + "/" + me.getLineHeight() + ")";
+                    doc.push(" <h4>" + msg + "</h4>");
+                    doc.push(" <p style='font-family:" + me.fonts[i] + ", Comic Sans MS !important;'>");
+                    doc.push(" Wikipedia began as a complementary project for Nupedia, a free online English-language encyclopedia project whose articles were written by experts and reviewed under a formal process. Nupedia was founded on March 9, 2000, under the ownership of Bomis, a web portal company. Its main figures were the Bomis CEO Jimmy Wales and Larry Sanger, editor-in-chief for Nupedia and later Wikipedia. Nupedia was licensed initially under its own Nupedia Open Content License, switching to the GNU Free Documentation License before Wikipedia's founding at the urging of Richard Stallman. Sanger and Wales founded Wikipedia. While Wales is credited with defining the goal of making a publicly editable encyclopedia, Sanger is credited with the strategy of using a wiki to reach that goal. On January 10, 2001, Sanger proposed on the Nupedia mailing list to create a wiki as a feeder project for Nupedia.");
+                    doc.push(" </p>");
+                }
+                doc.push("</div>");
+                var html = doc.join("");
+
+                document.body.insertAdjacentHTML("afterbegin", html);
+                me.popoutDiv = $(".readr-popout");
+                me.scrollToElement(me.popoutDiv);
+
+                me.activePopout = true;
+                me.refreshMenu();
+            };
+
+            me.findMainAuto = function() {
+                var cen = me.findCentreElement();
+                if (cen == null) {
+                    pop("popout", "can't find centre p");
+                    return null;
+                }
+                else {
+                    return me.findMain($(cen));
+                }
+            };
+
+            me.findCentreElement = function() {
+                var cenV = 500;
+                var cenH = document.documentElement.clientWidth / 2;
+
+                var elements = $('p');
+                var cen = null;
+
+                elements.each(function() {
+                    var el = $(this); //qqqqq
+                    var pos = this.getBoundingClientRect();
+                    var ml = parseInt(el.css('marginLeft'), 10);
+                    var mr = parseInt(el.css('marginRight'), 10);
+                    var pl = parseInt(el.css('paddingLeft'), 10);
+                    var pr = parseInt(el.css('paddingRight'), 10);
+                    var l = parseInt(pos.left, 10) - ml;
+                    var w = el.width() + ml + mr + pl + pr;
+                    var r = l + w;
+                    // var mt = parseInt(el.css('marginTop'), 10);
+                    // var mb = parseInt(el.css('marginBottom'), 10);
+                    // var pt = parseInt(el.css('paddingTop'), 10);
+                    // var pb = parseInt(el.css('paddingBottom'), 10);
+                    // var t = parseInt(pos.top, 10) - mt;
+                    // var h = el.height() + mt + mb + pt + pb;
+                    // var b = t + h;
+
+                    // log(this.tagName);
+                    // log("l", l);
+                    // log("t", t);
+                    // log("w", w);
+                    // log("h", h);
+                    // log("b", b);
+                    // log("r", r);
+                    // log("mt", mt);
+                    // log("ml", ml);
+                    // log("mr", mr);
+                    // log("mb", mb);
+                    // log("pt", pt);
+                    // log("pl", pl);
+                    // log("pr", pr);
+                    // log("pb", pb);
+
+                    // if (t < cenV && b > cenV && l < cenH && r > cenH) {
+                    if (l < cenH && r > cenH) {
+                        cen = this;
+                        return false;
+                    }
+                });
+
+                return cen;
             };
 
             me.elToString = function (el) {
@@ -1558,12 +1704,12 @@ try {
             };
 
             me.keyUp = function (e) {
-                userWeb.run(function () {
+                me.run(function () {
                     switch (e.keyCode) {
                         case 27: //esc
                             me.cancelFind();
                             break;
-                        case 13: //enter
+                        case 70: //force
                             me.options.forced = true;
                             me.found();
                             break;
@@ -1571,6 +1717,7 @@ try {
                             me.options.remove = true;
                             me.found();
                             break;
+                        case 13: //enter
                         case 80: //popout
                             me.options.popout = true;
                             me.found();
@@ -1590,7 +1737,7 @@ try {
             };
 
             me.mouseUpNext = function (e) {
-                userWeb.run(function () {
+                me.run(function () {
                     switch (e.button) {
                         case 0:
                             me.findNext(); //chrome
@@ -1628,86 +1775,16 @@ try {
                 me.els.push(me.el);
             };
 
-            me.exclude = /share|sharing|social|twitter|tool|related|comment|discussion|extra|contentWellBottom|kudo|$ad|keywords|secondary-column|furniture|hidden|embedded-hyper/;
-
             me.found = function () {
-                var title = document.title;
-                var root = userWeb.getRoot();
 
                 // log("popout", me.options.popout);
                 // log("remove", me.options.remove);
                 // log("forced", me.options.forced);
 
                 me.cancelFind();
-                me.originalHtml = $("html").html();
 
                 if (me.options.popout) {
-                    log("popout");
-
-                    var rem = me.el.find("iframe, script, link, button, input, form, textarea").remove();
-
-                    /*rem.each(function () {
-                        log($(this).html());
-                    });*/
-
-                    var hid = me.el.find("*").filter(function (a, b, c) {
-                        return this.className.match(me.exclude) !== null ||
-                            typeof (this.id) != "string" ||
-                            this.id.match(me.exclude) ||
-                            $(this).css('visibility') == 'hidden';
-                    });
-
-                    /*hid.each(function () {
-                        log($(this).html());
-                    });*/
-
-                    hid.remove();
-
-                    me.el.find('*').attr('style', '');
-                    me.findMainContainers(me.el);
-
-                    var containerClass = me.el.hasClass("readr-container") ? " readr-container" : "";
-                    var html = me.el.html();
-                    var doc = [];
-
-                    $("head").remove();
-                    $("body").remove();
-
-                    doc.push("<head>");
-                    doc.push("<title>" + title + "</title>");
-                    doc.push("<link rel='stylesheet' type='text/css' href='" + userWeb.getUrl("styles/readr.css") + "'>");
-                    doc.push("</head>");
-                    doc.push("<body>");
-                    doc.push("<div class='readr-inner" + containerClass + "'>");
-                    doc.push("<h1>" + title + "</h1>");
-                    doc.push(html);
-
-                    doc.push("<div class='readr-links'>");
-
-                    var u = document.location.href.split("#")[0].split("/");
-
-                    if (u[u.length - 1] == "") {
-                        u.pop();
-                    }
-
-                    while (u.length > 2) {
-                        doc.push("<a href=" + u.join("/") + ">" + u.join("/") + "</a><br />");
-                        u.pop();
-                    }
-
-                    doc.push("</div>");
-                    doc.push("</div>");
-                    doc.push("</body>");
-
-                    $("html").html(doc.join(""));
-
-                    // $('html').append(userWeb.menu);
-                    // userWeb.addStyles();
-
-                    me.el = null;
-                    me.el0 = null;
-                    me.els = [];
-
+                    me.doPopout();
                     return;
                 }
                 else {
@@ -1721,13 +1798,13 @@ try {
                         return;
                     }
                     else {
-                        log("reading ", userWeb.fonts[userWeb.currentFont], " (", userWeb.fontSize, "/", userWeb.getLineHeight(), ")");
+                        log("reading ", me.fonts[me.currentFont], " (", me.fontSize, "/", me.getLineHeight(), ")");
                         me.findMainContainers(me.el);
                     }
                 }
 
-                userWeb.activeReadr = true;
-                userWeb.refreshMenu();
+                me.activeReadr = true;
+                me.refreshMenu();
             };
 
             me.cancelFind = function () {
@@ -1781,11 +1858,16 @@ try {
         /* ================================================== */
 
         window.self.setTimeout(function () {
-            try {
-                userWeb.load();
+            if (settings.handleErrors) {
+                try {
+                    userWeb.load();
+                }
+                catch (ex) {
+                    log(ex);
+                }
             }
-            catch (ex) {
-                log(ex);
+            else {
+                userWeb.load();
             }
         }, loadAfter);
     }

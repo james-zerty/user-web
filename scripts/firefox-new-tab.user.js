@@ -6,6 +6,7 @@
 // @author      2010+, james_zerty
 // @include     about:blank
 // @include     about:newtab
+// @include     *chrome/newtab*
 // @include     https://www.google.co.uk/
 // @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-2.1.0.js
 // ==/UserScript==
@@ -181,6 +182,10 @@ try {
                 }
 
                 me.insertStyle(
+                    '#f {' +
+                        'position: relative !important;' +
+                        'top: 512px !important;' +
+                    '}' +
                     'html, body, .outer {' +
                         'margin: 0;' +
                     '}' +
@@ -269,7 +274,7 @@ try {
                         'div.inner {' +
                             'top: 5px;' +
                         '}' +
-                        '#tsf {' +
+                        '#tsf, #f {' +
                             'margin-top: 0 !important;' +
                             'width: 300px !important;' +
                             'top: ' + searchTopSmall + 'px !important;' +
@@ -282,7 +287,7 @@ try {
                             'padding: 0px !important;' +
                         '}' +
                     '}' +
-                    '#gb, #footer, .jsb, #tophf, .sfbg .nojsv, .sfbgg {' +
+                    '#gb, #footer, .jsb, #tophf, .sfbg .nojsv, .sfbgg, #most-visited, #lga {' +
                         'display: none !important;' +
                     '}' +
                     'div#searchform {' +
