@@ -6,14 +6,12 @@
 .post-text,
 .question-status
 {
-    /* reading font 13/20... */
-    font-family: Verdana, Corbel, URW Gothic L, Ubuntu Light, DejaVu Sans, Arial, Courier New !important;
-    font-style: normal !important;
-    font-size: 13px !important;
-    line-height: 20px !important;
-    text-align: justify !important;
-    color: #222 !important;
-    /* ...end */
+    font-family: Kalinga !important; /* uw-fnt */
+    font-size: 14px !important; /* uw-sz 14 */
+    line-height: 19px !important; /* uw-lh 19 */
+    font-style: normal !important; /* uw-sty */
+    text-align: justify !important; /* uw-jfy */
+    color: #222 !important; /* uw-clr */
     width: auto !important;
     max-width: 900px !important;
 }

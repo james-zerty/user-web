@@ -1,28 +1,22 @@
 /********** reading... **********/
 .usertext-body p {
-    /* reading font 16/24... */
-    font-family: Ubuntu, Verdana, Corbel, Arial, Ubuntu Light, URW Gothic L, DejaVu Sans, Courier New !important;
-    font-size: 16px !important;
-    line-height: 24px !important;
-    font-weight: 300 !important;
-    font-style: normal !important;
-    text-align: justify !important;
-    color: #000 !important;
-    /* ...end */
+    font-family: Kalinga !important; /* uw-fnt */
+    font-size: 14px !important; /* uw-sz-sm 14 */
+    line-height: 19px !important; /* uw-lh-sm 19 */
+    font-weight: 300 !important; /* uw-wgt */
+    font-style: normal !important; /* uw-sty */
+    text-align: justify !important; /* uw-jfy */
+    color: #222 !important; /* uw-clr */
 }
 
 .usertext-body p + p {
-    text-align: justify !important;
+    text-align: justify !important; /* uw-jfy */
     margin: 15px 0 !important;
 }
 
-.usertext-body a {
-    text-decoration: none !important;
-    border-bottom: 1px dotted #aaa !important;
-}
-
+.usertext-body a,
 .usertext-body a:hover {
-    text-decoration: none !important;
+    text-decoration: underline dotted #aaa !important; /* uw-uln */
 }
 
 .score, .live-timestamp, .flat-list *, .flair {
@@ -35,10 +29,8 @@
 /********** small window... **********/
 @media (max-width: 800px) {
     .usertext-body * {
-        /* reading font 14/21... */
-        font-size: 14px !important;
-        line-height: 21px !important;
-        /* ...end */
+        font-size: 14px !important; /* uw-sz-sm 14 */
+        line-height: 19px !important; /* uw-lh-sm 19 */
     }
 }
 /*************************************/

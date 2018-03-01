@@ -13,5 +13,5 @@ header, footer, .fdbkLinks, #id_h {
 .feedbackPopOut,
 .bm_fdbkLinks,
 .slideout {
-	display: none !important;
+    display: none !important;
 }

@@ -4,9 +4,13 @@
 .neVct-SX9D7d-ObfsIf *,
 .RfDI4d-bN97Pc *,
 .IZ65Hb-n0tgWb * {
-    font-size: 14px !important;
-    line-height: 16px !important;
-    font-family: Verdana, Corbel, URW Gothic L, Ubuntu Light, DejaVu Sans, Courier New, Arial !important;
+    font-family: Kalinga !important; /* uw-fnt */
+    font-size: 14px !important; /* uw-sz-sm 14 */
+    line-height: 19px !important; /* uw-lh 19 */
+    font-weight: 300 !important; /* uw-wgt */
+    font-style: normal !important; /* uw-sty */
+    text-align: justify !important; /* uw-jfy */
+    color: #222 !important; /* uw-clr */
 }
 /* inactive - normal + checkboxes */
 

@@ -12,3 +12,7 @@ html {
 #weatherHolder td {
     min-width: 49px !important;
 }
+
+#EUCookie {
+    display: none !important;
+}

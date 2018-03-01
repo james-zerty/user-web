@@ -1,40 +1,33 @@
-xxhtml {
-    margin: 0 auto !important;
-}
-xx* {
-	max-width: 800px !important;
-}
-
 .content__main-column {
     max-width: 800px !important;
-	margin-right: 0 !important;
+    margin-right: 0 !important;
 }
 
 .facia-page, .facia-page *, article, article * {
-    font-family: Verdana, Corbel, URW Gothic L, Ubuntu Light, DejaVu Sans, Arial, Courier New !important;
+    font-family: Kalinga !important; /* uw-fnt */
 }
 
 .content__article-body * {
-    /* reading font 16/24... */
-    font-family: Ubuntu, Verdana, Corbel, Arial, Ubuntu Light, URW Gothic L, DejaVu Sans, Courier New !important;
-    font-size: 16px !important;
-    line-height: 24px !important;
-    font-weight: 300 !important;
-    font-style: normal !important;
-    text-align: justify !important;
-    color: #000 !important;
-    /* ...end */
+    font-family: Kalinga !important; /* uw-fnt */
+    font-size: 14px !important; /* uw-sz 14 */
+    line-height: 19px !important; /* uw-lh 19 */
+    font-weight: 300 !important; /* uw-wgt */
+    font-style: normal !important; /* uw-sty */
+    text-align: justify !important; /* uw-jfy */
+    color: #222 !important; /* uw-clr */
 }
 
-x#header.l-header--is-slim {
-    position: absolute !important;
+
+.content__article-body a {
+    border-bottom: 0 !important;
+    text-decoration: underline dotted #aaa !important; /* uw-uln */
 }
+
 
 .content__meta-container,
 .site-message--banner,
 .site-message--cookies,
 .top-banner-ad-container,
-.xnavigation-container--collapsed,
 .submeta,
 .contributions__epic,
 aside,

@@ -85,7 +85,7 @@ a.hdtb-dd-b {
     #hdtb-msb .hdtb-mitem.hdtb-imb:first-child {
         margin-left: 10px !important;
     }
-	#rhscol,
+    #rhscol,
     #hdtb-mn-gp {
         display: none !important;
     }
@@ -99,14 +99,13 @@ li.g {
 
 span.st,
 div.st {
-    /* reading font 13/17... */
-    font-family: Verdana, Corbel, URW Gothic L, Ubuntu Light, DejaVu Sans, Arial, Courier New !important;
-    font-style: normal !important;
-    font-size: 13px !important;
-    line-height: 17px !important;
-    text-align: justify !important;
-    color: #222 !important;
-    /* ...end */
+    font-family: Kalinga !important; /* uw-fnt */
+    font-size: 14px !important; /* uw-sz-sm 14 */
+    line-height: 19px !important; /* uw-lh-sm 19 */
+    font-weight: 300 !important; /* uw-wgt */
+    font-style: normal !important; /* uw-sty */
+    text-align: justify !important; /* uw-jfy */
+    color: #222 !important; /* uw-clr */
     display: block;
     padding-top: 3px;
     padding-bottom: 6px;

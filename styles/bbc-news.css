@@ -6,27 +6,24 @@
 .layout-main p *,
 .story-body h2,
 .layout-main h2 {
-    /* reading font 16/24... */
-    font-family: Ubuntu, Verdana, Corbel, Arial, Ubuntu Light, URW Gothic L, DejaVu Sans, Courier New !important;
-    font-size: 16px !important;
-    line-height: 24px !important;
-    font-weight: 300 !important;
-    font-style: normal !important;
-    text-align: justify !important;
-    color: #000 !important;
-    /* ...end */
+    font-family: Kalinga !important; /* uw-fnt */
+    font-size: 14px !important; /* uw-sz 14 */
+    line-height: 19px !important; /* uw-lh 19 */
+    font-weight: 300 !important; /* uw-wgt */
+    font-style: normal !important; /* uw-sty */
+    text-align: justify !important; /* uw-jfy */
+    color: #222 !important; /* uw-clr */
 }
 
 .story-body h2,
 .layout-main h2 {
-    font-weight: bold !important;
+    font-weight: bold !important; /* bld */
 }
 
 .story-body a,
 .layout-main a {
-    font-weight: normal !important;
-    text-decoration: none !important;
-    border-bottom: 1px dotted #aaa !important;
+    font-weight: 300 !important; /* uw-wgt */
+    text-decoration: underline dotted #aaa !important; /* uw-uln */
 }
 
 .story-body p {
@@ -79,10 +76,8 @@
     .layout-main p *,
     .story-body h2,
     .layout-main h2 {
-        /* reading font 14/21... */
-        font-size: 14px !important;
-        line-height: 21px !important;
-        /* ...end */
+        font-size: 14px !important; /* uw-sz-sm 14 */
+        line-height: 19px !important; /* uw-lh-sm 19 */
     }
 
     .column--primary,

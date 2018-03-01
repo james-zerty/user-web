@@ -1,24 +1,21 @@
 /* reading... */
 body .mw-content-ltr * {
-    /* reading font 16/24... */
-    font-family: Ubuntu, Verdana, Corbel, Arial, Ubuntu Light, URW Gothic L, DejaVu Sans, Courier New !important;
-    font-size: 16px !important;
-    line-height: 24px !important;
-    font-weight: 300 !important;
-    font-style: normal !important;
-    text-align: justify !important;
-    color: #000 !important;
-    /* ...end */
+    font-family: Kalinga !important; /* uw-fnt */
+    font-size: 14px !important; /* uw-sz 14 */
+    line-height: 19px !important; /* uw-lh 19 */
+    font-weight: 300 !important; /* uw-wgt */
+    font-style: normal !important; /* uw-uw-sty */
+    text-align: justify !important; /* uw-jfy */
+    color: #222 !important; /* uw-clr */
 }
 
 p {
-	margin: 20px 0 !important;
+    margin: 20px 0 !important;
 }
 
 body .mw-content-ltr a {
-    color: #222 !important;
-    text-decoration: none !important;
-    border-bottom: 1px dotted #eee !important;
+    color: #222 !important; /* uw-clr */
+    text-decoration: underline dotted #aaa !important; /* uw-uln */
 }
 /* ...reading */
 
@@ -109,9 +106,8 @@ body .mw-content-ltr sup.Inline-Template * {
 
 #footer-places-mobileview {
   position: absolute !important;
-	top: 0 !important;
-	xleft: 200px !important;
-	font-weight: bold !important;
+    top: 0 !important;
+    font-weight: bold !important;
 }
 
 
