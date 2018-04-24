@@ -6,9 +6,9 @@
 .layout-main p *,
 .story-body h2,
 .layout-main h2 {
-    font-family: Kalinga !important; /* uw-fnt */
-    font-size: 14px !important; /* uw-sz 14 */
-    line-height: 19px !important; /* uw-lh 19 */
+    font-family: Ubuntu !important; /* uw-fnt */
+    font-size: 17px !important; /* uw-sz 17 */
+    line-height: 28px !important; /* uw-lh 28 */
     font-weight: 300 !important; /* uw-wgt */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
@@ -22,18 +22,20 @@
 
 .story-body a,
 .layout-main a {
-    font-weight: 300 !important; /* uw-wgt */
+    font-weight: normal !important; /* uw-wgt */
     text-decoration: underline dotted #aaa !important; /* uw-uln */
+	border-bottom: none !important; + /* uw-btm */
 }
 
 .story-body p {
-    margin: 20px 0 !important;
+    margin: 15px 0 !important; /* uw-pmgn */
 }
 
 /* ...reading */
 
 .story-body figure {
     max-width: 785px !important;
+    margin: 0 auto !important;
 }
 
 .story-body__inner {
@@ -77,7 +79,7 @@
     .story-body h2,
     .layout-main h2 {
         font-size: 14px !important; /* uw-sz-sm 14 */
-        line-height: 19px !important; /* uw-lh-sm 19 */
+        line-height: 23px !important; /* uw-lh-sm 23 */
     }
 
     .column--primary,

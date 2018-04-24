@@ -1,60 +1,20 @@
-/* all notes */
+all notes
 .RfDI4d-mAKE4e-DyVDA-haAclf *,
-.VIpgJd-TUo6Hb.XKSfm-L9AdLc.eo9XGd *,
+.VIpgJd-TUo6Hb *,
 .neVct-SX9D7d-ObfsIf *,
 .RfDI4d-bN97Pc *,
-.IZ65Hb-n0tgWb * {
-    font-family: Kalinga !important; /* uw-fnt */
-    font-size: 14px !important; /* uw-sz-sm 14 */
-    line-height: 19px !important; /* uw-lh 19 */
+.IZ65Hb-n0tgWb *
+.h1U9Be-xhiy4 *,
+.gkA7Yd-sKfxWe * {
+    font-family: Ubuntu !important; /* uw-fnt */
+    font-size: 14px !important; /* uw-b-sz-sm 14 */
+    line-height: 23px !important; /* uw-lh-sm 23 */
     font-weight: 300 !important; /* uw-wgt */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
     color: #222 !important; /* uw-clr */
 }
-/* inactive - normal + checkboxes */
 
-.ma6Yeb-r8s4j-gkA7Yd .h1U9Be-YPqjbf,
-.ma6Yeb-r8s4j-gkA7Yd .rymPhb-IZ65Hb-gkA7Yd {
-    min-height: 70px !important;
-    max-height: 70px !important;
-    opacity: 0.1 !important;
-    display: block !important;
-}
-
-/* title */
-.IZ65Hb-YPqjbf.r4nke-YPqjbf {
-    display: block !important;
-    background-color: #FB06 !important;
-}
-
-/* take a note */
-.IZ65Hb-YPqjbf.h1U9Be-YPqjbf.LwH6nd {
-    display: none !important;
-}
-
-/* inactive - checkboxes */
-.gkA7Yd-sKfxWe.rymPhb-IZ65Hb-gkA7Yd {
-    min-height: 52px !important;
-    max-height: 52px !important;
-}
-
-/* active */
-.oT9UPb .h1U9Be-YPqjbf,
-.oT9UPb .gkA7Yd-sKfxWe.rymPhb-IZ65Hb-gkA7Yd {
-    max-height: 9000px !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-@media (min-width: 1030px) {
-    .IZ65Hb-n0tgWb.IZ65Hb-QQhtn.oT9UPb {
-        width: 900px !important;
-        left: 0px !important;
-    }
-
-    /* active */
-    .VIpgJd-TUo6Hb.XKSfm-L9AdLc.eo9XGd {
-        left: 50px !important;
-    }
+[aria-label="Title"] {
+	font-size: 22px !important;
 }

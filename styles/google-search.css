@@ -27,7 +27,7 @@ a.hdtb-dd-b {
     outline: none !important;
     text-decoration: none !important;
     border: 0 !important;
-    border-right: solid 1px #4285F4 !important;
+    border-right: solid 1px #bbb !important;
     display: inline-block !important;
     text-align: center !important;
     border-radius: 0 !important;
@@ -51,17 +51,47 @@ a.hdtb-dd-b {
 }
 /* ...buttons */
 
-/********** small window... **********/
-@media (max-width: 830px) {
+span.st,
+div.st {
+    font-family: Ubuntu !important; /* uw-fnt */
+    font-size: 14px !important; /* uw-b-sz-sm 14 */
+    line-height: 23px !important; /* uw-lh-sm 23 */
+    font-weight: 300 !important; /* uw-wgt */
+    font-style: normal !important; /* uw-sty */
+    text-align: justify !important; /* uw-jfy */
+    color: #222 !important; /* uw-clr */
+    display: block;
+    padding-top: 3px;
+    padding-bottom: 6px;
+}
+
+span.mn-dwn-arw {
+    border-color: #bbb transparent !important;
+}
+
+.exp-outline {
+    border-width: 1px 0 !important;
+}
+
+/********** medium window... **********/
+@media (max-width: 1150px) {
+    #rhs {
+        margin-left: 660px !important;
+    }
+
     #hdtb-msb .hdtb-mitem.hdtb-msel:first-child,
     #hdtb-msb .hdtb-mitem.hdtb-msel-pre:first-child,
-    .tsf-p,
     #hdtb-msb > .hdtb-mitem:first-child,
-    .ab_tnav_wrp,
     #cnt #center_col,
-    .mw #center_col {
+    .mw #center_col,
+    .tsf-p,
+    .ab_tnav_wrp {
         margin-left: 10px !important;
         padding-left: 0 !important;
+    }
+
+    #cnt > * {
+        xxmargin: 0 auto !important
     }
 
     #res,
@@ -76,15 +106,24 @@ a.hdtb-dd-b {
         margin-left: 0 !important;
         margin-right: 0 !important;
     }
+
     /* buttons... */
     .hdtb-mitem,
     .hdtb-imb {
         margin: 0 !important;
     }
+
     #hdtbMenus,
     #hdtb-msb .hdtb-mitem.hdtb-imb:first-child {
         margin-left: 10px !important;
     }
+}
+
+/********** small window... **********/
+@media (max-width: 960px) {
+
+
+    #rhs,
     #rhscol,
     #hdtb-mn-gp {
         display: none !important;
@@ -96,30 +135,3 @@ li.g {
     border-top: solid 1px #ddd;
     padding: 10px 0;
 }
-
-span.st,
-div.st {
-    font-family: Kalinga !important; /* uw-fnt */
-    font-size: 14px !important; /* uw-sz-sm 14 */
-    line-height: 19px !important; /* uw-lh-sm 19 */
-    font-weight: 300 !important; /* uw-wgt */
-    font-style: normal !important; /* uw-sty */
-    text-align: justify !important; /* uw-jfy */
-    color: #222 !important; /* uw-clr */
-    display: block;
-    padding-top: 3px;
-    padding-bottom: 6px;
-}
-
-/* cite, cite *, cite a {
-    color: #bbb !important;
-} */
-
-span.mn-dwn-arw {
-    border-color: #bbb transparent !important;
-}
-
-/* more news links */
-/* a._Eu._H2, ._XFe a.fl {
-    padding-left: 15px;
-}*/

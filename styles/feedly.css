@@ -29,9 +29,9 @@
 }
 
 .content, .entryBody, .entryBody * {
-    font-family: Kalinga !important; /* uw-fnt */
-    font-size: 14px !important; /* uw-sz 14 */
-    line-height: 19px !important; /* uw-lh 19 */
+    font-family: Ubuntu !important; /* uw-fnt */
+    font-size: 17px !important; /* uw-sz 17 */
+    line-height: 28px !important; /* uw-lh 28 */
     font-weight: 300 !important; /* uw-wgt */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */

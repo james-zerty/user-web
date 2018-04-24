@@ -8,7 +8,7 @@
 // @include     /^https://.*/whatever/.*/
 // @match       https://whatever.com/*
 // @match       https://xxlocalhost/*
-// @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-2.1.0.js
+// @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-2.1.0.min.js
 // ==/UserScript==
 "use strict";
 

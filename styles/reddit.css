@@ -1,8 +1,8 @@
 /********** reading... **********/
 .usertext-body p {
-    font-family: Kalinga !important; /* uw-fnt */
-    font-size: 14px !important; /* uw-sz-sm 14 */
-    line-height: 19px !important; /* uw-lh-sm 19 */
+    font-family: Ubuntu !important; /* uw-fnt */
+    font-size: 17px !important; /* uw-sz 17 */
+    line-height: 28px !important; /* uw-lh 28 */
     font-weight: 300 !important; /* uw-wgt */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
@@ -11,12 +11,13 @@
 
 .usertext-body p + p {
     text-align: justify !important; /* uw-jfy */
-    margin: 15px 0 !important;
+    margin: 15px 0 !important; /* uw-pmgn */
 }
 
 .usertext-body a,
 .usertext-body a:hover {
     text-decoration: underline dotted #aaa !important; /* uw-uln */
+    border-bottom: none !important; + /* uw-btm */
 }
 
 .score, .live-timestamp, .flat-list *, .flair {
@@ -24,13 +25,23 @@
     max-height: 5px !important;
     opacity: 0.1;
 }
+
+.infobar,
+.commentsignupbar,
+.side,
+#header,
+#eu-cookie-policy,
+.footer-parent {
+    display: none !important;
+}
+
 /******************************************/
 
 /********** small window... **********/
 @media (max-width: 800px) {
     .usertext-body * {
         font-size: 14px !important; /* uw-sz-sm 14 */
-        line-height: 19px !important; /* uw-lh-sm 19 */
+        line-height: 23px !important; /* uw-lh-sm 23 */
     }
 }
 /*************************************/

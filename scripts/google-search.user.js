@@ -3,19 +3,18 @@
 // @description enhance google search results
 // @namespace   https://github.com/james-zerty/
 // @version     2
-// @grant       none
 // @author      2010+, james_zerty
+// @grant       none
+// @noframes
 // @include     https://www.google.*/search*
 // @include     xhttps://localhost:44300/Home.htm
-// @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-2.1.0.js
+// @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-2.1.0.min.js
 // ==/UserScript==
 "use strict";
-
 try {
+    var $ = window.$;
+    var loadAfter = 100;
     var logPrefix = "[google-search] ";
-    var isTop = window.top == window.self;
-
-    if (isTop) {
         var obj = new function () {
             var me = this;
 
@@ -86,22 +85,18 @@ try {
                 );
             };
 
-        };
+    }();
 
-        /* ================================================== */
+    /* ================================================== */
 
-        setTimeout(function () {
-            try {
-                obj.load();
-            }
-            catch (ex) {
-                log(ex);
-            }
-        }, 1000);
-    }
-    else {
-        //log("skipping frame", "'", document.location.href, "'");
-    }
+    window.self.setTimeout(function () {
+        try {
+            obj.load();
+        }
+        catch (ex) {
+            log(ex);
+        }
+    }, loadAfter);
 }
 catch (ex) {
     log(ex);
@@ -114,11 +109,11 @@ function hidePop() {
     if (logPopup && logPopup.style) {
         logPopup.style.display = "none";
     }
-};
+}
 function pop() {
     Array.prototype.unshift.call(arguments, DO_POP);
     log.apply(this, arguments);
-};
+}
 function log() {
     function tidy(str) {
         if (str && typeof (str) == "string") {
@@ -126,7 +121,7 @@ function log() {
         }
 
         return str;
-    };
+    }
 
     function popup(msg) {
         if (logPopup == null) {
@@ -138,12 +133,12 @@ function log() {
             logPopup.oncontextmenu = function (e) {
                 logPopup.style.display = "none";
                 return false;
-            }
+            };
         }
 
         logPopup.innerHTML = logPopup.innerHTML + msg.replace(/(\s)/g, "&nbsp;") + "<br />";
         logPopup.style.display = "block";
-    };
+    }
 
     var text1 = "", text2 = "", doPop = false;
 
@@ -204,7 +199,7 @@ function log() {
 
     try {
         if (window.console) {
-            console.log(logPrefix + text1, text2);
+            window.console.log(logPrefix + text1, text2);
         }
         else {
         }
@@ -214,9 +209,9 @@ function log() {
         }
     }
     catch (ex) {
-        alert(logPrefix + text1 + "\r\r" + ex.message);
+        window.alert(logPrefix + text1 + "\r\r" + ex.message);
     }
-};
+}
 function addElement(parent, tag, className, text) {
     var el = document.createElement(tag);
 
@@ -233,5 +228,5 @@ function addElement(parent, tag, className, text) {
     }
 
     return el;
-};
+}
 /* == utils END ============================================================= */

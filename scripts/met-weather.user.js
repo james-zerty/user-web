@@ -2,110 +2,107 @@
 // @name        met-weather
 // @description make weather more readable
 // @namespace   https://github.com/james-zerty/
-// @include     https://www.metoffice.gov.uk/mobile/forecast/*
 // @version     2
+// @author      2010+, james_zerty
 // @grant       none
-// @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-2.1.0.js
+// @noframes
+// @include     https://www.metoffice.gov.uk/mobile/forecast/*
+// @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-2.1.0.min.js
 // ==/UserScript==
 "use strict";
-console.log("000");
 try {
+    var $ = window.$;
+    var loadAfter = 100;
     var logPrefix = "[met-weather] ";
-    var isTop = window.top == window.self;
 
-    if (isTop) {
-        var obj = new function () {
-            var me = this;
+    var obj = new function () {
+        var me = this;
 
-            me.load = function () {
-console.log("300");
-                $(".weatherTime td").each(function(i) {
-                    var t = parseInt($(this).text().substr(0, 2), 10);
+        me.load = function () {
+            $(".largeTabInner").each(function(i) {
+                var t = $(this).text();
 
-                    if (isNaN(t)) {
-                        t = new Date().getHours();
-                    }
-
-                    if (t < 6 || t > 20) {
-                        $(this).css("background-color", "#2863B4"); // night
-                    }
-                    else if (t < 9 || t > 17) {
-                        $(this).css("background-color", "#91B3DC"); // morning / eve
-                    }
-                    else {
-                        $(this).css("background-color", "#DEEDFF"); // day
-                    }
-                });
-console.log("310");
-                $(".weatherRain td").each(function(i) {
-                    var val = parseInt($(this).text().match(/\d+/i, ""), 10);
-
-                    if (val < 30) {
-                        $(this).css("background-color", "#8f8");
-                    }
-                    else if (val < 50) {
-                        $(this).css("background-color", "#f8f");
-                    }
-                    else {
-                        $(this).css("background-color", "#f88");
-                    }
-                });
-console.log("320");
-                var url = document.location.href;
-                if (url.indexOf("#") > -1) {
-                    url = url.substring(0, url.indexOf("#"));
+                if (t.indexOf("Sat") > -1 || t.indexOf("Sun") > -1) {
+                    $(this).css("background-color", "#B9DC0C");
                 }
-console.log("330");
-                me.title = $(".main header h1").text();
-                me.loadDate = new Date($(".issue time").attr("datetime"));
-                $(".main header h1").html("<a href=" + url + ">" + me.title + "</a><div id=timeSpan style='font-size:16px;'></div>");
-console.log("340");
+            });
+
+            $(".weatherTime td").each(function(i) {
+                var t = parseInt($(this).text().substr(0, 2), 10);
+
+                if (isNaN(t)) {
+                    t = new Date().getHours();
+                }
+
+                if (t < 6 || t > 20) {
+                    $(this).css("background-color", "#2863B4"); // night
+                }
+                else if (t < 9 || t > 17) {
+                    $(this).css("background-color", "#91B3DC"); // morning / eve
+                }
+                else {
+                    $(this).css("background-color", "#DEEDFF"); // day
+                }
+            });
+            
+            $(".weatherRain td").each(function(i) {
+                var val = parseInt($(this).text().match(/\d+/i, ""), 10);
+
+                if (val < 30) {
+                    $(this).css("background-color", "#8f8");
+                }
+                else if (val < 50) {
+                    $(this).css("background-color", "#f8f");
+                }
+                else {
+                    $(this).css("background-color", "#f88");
+                }
+            });
+
+            var url = document.location.href;
+            if (url.indexOf("#") > -1) {
+                url = url.substring(0, url.indexOf("#"));
+            }
+
+            me.title = $(".main header h1").text();
+            me.loadDate = new Date($(".issue time").attr("datetime"));
+            $(".main header h1").html("<a href=" + url + ">" + me.title + "</a><div id=timeSpan style='font-size:16px;'></div>");
+
+            me.setTitle();
+
+            //set the timeout at 1s past the minute...
+            var secs = 60 - new Date().getSeconds() + 1;
+            setTimeout(function() {
+
                 me.setTitle();
-console.log("350");
-                //set the timeout at 1s past the minute...
-                var secs = 60 - new Date().getSeconds() + 1;
-                setTimeout(function() {
-console.log("400");
+                setInterval(function() {
                     me.setTitle();
-console.log("410");
-                    setInterval(function() {
-console.log("500");
-                        me.setTitle();
-console.log("510");
-                    }, 60 * 1000);
-                }, secs * 1000);
-console.log("420");
-            };
-
-            me.setTitle = function () {
-                var now = new Date();
-                var msg = getTimeSpan(me.loadDate, now);
-
-                $(".main header h1 #timeSpan").text("Issued " + msg + " ago");
-            };
+                }, 60 * 1000);
+            }, secs * 1000);
         };
 
-        /* ================================================== */
+        me.setTitle = function () {
+            var now = new Date();
+            var msg = getTimeSpan(me.loadDate, now);
 
-        setTimeout(function () {
-            try {
-console.log("200");
-                obj.load();
-console.log("900");
-            }
-            catch (ex) {
-                log(ex);
-            }
-        }, 100);
-    }
-    else {
-        //log("skipping frame", "'", document.location.href, "'");
-    }
+            $(".main header h1 #timeSpan").text("Issued " + msg + " ago");
+        };
+
+    }();
+
+    /* ================================================== */
+
+    window.self.setTimeout(function () {
+        try {
+            obj.load();
+        }
+        catch (ex) {
+            log(ex);
+        }
+    }, loadAfter);
 }
 catch (ex) {
-console.log("990");
     log(ex);
-console.log("999");
 }
 
 function getTimeSpan(start, end, includeSecs, includeMillisecs) {
@@ -142,11 +139,11 @@ function hidePop() {
     if (logPopup && logPopup.style) {
         logPopup.style.display = "none";
     }
-};
+}
 function pop() {
     Array.prototype.unshift.call(arguments, DO_POP);
     log.apply(this, arguments);
-};
+}
 function log() {
     function tidy(str) {
         if (str && typeof (str) == "string") {
@@ -154,7 +151,7 @@ function log() {
         }
 
         return str;
-    };
+    }
 
     function popup(msg) {
         if (logPopup == null) {
@@ -166,12 +163,12 @@ function log() {
             logPopup.oncontextmenu = function (e) {
                 logPopup.style.display = "none";
                 return false;
-            }
+            };
         }
 
         logPopup.innerHTML = logPopup.innerHTML + msg.replace(/(\s)/g, "&nbsp;") + "<br />";
         logPopup.style.display = "block";
-    };
+    }
 
     var text1 = "", text2 = "", doPop = false;
 
@@ -232,7 +229,7 @@ function log() {
 
     try {
         if (window.console) {
-            console.log(logPrefix + text1, text2);
+            window.console.log(logPrefix + text1, text2);
         }
         else {
         }
@@ -242,9 +239,9 @@ function log() {
         }
     }
     catch (ex) {
-        alert(logPrefix + text1 + "\r\r" + ex.message);
+        window.alert(logPrefix + text1 + "\r\r" + ex.message);
     }
-};
+}
 function addElement(parent, tag, className, text) {
     var el = document.createElement(tag);
 
@@ -261,5 +258,5 @@ function addElement(parent, tag, className, text) {
     }
 
     return el;
-};
+}
 /* == utils END ============================================================= */

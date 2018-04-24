@@ -4,26 +4,34 @@
 }
 
 .facia-page, .facia-page *, article, article * {
-    font-family: Kalinga !important; /* uw-fnt */
+    font-family: Ubuntu !important; /* uw-fnt */
 }
 
 .content__article-body * {
-    font-family: Kalinga !important; /* uw-fnt */
-    font-size: 14px !important; /* uw-sz 14 */
-    line-height: 19px !important; /* uw-lh 19 */
+    font-family: Ubuntu !important; /* uw-fnt */
+    font-size: 17px !important; /* uw-sz 17 */
+    line-height: 28px !important; /* uw-lh 28 */
     font-weight: 300 !important; /* uw-wgt */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
     color: #222 !important; /* uw-clr */
 }
-
+.content__article-body p {
+    margin: 15px 0 !important; /* uw-pmgn */
+}
 
 .content__article-body a {
     border-bottom: 0 !important;
     text-decoration: underline dotted #aaa !important; /* uw-uln */
+    border-bottom: none !important; + /* uw-btm */
 }
 
+.content__main-column:before {
+    background: 0 !important;
+}
 
+.content__secondary-column, 
+.js-secondary-column,
 .content__meta-container,
 .site-message--banner,
 .site-message--cookies,

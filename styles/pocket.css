@@ -1,9 +1,9 @@
 /********** reading... **********/
 .text_body *,
 .reader_content h1 {
-    font-family: Kalinga !important; /* uw-fnt */
-    font-size: 14px !important; /* uw-sz 14 */
-    line-height: 19px !important; /* uw-lh 19 */
+    font-family: Ubuntu !important; /* uw-fnt */
+    font-size: 17px !important; /* uw-sz 17 */
+    line-height: 28px !important; /* uw-lh 28 */
     font-weight: 300 !important; /* uw-wgt */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
@@ -11,7 +11,7 @@
 }
 
 body * {
-    font-family: Kalinga !important; /* uw-fnt */
+    font-family: Ubuntu !important; /* uw-fnt */
     font-weight: 300 !important; /* uw-wgt */
 }
 
@@ -21,13 +21,15 @@ nav.pkt-nav.readr-container a,
 }
 
 .text_body p {
+    text-indent: 20px !important;
     text-align: justify !important; /* uw-jfy */
-    margin: 15px 0 !important;
+    margin: 15px 0 !important; /* uw-pmgn */
 }
 
 .reader_content .text_body a,
 .text_body a:hover {
     text-decoration: underline dotted #aaa !important; /* uw-uln */
+    border-bottom: none !important; + /* uw-btm */
 }
 
 .title,
@@ -62,6 +64,7 @@ nav.pkt-nav.readr-container a,
     color: #fff !important;
 }
 
+    aside,
     .item .thumb,
     #page_queue .tags,
     .topic {
@@ -85,6 +88,11 @@ nav.pkt-nav.readr-container a,
 div.reader_content_wrapper {
     margin-bottom: 600px !important;
 }
+
+.reader_content img {
+    display: none !important;
+}
+
 /********************************/
 
 /********** general... **********/
@@ -144,15 +152,15 @@ a[href='/a/queue/list/inoreader'], .topic_1 {
 /*************************************/
 
 /********** small window... **********/
-@media (max-width: 801px) {
+@media (max-width: 701px) {
     .reader_content {
         padding: 10px !important;
     }
 
     .text_body *,
     .reader_content h1 {
-        font-size: 14px !important; /* uw-sz-sm 14 */
-        line-height: 19px !important; /* uw-lh-sm 19 */
+        font-size: 14px !important; /* uw-b-sz-sm 14 */
+        line-height: 23px !important; /* uw-lh-sm 23 */
     }
 
     #page_queue * {

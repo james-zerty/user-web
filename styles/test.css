@@ -2,3 +2,34 @@
     color: #000 !important;
     background-color: #fff !important;
 }
+
+xx {
+    font-family: Kalinga !important; /* uw-fnt */
+    font-size: 16px !important; /* uw-sz 16 */
+    line-height: 21px !important; /* uw-lh 21 */
+    font-weight: normal !important; /* uw-wgt */
+    font-style: normal !important; /* uw-sty */
+    text-align: justify !important; /* uw-jfy */
+    color: #222 !important; /* uw-clr */
+}
+
+xx {
+    font-family: Yu Mincho !important; /* uw-b-fnt */
+    font-size: 19px !important; /* uw-b-sz 19 */
+    line-height: 29px !important; /* uw-b-lh 29 */
+    font-weight: normal !important; /* uw-wgt */
+    font-style: normal !important; /* uw-sty */
+    text-align: justify !important; /* uw-jfy */
+    color: #222 !important; /* uw-clr */
+}
+
+
+x* {
+    font-family: Ubuntu !important; /* uw-fnt */
+    font-size: 17px !important; /* uw-sz 16 */
+    line-height: 28px !important; /* uw-lh 21 */
+    font-weight: 300 !important; /* uw-wgt */
+    font-style: normal !important; /* uw-sty */
+    text-align: justify !important; /* uw-jfy */
+    color: #222 !important; /* uw-clr */
+}

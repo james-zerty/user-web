@@ -8,18 +8,18 @@
 // @noframes
 // @include     http*://*/*
 // @exclude     https://localhost:44300/dev*
-// @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-2.1.0.js
+// @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-2.1.0.min.js
 // ==/UserScript==
 "use strict";
 try {
-    var loadAfter = 1000;
+    var $ = window.$;
+    var loadAfter = 100;
     var logPrefix = "[user-web] ";
     var url = document.location.href;
-    var isTop = window.top == window.self || url.toLowerCase().indexOf("inoreader") > -1 || url.toLowerCase().indexOf("home.htm") > -1;
 
     var settings = { localUrls: 0, uniqueUrls: 0, reloader: 0, autoShow: 0, handleErrors: 1 };
     if (url.match(/localhost.*\/(xhome|dev).*\.htm/i) != null) {
-        settings = { localUrls: 0, uniqueUrls: 0, reloader: 1, autoShow: 0, handleErrors: 0 };
+        settings = { localUrls: 0, uniqueUrls: 0, reloader: 0, autoShow: 1, handleErrors: 0 };
     }
 
     if (navigator.userAgent.indexOf("Mozilla/5.0 (Windows NT 6.3; Win64; x64;" > -1)) {
@@ -43,129 +43,106 @@ try {
             { exp: /amazon\.co/i, filter: "#dp-ads-middle-3psl, #tellAFriendBox_feature_div, #quickPromoBucketContent, #quickPromoDivId, #sc-new-upsell, #nav-swmslot, #hqpWrapper, #huc-v2-cobrand-stripe, #nav-upnav, #detail-ilm_div" },
         ];
 
-        me.adblock = function () {
-            for (var i in me.filterConfig) {
-                var cfg = me.filterConfig[i];
-
-                if (me.url.match(cfg.exp) != null) {
-                    log("filter", cfg.filter);
-
-                    $(cfg.filter).each(function(i) {
-                        var id = this.id; if (id == "") id = "[none]";
-                        var className = this.className; if (className == "") className = "[none]";
-                        log("", "removing: id:", id, "; class:", className, ";");
-                        $(this).remove();
-                    });
-
-                    me.addStyle(
-                        cfg.filter + ' { display: none !important; }'
-                    );
-                }
-            }
-        }
-
         me.load = function () {
             me.url = document.location.href;
-            me.isLinux = navigator.userAgent.indexOf("Linux") > -1;
-            me.fontSize = 14; //fnt
-            me.fontSizeSmall = 14;
-            me.fontRatio = 19 / me.fontSize;
+
+            //fnt
+            me.fontA = { 
+                large: { size: 17, height: 28, face: "Ubuntu", weight: "300", color: "#222" }, 
+                small: { size: 14, height: 23, face: "Ubuntu", weight: "300", color: "#222" } };
+            me.fontB = { 
+                large: { size: 19, height: 29, face: "Yu Mincho", weight: "300", color: "#000" }, 
+                small: { size: 15, height: 22, face: "Yu Mincho", weight: "300", color: "#000" } };
+
+            me.currentFont = 0;
+            me.fontSizeCurrent = me.fontA.large.size;
+            me.fontRatio = me.fontA.large.height / me.fontA.large.size;
+
+            me.marked = $(); //qqq
+            me.readingState = "none";
             me.menuTimeoutTime = 1000;
             me.noRead = me.url.match(/:9000/i) != null;
-            me.options = {};
-            me.el0 = null;
-            me.el = null;
-            me.els = [];
 
-            if (settings.reloader) {
-                document.oncontextmenu = function (e) {
-                    document.location.reload(true);
-                    return false;
-                };
-            }
-
+            me.setReloader();
+            me.filterSpam();
             me.loadUserStyle();
-            me.bindMouse();
-            me.adblock();
-            me.bindOnKeyDown();
+            me.bindPageMouse();
+            me.bindPageKeyDown();
 
-            if (settings.autoShow) { //qq
+            if (settings.autoShow) {
                 me.run(function () {
                     // me.testFonts();
-
-                    me.autoPopout();
-
+                    // me.doReadAuto();
+                    // me.doPopoutAuto();
                     // throw new Error("test!");
-
-                    // var e = {
-                        // pageX: 400,
-                        // pageY: 300,
-                        // target: $("p")[0]
-                    // };
-                    // me.tidyUp();
-                    // me.runReadr(e);
-                    // me.markElementAndBind(e);
                 });
             }
         };
 
-        me.getRoot = function () {
-            return settings.localUrls ? "https://localhost:44300/" : "https://rawgit.com/james-zerty/user-web/master/";
-        }
+        /*** page events ********************************************************************************************** */
 
-        me.isSmall = function () {
-            return $(window).width() < 800;
-        }
+        me.bindPageMouse = function () {
+            if (url.match("keep\.google")) return;
 
-        me.run = function (fn) {
-            if (settings.handleErrors) {
-                try {
-                    fn();
-                }
-                catch (ex) {
-                    log(ex);
-                }
-            }
-            else {
-                fn();
-            }
+            $("html").mousedown(function (e) {
+                me.startX = e.pageX;
+                me.startY = e.pageY;
+            });
+            $("html").mouseup(function (e) {
+                me.onPageMouseUp(e);
+            });
         };
 
+        me.onPageMouseUp = function (e) {
+            me.run(function () {
+                if (e.button != 0) {
+                    return;
+                }
+                if (me.saveSelection(e)) {
+                    if (me.menuShowing) {
+                        me.hideMenu();
+                        return;
+                    }
+                    var tagName = e.target == null ? "UNKNOWN" : e.target.tagName;
 
-	//qqqq
-	// me.enableSelection = function() {
-		// var styles='*, p, div { user-select:text !important; -moz-user-select:text !important; -webkit-user-select:text !important; }';
-		// jQuery('head').append(jQuery('<style />').html(styles));
-
-		// var allowNormal = function() {
-			// return true;
-		// };
-
-		// $('*[onselectstart], *[ondragstart], *[oncontextmenu]')
-			// .unbind('contextmenu')
-			// .unbind('selectstart')
-			// .unbind('dragstart')
-			// .unbind('mousedown')
-			// .unbind('mouseup')
-			// .unbind('click')
-			// .attr('onselectstart', allowNormal)
-			// .attr('oncontextmenu', allowNormal)
-			// .attr('ondragstart',allowNormal);
-	// }
-
-// >> $("*").css("user-select", "text");
-
+                    switch (tagName) {
+                        case "IMG":  //img doesn't clear selection
+                        case "HTML": //scrollbar
+                            log("not showing!", e.target.tagName, e.target, e.pageX, e.pageY);
+                            me.hideMenu();
+                            return;
+                    }
+                    var text = me.selectedText;
+                    var x = e.pageX - me.startX;
+                    var y = e.pageY - me.startY;
+                    // 0 —— x
+                    // |
+                    // y
+                    if (x < 0 && text.length < 10) { //backwards selection
+                        if (me.noRead) return;
+                        if (tagName == "INPUT" || tagName == "TEXTAREA") return;
+                        var el = $(e.target);
+                        me.doReadFromElement(el);
+                        me.markElementAndBind(el);
+                    }
+                    else { //normal selection
+                        me.showMenu(e);
+                    }
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
+            });
+        };
 
         me.saveSelection = function (e) {
             var text = "";
-
             if ($(e.target).is("input[type='text']") || $(e.target).is("textarea")) {
-                text = me.getTextFieldSelection(e.target);
+                text = e.target.value.substring(e.target.selectionStart, e.target.selectionEnd);
             }
             else {
                 text = window.getSelection().toString();
             }
-
             if (text) {
                 me.selectedText = text;
                 return true;
@@ -189,119 +166,32 @@ try {
             }
         };
 
-        me.getTextFieldSelection = function (textField) {
-            return textField.value.substring(textField.selectionStart, textField.selectionEnd);
-        };
-
-        /* events ********************************************************************************************************************** */
-
-        me.bindMouse = function () {
-            if (url.match("keep\.google")) return;
-
-            $('html').mousedown(function (e) {
-                me.startX = e.pageX;
-                me.startY = e.pageY;
-            });
-            $('html').mouseup(function (e) {
-                me.run(function () {
-                    if (e.button != 0) {
-                        return;
-                    }
-
-                    if (me.saveSelection(e)) {
-                        if (me.menuShowing) {
-                            me.hideMenu();
-                            return;
-                        }
-
-                        var tagName = e.target == null ? "UNKNOWN" : e.target.tagName;
-
-                        switch (tagName) {
-                            case "IMG":  //img doesn't clear selection
-                            case "HTML": //scrollbar
-                                log("not showing!", e.target.tagName, e.target, e.pageX, e.pageY);
-                                me.hideMenu();
-                                return;
-                        }
-
-                        // log("showing", e.target.tagName, e.target, e.pageX, e.pageY);
-
-                        var text = me.selectedText;
-                        if (text.length > 20) {
-                            text = text.substr(0, 20) + "...";
-                        }
-
-                        var x = e.pageX - me.startX;
-                        var y = e.pageY - me.startY;
-                        // log("x,y = ", x, ",", y);
-
-                        // 0 —— x
-                        // |
-                        // y
-                        if (x < 0 && text.length < 10) { //backwards selection
-                            if (me.noRead) return;
-                            if (tagName == "INPUT" || tagName == "TEXTAREA") return;
-                            me.createMenu();
-                            me.tidyUp();
-                            var $target = $(e.target);
-                            me.doRead($target.width(), 50, "readr-container");
-                            me.markElementAndBind(e);
-                            me.hideMenu();
-                        }
-                        else { //normal selection
-                            me.showMenu(e);
-                            me.bindMenuClick();
-                        }
-
-                        e.preventDefault();
-                        e.stopPropagation();
-                        return;
-                    }
-                });
-            });
-        };
-
-        me.bindMenuClick = function () {
-            if (!me.isClickBound) {
-                me.isClickBound = true;
-
-                me.menu.bind("click", function (e) {
+        me.bindPageKeyDown = function () {
+            if (!me.isPageKeyDownBound) {
+                me.isPageKeyDownBound = true;
+                $("body").bind("keydown.uw-page", function (e) {
                     me.run(function () {
-                        me.onMenuClick(e);
+                        me.onPageKeyDown(e);
                     });
                 });
             }
         };
 
-        me.onMenuClick = function (e) {
-            me.hideMenu();
+        me.cancelEvent = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
         };
-
-        me.bindOnKeyDown = function () {
-            if (!me.isKeyDownBound) {
-                me.isKeyDownBound = true;
-                $('body').bind("keydown", function (e) {
-                    me.run(function () {
-                        me.onKeyDown(e);
-                    });
-                });
-            }
-        };
-
-        me.countGrave = 0;
-        me.onKeyDown = function (e) {
-            // log("onKeyDown", "key:", e.key, " code:", e.keyCode, " ctrl:", e.ctrlKey, " alt:", e.altKey, " shift:", e.shiftKey);
+        
+        me.onPageKeyDown = function (e) {
+            // log("onPageKeyDown", "key:", e.key, " code:", e.keyCode, " ctrl:", e.ctrlKey, " alt:", e.altKey, " shift:", e.shiftKey);
             me.run(function () {
                 switch (e.keyCode) {
-                    case 191: // /
-                        if (me.menuShowing) {
-                            me.showHelp();
-                        }
-                        break;
                     case 192: // ` firefox
                     case 223: // ` chrome
+                        if (navigator.userAgent.indexOf("Chrome") > -1 && e.keyCode == 192) return;
                         // Ctrl+Shift+`     toggle user style
-                        // `                read lite
+                        // `                read cycle
                         // Alt+`            show menu
                         // Ctrl+`           find element
                         // Shift+`          undo read
@@ -310,60 +200,49 @@ try {
                             if (me.activeUserStyle) {
                                 me.unloadUserStyle();
                             }
-                            else
-                            {
+                            else {
                                 settings.uniqueUrls = 1;
                                 me.loadUserStyle();
                             }
                         }
                         else if (e.shiftKey) { //undo read...
                             log("Shift+`", "undo read");
-                            me.undoReadr();
-                            if (me.marking) {
-                                me.markElementCancel();
-                            }
+                            me.undoRead();
                         }
                         else if (e.altKey) { //show menu...
                             log("Alt+`", "show menu");
                             me.showMenu(e);
-                            return;
                         }
                         else if (e.ctrlKey) { //find element...
                             log("Ctrl+`", "find element");
-                            me.runReadr(null, { find: true });
-                            return;
+                            me.startFind();
                         }
-                        else { //read lite...
-                            // if (me.countGrave == 0) { //qqq
-                                // me.countGrave++;
-                                // log("`", "read lite");
-                                // me.readLite();
-                            // }
-                            if (me.countGrave == 0) {
-                                log("`", "read medium");
-                                me.countGrave++;
-                                me.run(function () { //medium = hide fixed + style all p's
-                                    me.tidyUp();
-                                    me.setFont(0);
-                                    me.doRead(500, 400, "readr-container");
-                                });
-                            }
-                            else if (me.countGrave == 1) {
-                                log("`", "read popout");
-                                me.countGrave++;
-                                if (!me.autoPopout()) {
+                        else { //reading...
+                            switch (me.readingState) {
+                                case "none":
+                                    log("`", "reading");
+                                    me.doReadAuto();
                                     break;
-                                }
-                            }
-                            else {
-                                // log("`", "set font");
-                                // me.setFont(1);
-                                me.undoReadr();
-                                me.undoPopout();
-                                me.countGrave = 0;
+                                case "reading":
+                                    if (!me.isFontB()) {
+                                        log("`", "reading large");
+                                        me.setFontB(); //qqq
+                                        me.scrollToElement(me.marked, true);
+                                        break;
+                                    }
+                                    else {
+                                        log("`", "reading popout");
+                                        me.doPopoutAuto();
+                                        break;
+                                    }
+                                default:
+                                    log("`", "reading reset");
+                                    me.undoRead();
+                                    break;
                             }
                         }
-                        break;
+                        
+                        return me.cancelEvent(e);
                     case 16: // shift
                     case 17: // ctrl
                     case 18: // alt
@@ -372,10 +251,10 @@ try {
                         return;
                     case 107: // num plus
                         if (e.altKey && e.shiftKey) {
-                            me.setFontSize(1);
+                            me.setAltFontSize(1);
                         }
                         else if (e.ctrlKey && e.altKey) {
-                            me.setFont(1);
+                            me.setAltFont(1);
                         }
                         else {
                             var msg = me.getFontMsg();
@@ -385,10 +264,10 @@ try {
                         break;
                     case 109: // num minus
                         if (e.altKey && e.shiftKey) {
-                            me.setFontSize(-1);
+                            me.setAltFontSize(-1);
                         }
                         else if (e.ctrlKey && e.altKey) {
-                            me.setFont(-1);
+                            me.setAltFont(-1);
                         }
                         else {
                             var msg = me.getFontMsg();
@@ -396,20 +275,15 @@ try {
                         }
 
                         break;
-                    case 32: // space
-                        if (me.menuShowing) {
-                            me.runReadr(me.clickEvent);
-                            e.preventDefault();
-                            e.stopPropagation();
-                        }
-
-                        break;
                     case 37: // left
                     case 39: // right
                     case 74: // j
+                    case 75: // k
                         if (me.marking) {
-                            var fwd = e.keyCode != 37;
-                            var curr = $(".readr-marked");
+                            if (e.ctrlKey || e.shiftKey || e.altKey) return;
+
+                            var fwd = e.keyCode == 39 || e.keyCode == 74;
+                            var curr = $(".uw-marked");
                             var next = fwd? curr.next() : curr.prev();
 
                             if (curr.prop("tagName") == "P") {
@@ -432,7 +306,7 @@ try {
                                 }
                             }
 
-                            if (next.is(':hidden') || next.css("visibility") == "hidden" || next.text().length == 0) {
+                            if (next.is(":hidden") || next.css("visibility") == "hidden" || next.text().length == 0) {
                                 log("next is hidden");
                                 next = fwd? next.next() : next.prev();
                             }
@@ -463,74 +337,7 @@ try {
             });
         };
 
-        me.scrollToElement = function (el) {
-            var offset = el.offset();
-            offset.top -= me.isSmall() ? 15 : 15;
-            $('html, body').animate({
-                scrollTop: offset.top
-            });
-        };
-
-        /* display ********************************************************************************************************************** */
-
-        me.showHelp = function(e) {
-            var pop = $("<div class='user-web-help'>");
-            pop.html(
-                "<table>" +
-                    "<tr><td>`</td><td>read lite</td></tr>" +
-                    "<tr><td>Alt+`</td><td>show menu</td></tr>" +
-                    "<tr><td>Ctrl+`</td><td>find element</td></tr>" +
-                    "<tr><td>Shift+`</td><td>undo read</td></tr>" +
-                    "<tr><td>Ctrl+Shift+`</td><td>toggle user style</td></tr>" +
-                    "<tr><td>&nbsp;</td></tr>" +
-                    "<tr><td>Ctrl+Alt+NumPlus</td><td>change font</td></tr>" +
-                    "<tr><td>Ctrl+Alt+NumMinus</td><td>change font</td></tr>" +
-                    "<tr><td>Shift+Alt+Num+</td><td>font size +</td></tr>" +
-                    "<tr><td>Shift+Alt+Num-</td><td>font size -</td></tr>" +
-                    "<tr><td>&nbsp;</td></tr>" +
-                    "<tr><th>Menu...</th></tr>" +
-                    "<tr><td>/</td><td>Help</td></tr>" +
-                    "<tr><td>Space</td><td>Run Readr</td></tr>" +
-                    "<tr><td>&nbsp;</td></tr>" +
-                    "<tr><th>Marking...</th></tr>" +
-                    "<tr><td>Left</td><td>Previous paragraph</td></tr>" +
-                    "<tr><td>Right or j</td><td>Next paragraph</td></tr>" +
-                    "<tr><td>ESC</td><td>Cancel Marking</td></tr>" +
-                    "<tr><td>&nbsp;</td></tr>" +
-                    "<tr><th>Finding...</th></tr>" +
-                    "<tr><td>ESC</td><td>Cancel</td></tr>" +
-                    "<tr><td>Enter</td><td>Forced</td></tr>" +
-                    "<tr><td>DEL</td><td>Delete elements</td></tr>" +
-                    "<tr><td>p</td><td>Popout</td></tr>" +
-                    "<tr><td>Right / Left</td><td>Next / Previous node</td></tr>" +
-                "</table>"
-            );
-
-            var cls =   $("<div class='user-web-help-button'>")
-                .text("Close")
-                .click(function(e) {
-                    pop.hide();
-                    return false;
-                });
-            pop.append(cls);
-            $('body').append(pop);
-        };
-
-        me.tidyUp = function (e) {
-            if (me.url.match(/inoreader\.com/i)) return;
-
-            $('*').filter(function() {
-                var el = $(this);
-                var pos = el.css("position");
-
-                return (pos === 'fixed' || pos === 'sticky') && el.prop("tagName") != "PICTURE";
-            }).attr('style','display:none !important');
-        };
-
-        me.readLite = function (e) {
-            me.tidyUp();
-            $("p").css({"text-align" : "justify"});
-        };
+        /*** menu ui ************************************************************************************************** */
 
         me.showMenu = function (e) {
             me.menuShowing = true;
@@ -543,7 +350,7 @@ try {
 
             var ePageX = e.pageX;
             var ePageY = e.pageY;
-            log("", "ePageX: ", ePageX, "; ePageY: ", ePageY)
+            log("", "ePageX: ", ePageX, "; ePageY: ", ePageY);
             if (isNaN(ePageY)) {
                 ePageY = $(window).scrollTop();
             }
@@ -551,7 +358,7 @@ try {
                 ePageX = $(window).scrollLeft();
                 adjustX = -10;
             }
-            log("", "ePageX: ", ePageX, "; ePageY: ", ePageY)
+            log("", "ePageX: ", ePageX, "; ePageY: ", ePageY);
 
             if (me.menu == null) {
                 me.createMenu();
@@ -579,12 +386,12 @@ try {
                 left = 10;
             }
 
-            log("top", top);
-            log("left", left);
+            // log("top", top);
+            // log("left", left);
 
             me.menu.css({
-                top: top + 'px',
-                left: left + 'px'
+                top: top + "px",
+                left: left + "px"
             });
 
             var pos = me.menu.position();
@@ -600,11 +407,11 @@ try {
             wpos.scrollBottom = wpos.scrollTop + wpos.height;
 
             if (pos.bottom > wpos.scrollBottom) {
-                me.menu.css("top", ePageY - pos.height - 20 + 'px');
+                me.menu.css("top", ePageY - pos.height - 20 + "px");
             }
 
             if (pos.top < 0) {
-                me.menu.css("top", '0px');
+                me.menu.css("top", "0px");
             }
 
             if (pos.right > wpos.width) {
@@ -619,17 +426,17 @@ try {
             me.menuTimeoutSet();
         };
 
+        me.menuTimeoutSet = function () {
+            me.menuTimeoutId = setTimeout(function () {
+                me.hideMenu();
+            }, me.menuTimeoutTime);
+        };
+
         me.menuTimeoutClear = function () {
             if (typeof me.menuTimeoutId == "number") {
                 clearTimeout(me.menuTimeoutId);
                 delete me.menuTimeoutId;
             }
-        };
-
-        me.menuTimeoutSet = function () {
-            me.menuTimeoutId = setTimeout(function () {
-                me.hideMenu();
-            }, me.menuTimeoutTime);
         };
 
         me.hideMenu = function () {
@@ -646,10 +453,9 @@ try {
                 return;
             }
 
-            me.bindOnKeyDown();
             me.addStyles();
-            me.menu = $("<div id='UserWebMenu' class='user-web-menu'>");
-            me.ulReadr = $("<ul class='user-web-readr'>");
+            me.menu = $("<div id='UserWebMenu' class='uw-menu'>");
+            me.ulReadr = $("<ul class='uw-menu-left'>");
 
             me.menu.hover(
                 function () { // on hover
@@ -661,84 +467,57 @@ try {
                 }
             );
 
-            me.menu.append(me.ulReadr);
+            me.menu.bind("click.uw-menu", function (e) {
+                me.run(function () {
+                    me.hideMenu();
+                });
+            });
 
-            me.linkRunReadrFullAndMark =
-                me.addLink(me.ulReadr, "Read & Mark", function () {
-                    me.run(function () { //Medium = hide fixed + style all p's
-                        me.tidyUp();
-                        var $target = $(me.clickEvent.target);
-                        var w = $target.width();
-                        log("w", w);
-                        me.doRead(w, 50, "readr-container");
-                        me.markElementAndBind(me.clickEvent);
-                    });
-                }, null, "Tidy and set font family + size - everything of same width - and mark paragraph");
+            me.menu.append(me.ulReadr);
 
             me.linkRunReadrFull =
                 me.addLink(me.ulReadr, "Read", function () {
-                    me.run(function () { //Medium = hide fixed + style all p's
-                        me.tidyUp();
-                        var $target = $(me.clickEvent.target);
-                        var w = $target.width();
-                        log("w", w);
-                        me.doRead(w, 50, "readr-container");
+                    me.run(function () { //normal = hide fixed + style all p's
+                        var el = $(me.clickEvent.target);
+                        me.doReadFromElement(el);
                         me.clearSelection();
-                        me.scrollToElement($target);
+                        me.scrollToElement(el);
                     });
-                }, null, "Tidy and set font family + size - everything of same width");
+                }, null, "Tidy + set font for elements with same width (`)");
 
-            me.linkRunReadrMed =
-                me.addLink(me.ulReadr, "Read Medium", function () {
-                    me.run(function () { //Medium = hide fixed + style all p's
-                        me.tidyUp();
-                        var $target = $(me.clickEvent.target);
-                        var w = $(me.clickEvent.target).width();
-                        log("w", w);
-                        me.doRead(w, 50, "readr-med");
+            me.linkRunReadrLarge =
+                me.addLink(me.ulReadr, "Read Large", function () {
+                    me.run(function () { //large = hide fixed + style all p's with large font
+                        var el = $(me.clickEvent.target);
+                        me.setFontB();
+                        me.doReadFromElement(el);
                         me.clearSelection();
-                        me.scrollToElement($target);
+                        me.scrollToElement(el);
                     });
-                }, null, "Tidy and set font family - everything of same width");
+                }, null, "Tidy + set large font for elements with same width (``)");
 
             me.linkRunReadrLite =
                 me.addLink(me.ulReadr, "Read Lite", function () {
-                    me.run(function () { //Lite = hide fixed + justify all p's
+                    me.run(function () { //lite = hide fixed + justify all p's
                         me.readLite();
                     });
                 }, null, "Tidy and justify");
 
+            me.linkRunReadrFind =
+                me.addLink(me.ulReadr, "Find...", function () {
+                    me.run(function () {
+                        me.startFind();
+                    });
+                }, null, "Find an element then choose to read, popout or delete - see help for more info (Ctrl+`)");
+
             me.separatorRead1 = me.addSeparator(me.ulReadr).hide();
-
-            me.linkFontUp =
-                me.addLink(me.ulReadr, "Font bigger", function () {
-                    me.run(function () {
-                        me.setFontSize(1);
-                    });
-                }).hide();
-
-            me.linkFontDown =
-                me.addLink(me.ulReadr, "Font smaller", function () {
-                    me.run(function () {
-                        me.setFontSize(-1);
-                    });
-                }).hide();
-
-            me.separatorRead2 = me.addSeparator(me.ulReadr).hide();
 
             me.linkUndoReadr =
                 me.addLink(me.ulReadr, "Undo Read", function () {
                     me.run(function () {
-                        me.undoReadr();
+                        me.undoRead();
                     });
-                }).hide();
-
-            me.linkUndoPopout =
-                me.addLink(me.ulReadr, "Undo Popout", function () {
-                    me.run(function () {
-                        me.undoPopout();
-                    });
-                }).hide();
+                }, null, "Remove reading styles and highlights (Shift+`)").hide();
 
             me.userStyleSeparator = me.addSeparator(me.ulReadr);
 
@@ -748,11 +527,11 @@ try {
                         settings.uniqueUrls = 1;
                         me.loadUserStyle();
                     });
-                }).hide();
+                }, null, "Reload the user style (Ctrl+Shift+`)").hide();
 
             me.linkReloadStyleOnDblClick =
                 me.addLink(me.ulReadr, "Reload dblclick", function () {
-                    $('body').bind("dblclick.uws", function () {
+                    $("body").bind("dblclick.uw-find", function () {
                         me.run(function () {
                             settings.uniqueUrls = 1;
                             me.loadUserStyle();
@@ -770,51 +549,53 @@ try {
                         settings.uniqueUrls = 1;
                         me.loadUserStyle();
                     });
-                }).hide();
+                }, null, "Reload the user style on dblclick").hide();
 
             me.linkReloadStyleOnDblClickOff =
                 me.addLink(me.ulReadr, "Reload cancel", function () {
-                    $('body').unbind("dblclick.uws");
+                    $("body").unbind("dblclick.uw-find");
                     me.linkReloadStyleOnDblClick.show();
                     me.linkReloadStyleOnDblClickOff.hide();
-                }).hide();
+                }, null, "Stop reloading the user style on dblclick").hide();
 
             me.linkOpenStyle =
                 me.addLink(me.ulReadr, "Open style", function () {
                     me.run(function () {
                         me.openUserStyle();
                     });
-                }).hide();
+                }, null, "Open user style in new tab").hide();
 
             me.linkUnloadStyle =
                 me.addLink(me.ulReadr, "Unload style", function () {
                     me.run(function () {
                         me.unloadUserStyle();
                     });
-                }).hide();
+                }, null, "Unload the user style (Ctrl+Shift+`)").hide();
 
             me.addSeparator(me.ulReadr);
+
+            me.linkEnableSelect =
+                me.addLink(me.ulReadr, "Enable selection", function () {
+                    me.run(function () {
+                        me.enableSelect();
+                        me.clearSelection();
+                        me.hideMenu();
+                    });
+                }, null, "Allow selection of text");
 
             me.linkImagesHide =
                 me.addLink(me.ulReadr, "Hide Images", function () {
                     me.run(function () {
                         me.hideImages();
                     });
-                });
+                }, null, "Hide all images in the page");
 
             me.linkImagesShow =
                 me.addLink(me.ulReadr, "Show Images", function () {
                     me.run(function () {
                         me.showImages();
                     });
-                }).hide();
-
-            me.linkRunReadrFind =
-                me.addLink(me.ulReadr, "Find...", function () {
-                    me.run(function () {
-                        me.runReadr(null, { find: true });
-                    });
-                });
+                }, null, "Redisplay hidden images").hide();
 
             me.addSeparator(me.ulReadr);
 
@@ -824,16 +605,23 @@ try {
                 });
             });
 
-            me.ulSearch = $("<ul class='user-web-search'>");
+            me.ulSearch = $("<ul class='uw-menu-right'>");
             me.menu.append(me.ulSearch);
 
             me.addLink(me.ulSearch, "Copy", function () { me.setClipboard(); });
             me.linkMarkElement =
                 me.addLink(me.ulSearch, "Mark", function () {
                     me.run(function () {
-                        me.markElementAndBind(me.clickEvent);
+                        var el = $(me.clickEvent.target);
+                        me.markElementAndBind(el);
                     });
                 });
+            me.linkResumeMarkElement =
+                me.addLink(me.ulSearch, "Resume Marking", function () {
+                    me.run(function () {
+                        me.markElementAndBind(me.marked);
+                    });
+                }).hide();
             me.linkHighlightElement =
                 me.addLink(me.ulSearch, "Highlight", function () {
                     me.run(function () {
@@ -843,13 +631,13 @@ try {
             me.addSeparator(me.ulSearch);
             var u = encodeURIComponent(window.location.href);
             var title = encodeURIComponent(window.document.title);
-            var prefix = 'https://getpocket.com/edit?';
-            var pocketUrl = prefix + 'url=' + u + '&title=' + title;
+            var prefix = "https://getpocket.com/edit?";
+            var pocketUrl = prefix + "url=" + u + "&title=" + title;
             me.addLink(me.ulSearch, "Add to Pocket", null, pocketUrl);
             me.addSeparator(me.ulSearch);
             me.linkNavigateTo = me.addLink(me.ulSearch, "Go to", function () { me.navigateTo(me.selectedText); });
             me.addSeparator(me.ulSearch);
-            me.linkSearchTitle = me.addListItem(me.ulSearch, "Search..."); //.addClass("bold");
+            me.linkSearchTitle = me.addListItem(me.ulSearch, "Search...").addClass("bold");
             me.addLink(me.ulSearch, "Google", function () { me.openSearch("https://www.google.co.uk/search?q=TESTSEARCH"); });
             me.addLink(me.ulSearch, "Google Define", function () { me.openSearch("https://www.google.co.uk/search?q=define:TESTSEARCH"); });
             me.addLink(me.ulSearch, "Google Maps", function () { me.openSearch("https://maps.google.co.uk/maps?q=TESTSEARCH"); });
@@ -863,7 +651,7 @@ try {
             me.addLink(me.ulSearch, "Wikipedia", function () { me.openSearch("http://en.wikipedia.org/wiki/Special:Search?search=TESTSEARCH&go=Go"); });
             me.addLink(me.ulSearch, "Amazon", function () { me.openSearch("http://www.amazon.co.uk/s/ref=nb_sb_noss_1?url=search-alias%3Daps&field-keywords=TESTSEARCH&x=0&y=0"); });
 
-            $('body').append(me.menu);
+            $("body").append(me.menu);
 
             me.refreshMenu();
         };
@@ -889,7 +677,7 @@ try {
         };
 
         me.addSeparator = function (parent) {
-            return me.addListItem(parent, "").addClass("user-web-separator");
+            return me.addListItem(parent, "").addClass("uw-separator");
         };
 
         me.refreshMenu = function () {
@@ -901,6 +689,10 @@ try {
                 else {
                     me.linkImagesShow.hide();
                     me.linkImagesHide.show();
+                }
+                
+                if (me.marked.length > 0) {
+                    me.linkResumeMarkElement.show();
                 }
 
                 if (me.foundUserStyle) {
@@ -928,279 +720,61 @@ try {
 
                 if (me.activeReadr) {
                     me.separatorRead1.show();
-                    me.separatorRead2.show();
                     me.linkUndoReadr.show();
-                    me.linkFontUp.show();
-                    me.linkFontDown.show();
                 }
                 else {
                     me.separatorRead1.hide();
-                    me.separatorRead2.hide();
                     me.linkUndoReadr.hide();
-                    me.linkFontUp.hide();
-                    me.linkFontDown.hide();
-                }
-
-                if (me.activePopout) {
-                    me.linkUndoPopout.show();
-                }
-                else {
-                    me.linkUndoPopout.hide();
                 }
             }
         };
 
-        me.addStyle = function (css) {
-            $(document.head).append(
-                $('<style>')
-                    .attr('id', "user-web-menu-css")
-                    .attr('rel', 'stylesheet')
-                    .attr('type', 'text/css')
-                    .text(css));
-        };
-
-        me.addStyles = function () {
-            if (me.addStylesDone) return;
-            me.addStylesDone = true;
-
-            me.addStyle(
-                '.user-web-help { ' +
-                    'position: fixed; top: 10px; left: 10px; border: solid 1px #000; background-color: #fff; z-index: 9999999; padding: 10px;' +
-                '}' +
-                '.user-web-help td, .user-web-help th { ' +
-                    'padding: 1px 20px 1px 5px;' +
-                '}' +
-                '.user-web-help-button { ' +
-                    'border:solid 1px #000; padding:5px; margin-top:20px; text-align:center; cursor:pointer;' +
-                '}' +
-                '.user-web-menu { ' +
-                    'text-align: left !important;' +
-                    'padding: 0 !important;' +
-                    'position: absolute;' +
-                    'border: solid 1px #000;' +
-                    'font-family: calibri;' +
-                    'font-size: 12px;' +
-                    'color: #000;' +
-                    'z-index: 999999999;' +
-                    'text-align: center;' +
-                '}' +
-                '.user-web-menu, .user-web-menu *, .user-web-menu ul li a, .user-web-menu ul li span, .user-web-help td, .user-web-help th { ' +
-                    'font-family: Corbel, Comic Sans MS !important;' +
-                    'font-size: 13px !important;' +
-                    'font-style: normal !important;' +
-                    'line-height: 13px !important;' +
-                    'letter-spacing: 0 !important;' +
-                    'color: #000 !important;' +
-                    'background-color: #fff !important;' +
-                    'text-align: left !important;' +
-                    'margin: 0 !important;' +
-                '}' +
-                '.user-web-menu ul {' +
-                    'display: table-cell !important;' +
-                '}' +
-                '.user-web-menu ul.user-web-readr {' +
-                    'border-right: solid 1px #000 !important;' +
-                '}' +
-                '.user-web-menu ul, .user-web-menu li {' +
-                    'margin: 0 !important;' +
-                    'padding: 0 !important;' +
-                    'list-style-type: none !important;' +
-                    'list-style: none !important;' +
-                    'white-space: nowrap !important;' +
-                '}' +
-                '.user-web-menu a:visited {' +
-                    ' color: #000 !important;' +
-                '}' +
-                '.user-web-menu a {' +
-                    'text-decoration: none !important;' +
-                    'cursor: pointer !important;' +
-                '}' +
-                '.user-web-menu li {' +
-                    'border-top: solid 1px #ddd !important;' +
-                '}' +
-                '.user-web-menu li.bold * {' +
-                    'font-weight: bold !important;' +
-                '}' +
-                '.user-web-menu li.user-web-separator {' +
-                    'padding: 0 !important;' +
-                    'border-top: solid 1px #aaa !important;' +
-                '}' +
-                '.user-web-menu li.user-web-separator span {' +
-                    'padding: 0 !important;' +
-                '}' +
-                '.user-web-menu a, .user-web-menu span {' +
-                    'padding: 1px 10px !important;' +
-                    'font-weight: normal !important;' +
-                    'display: block !important;' +
-                '}' +
-                '.user-web-menu span {' +
-                    'color: #888 !important;' +
-                    'font-style: italic !important;' +
-                '}' +
-                '.user-web-menu a:hover {' +
-                    'background-color: #def !important;' +
-                '}' +
-                '.readr-container a {' +
-                    'text-decoration: underline dotted #aaa !important;' + /* uw-uln */
-                '}' +
-                '.readr-container h1, .readr-container h2, .readr-container h3, .readr-container h4 {' +
-                    'font-family: ' + me.fonts[me.currentFont] + ', Comic Sans MS !important;' +
-                    'font-weight: bold !important;' +
-                    'margin: 30px 0 10px !important;' +
-                '}' +
-                '.readr-container img + * {' +
-                    'font-style: italic !important;' +
-                '}' +
-                '.readr-container-forced, .readr-container-forced * {' +
-                    'color: #000 !important;' +
-                '}' +
-                '.readr-marked {' +
-                    'border-top: dotted 1px #f8f !important; padding-top: 5px !important;' +
-                    'border-bottom: dotted 1px #f8f !important; padding-bottom: 8px !important;' +
-                '}' +
-                '.readr-highlight {' +
-                    'background-color: #ffff80 !important;' +
-                '}' +
-                '.readr-popout {' + //qq
-                    "min-width: 500px;" +
-                    "max-width: 800px;" +
-                    "margin: 40px auto 800px !important;" +
-                    "background-color: #fff;" +
-                    "border: solid 1px #000;" +
-                    "border-radius: 7px !important;" +
-                    "padding: 70px;" +
-                    "z-index: 99999999;" +
-                '}' +
-                '.readr-links h1 {' +
-                    ' margin: 0 0 20px !important;' +
-                    ' font-size: 20px !important;' +
-                    ' font-style: italic !important;' +
-                '}' +
-                '.readr-links a:visited {' +
-                    ' color: #222 !important;' + /* uw-clr */
-                '}' +
-                '.readr-popout p {' +
-                    "margin: 10px 0 !important;" +
-                '}' +
-                '.readr-popout * {' +
-                    "position: relative !important;" +
-                    "float: none !important;" +
-                    "width: auto !important;" +
-                    "max-width: 99999px !important;" +
-                '}' +
-                me.getReadrFont()
+        me.showHelp = function(e) {
+            var pop = $("<div class='uw-help'>");
+            pop.html(
+                "<table>" +
+                    "<tr><th>General...</th></tr>" +
+                    "<tr><td>`</td><td>Toggle...</td></tr>" +
+                    "<tr><td></td><td>Read</td></tr>" +
+                    "<tr><td></td><td>Read large</td></tr>" +
+                    "<tr><td></td><td>Popout</td></tr>" +
+                    "<tr><td></td><td>Undo reading</td></tr>" +
+                    "<tr><td>Alt+`</td><td>Show menu</td></tr>" +
+                    "<tr><td>Ctrl+`</td><td>Find element</td></tr>" +
+                    "<tr><td>Shift+`</td><td>Undo read</td></tr>" +
+                    "<tr><td>Ctrl+Shift+`</td><td>Toggle user style</td></tr>" +
+                    "<tr><td>&nbsp;</td></tr>" +
+                    "<tr><th>Reading...</th></tr>" +
+                    "<tr><td>Ctrl+Alt+Num+</td><td>Change font</td></tr>" +
+                    "<tr><td>Ctrl+Alt+Num-</td><td>Change font</td></tr>" +
+                    "<tr><td>Shift+Alt+Num+</td><td>Font size +</td></tr>" +
+                    "<tr><td>Shift+Alt+Num-</td><td>Font size -</td></tr>" +
+                    "<tr><td>&nbsp;</td></tr>" +
+                    "<tr><th>Marking...</th></tr>" +
+                    "<tr><td>Left or k</td><td>Previous paragraph</td></tr>" +
+                    "<tr><td>Right or j</td><td>Next paragraph</td></tr>" +
+                    "<tr><td>ESC</td><td>Cancel Marking</td></tr>" +
+                    "<tr><td>&nbsp;</td></tr>" +
+                    "<tr><th>Finding...</th></tr>" +
+                    "<tr><td>f</td><td>Forced read</td></tr>" +
+                    "<tr><td>Enter or p</td><td>Popout read</td></tr>" +
+                    "<tr><td>DEL</td><td>Delete elements</td></tr>" +
+                    "<tr><td>ESC</td><td>Cancel find</td></tr>" +
+                    "<tr><td>Right / Left</td><td>Next / Previous node</td></tr>" +
+                "</table>"
             );
+
+            var cls =   $("<div class='uw-help-button'>")
+                .text("Close")
+                .click(function(e) {
+                    pop.hide();
+                    return false;
+                });
+            pop.append(cls);
+            $("body").append(pop);
         };
 
-
-
-        me.getFontMsg = function () { //qqqq
-            return me.fonts[me.currentFont] + " (" + me.fontSize + "/" + me.getLineHeight() + ")";
-        }
-
-        me.getReadrFont = function (match) {
-            var msg = me.getFontMsg();
-            log("setFont", msg);
-
-            if (match == null) match = '*';
-
-            return '' +
-                '.readr-container, .readr-container ' + match + ' {' +
-                    'font-family: ' + me.fonts[me.currentFont] + ', Comic Sans MS !important;' +
-                    'font-size: ' + me.fontSize + 'px !important;' +
-                    'line-height: ' + me.getLineHeight() + 'px !important;' +
-                    'font-weight: normal !important;' + /* uw-wgt */
-                    'font-style: normal !important;' + /* uw-sty */
-                    'text-align: justify !important;' + /* uw-jfy */
-                    'color: #222 !important;' + /* uw-clr */
-                '}' +
-                '.readr-med, .readr-med * {' +
-                    'font-family: ' + me.fonts[me.currentFont] + ', Comic Sans MS !important;' +
-                    'text-align: justify !important;' + /* uw-jfy */
-                '}' +
-                '@media (max-width: 840px) {' +  //fnt
-                    '.readr-container, .readr-container ' + match + ',' +
-                    '.readr-med, .readr-med * {' +
-                        'font-size: ' + me.fontSizeSmall + 'px !important;' +
-                        'line-height: ' + me.getLineHeightSmall() + 'px !important;' +
-                    '}' +
-                '}';
-        };
-
-        /* menu actions ********************************************************************************************************************** */
-
-        me.markElementAndBind = function (e) {
-            if (!me.marking) {
-                me.marking = true;
-                me.markElement($(e.target));
-                // log("readr binding", "markElement");
-                $('body').bind("mouseup.uw-markElement", me.mouseUpMarkElement);
-                $('body').bind("keyup.uw-keyUpMarkElement", me.keyUpMarkElement);
-
-                document.oncontextmenu = function (e) {
-                    if (me.marking) {
-                        me.markElementCancel();
-                        return false;
-                    }
-                };
-            }
-        };
-
-        me.keyUpMarkElement = function (e) {
-            me.run(function () {
-                switch (e.keyCode) {
-                    case 27: //esc
-                        me.markElementCancel();
-                        break;
-                }
-            });
-        };
-
-        me.markElementCancel = function () {
-            me.run(function () {
-                me.marking = false;
-                $('body').unbind("mouseup.uw-markElement");
-                $('body').unbind("keyup.uw-keyUpMarkElement");
-            });
-        };
-
-        me.markElement = function (target) {
-            me.clearSelection();
-            $(".readr-marked").removeClass("readr-marked");
-            if (target.prop("tagName") != "P" && target.parent().prop("tagName") == "P") target = target.parent();
-            target.addClass("readr-marked");
-            me.scrollToElement(target);
-        };
-
-        me.highlightElement = function (target) {
-            me.clearSelection();
-            if (target.prop("tagName") != "P" && target.parent().prop("tagName") == "P") target = target.parent();
-            target.addClass("readr-highlight");
-        };
-
-        me.mouseUpMarkElement = function (e) {
-            if (e.pageX >= me.startX + 20 || e.pageY >= me.startY + 20) {
-                me.markElementCancel();
-                return;
-            }
-
-            switch (e.button) {
-                case 0: //chrome
-                    me.run(function () {
-                        me.markElement($(e.target));
-                    });
-                    break;
-                case 1:
-                    if (document.all) { //IE
-                        me.run(function () {
-                            me.markElement($(e.target));
-                        });
-                    }
-                    break;
-                case 2: //right click
-                    break;
-            }
-        };
+        /*** menu actions ********************************************************************************************* */
 
         me.hideImages = function () {
             $("img").hide();
@@ -1214,43 +788,61 @@ try {
             me.refreshMenu();
         };
 
-        me.doRead = function(width, widthMargin, parentClass) {
-            if (me.url.match(/mail\.google/i) == null) {
-                $("*").filter(function() {
-                    var w = $(this).width();
-                    return w <= width + widthMargin && w >= width - widthMargin;
-                }).addClass(parentClass);
-            }
-            else {
-                $(".ii.gt.adP.adO").addClass(parentClass);
-            }
+        me.enableSelect = function() {
+            var styles="*, p, div { user-select:text !important; -moz-user-select:text !important; -webkit-user-select:text !important; }";
+            $("head").append($("<style />").html(styles));
 
-            me.activeReadr = true;
-            me.refreshMenu();
+            var allowNormal = function() {
+                return true;
+            };
+
+            $("*[onselectstart], *[ondragstart], *[oncontextmenu]")
+                .unbind("contextmenu")
+                .unbind("selectstart")
+                .unbind("dragstart")
+                .unbind("mousedown")
+                .unbind("mouseup")
+                .unbind("click")
+                .attr("onselectstart", allowNormal)
+                .attr("oncontextmenu", allowNormal)
+                .attr("ondragstart",allowNormal);
         };
 
-        me.runReadr = function (e, options) {
-            me.clearSelection();
-
-            var target = e ? e.target : null;
-
-            me.loadReadr(target, options);
-            me.refreshMenu();
+        me.setClipboard = function (url) {
+            me.run(function () {
+                window.GM.setClipboard(me.selectedText.trim());
+            });
         };
 
-        me.undoReadr = function () {
-            me.unloadReadr();
-            $(".readr-marked").removeClass("readr-marked");
-            me.refreshMenu();
+        me.openSearch = function (url) {
+            me.run(function () {
+                window.open(url.replace("TESTSEARCH", encodeURIComponent(me.selectedText.trim()).replace(/%20/g, "+")), "", "");
+            });
         };
 
-        me.fonts = [ //fnt //sans...
+        me.navigateTo = function (url) {
+            me.run(function () {
+                url = url.trim();
+
+                if (url.indexOf("http") != 0) {
+                    url = "http://" + url;
+                }
+
+                window.open(url, "", "");
+            });
+        };
+
+        /*** fonts **************************************************************************************************** */
+
+        me.fonts = [ //fnt
+            "Ubuntu",
             "Kalinga",
+            "Yu Mincho",
+            "Urdu Typesetting", //sans...
             "Euphemia",
             "Corbel",
-            "Segoe UI", //qq
+            "Segoe UI",
             "Levenim MT",
-            "Ubuntu",
             "Leelawadee UI",
             "Century Gothic",
             "Gadugi",
@@ -1258,10 +850,8 @@ try {
             "Estrangelo Edessa",
             "Malgun Gothic",
             "Comic Sans MS", //serif...
-            "Yu Mincho",
             "Batang",
             "Traditional Arabic",
-            "Urdu Typesetting",
             "Comic Sans MS", //more...
             "Gisha",
             "Candara",
@@ -1338,55 +928,237 @@ try {
             "Comic Sans MS"
         ];
 
-        me.currentFont = 0;
+        /*** menu and reading styles ********************************************************************************** */
 
-        me.setFont = function (change) {
+        me.addStyleElement = function (id, css) {
+            $(document.head).append(
+                $("<style>")
+                    .attr("id", id)
+                    .attr("rel", "stylesheet")
+                    .attr("type", "text/css")
+                    .text(css));
+        };
+
+        me.addStyles = function () {
+            if (me.addStylesDone) return;
+            me.addStylesDone = true;
+
+            me.addStyleElement("uw-css",
+                "html body .uw-help { " +
+                    "position: fixed; top: 10px; left: 10px; border: solid 1px #000; background-color: #fff; z-index: 9999999; padding: 10px;" +
+                "}" +
+                "html body .uw-help td, html body .uw-help th { " +
+                    "padding: 1px 20px 1px 5px;" +
+                "}" +
+                "html body .uw-help-button { " +
+                    "border:solid 1px #000; padding:5px; margin-top:20px; text-align:center; cursor:pointer;" +
+                "}" +
+                "html body .uw-menu { " +
+                    "text-align: left !important;" +
+                    "padding: 0 !important;" +
+                    "position: absolute;" +
+                    "border: solid 1px #000;" +
+                    "font-family: calibri;" +
+                    "font-size: 12px;" +
+                    "color: #000;" +
+                    "z-index: 999999999;" +
+                    "text-align: center;" +
+                "}" +
+                "html body .uw-menu, html body .uw-menu *, html body .uw-menu ul li a, html body .uw-menu ul li span, html body .uw-help td, html body .uw-help th { " +
+                    "font-family: Corbel, Comic Sans MS !important;" +
+                    "font-size: 13px !important;" +
+                    "font-style: normal !important;" +
+                    "line-height: 13px !important;" +
+                    "letter-spacing: 0 !important;" +
+                    "color: #000 !important;" +
+                    "background-color: #fff !important;" +
+                    "text-align: left !important;" +
+                    "margin: 0 !important;" +
+                "}" +
+                "html body .uw-menu ul {" +
+                    "display: table-cell !important;" +
+                "}" +
+                "html body .uw-menu ul.uw-menu-left {" +
+                    "border-right: solid 1px #000 !important;" +
+                "}" +
+                "html body .uw-menu ul, html body .uw-menu li {" +
+                    "margin: 0 !important;" +
+                    "padding: 0 !important;" +
+                    "list-style-type: none !important;" +
+                    "list-style: none !important;" +
+                    "white-space: nowrap !important;" +
+                "}" +
+                "html body .uw-menu a:visited {" +
+                    " color: #000 !important;" +
+                "}" +
+                "html body .uw-menu a {" +
+                    "text-decoration: none !important;" +
+                    "cursor: pointer !important;" +
+                "}" +
+                "html body .uw-menu li {" +
+                    "border-top: solid 1px #ddd !important;" +
+                "}" +
+                "html body .uw-menu li.bold * {" +
+                    "font-weight: bold !important;" +
+                "}" +
+                "html body .uw-menu li.uw-separator {" +
+                    "padding: 0 !important;" +
+                    "border-top: solid 1px #aaa !important;" +
+                "}" +
+                "html body .uw-menu li.uw-separator span {" +
+                    "padding: 0 !important;" +
+                "}" +
+                "html body .uw-menu a, html body .uw-menu span {" +
+                    "padding: 1px 10px !important;" +
+                    "font-weight: normal !important;" +
+                    "display: block !important;" +
+                "}" +
+                "html body .uw-menu span {" +
+                    "color: #888 !important;" +
+                    "font-style: italic !important;" +
+                "}" +
+                "html body .uw-menu a:hover {" +
+                    "background-color: #def !important;" +
+                "}" +
+                "html body .uw-container a {" +
+                    "text-decoration: underline dotted #aaa !important;" + /* uw-uln */
+                    "border-bottom: none !important;" + /* uw-btm */
+                "}" +
+                "html body .uw-container h1, html body .uw-container h2, html body .uw-container h3, html body .uw-container h4 {" +
+                    "font-family: " + me.fonts[me.currentFont] + ", Comic Sans MS !important;" +
+                    "font-weight: bold !important;" +
+                    "margin-top: 30px !important;" +
+                    "margin-bottom: 10px !important;" +
+                "}" +
+                "html body .uw-container p, html body p.uw-container {" +
+                    "margin-top: 15px !important;" + /* uw-pmgn */
+                    "margin-bottom: 15px !important;" +
+                "}" +
+                "html body.uw-large .uw-container p, html body.uw-large p.uw-container {" +
+                    "text-indent: 20px !important;" +
+                    "margin-top: 30px !important;" +
+                    "margin-bottom: 30px !important;" +
+                "}" +
+                "html body .uw-container img + * {" +
+                    "font-style: italic !important;" +
+                "}" +
+                "html body .uw-marked {" +
+                    "border-top: dotted 1px #f8f !important; padding-top: 5px !important;" +
+                "}" +
+                "html body .uw-highlight {" +
+                    "background-color: #ffff80 !important;" +
+                "}" +
+                "html body .uw-popout {" +
+                    "min-width: 350px;" +
+                    "max-width: 900px;" +
+                    "margin: 40px auto 800px !important;" +
+                    "background-color: #fff;" +
+                    "border: solid 1px #bbb;" +
+                    "border-radius: 7px !important;" +
+                    "padding: 70px;" +
+                    "z-index: 99999999;" +
+                "}" +
+                "html body .uw-links h1 {" +
+                    " margin: 0 0 20px !important;" +
+                    " font-size: 20px !important;" +
+                    " font-style: italic !important;" +
+                "}" +
+                "html body .uw-links a:visited {" +
+                    " color: #222 !important;" + /* uw-clr */
+                "}" +
+                "html body .uw-popout * {" +
+                    "position: relative !important;" +
+                    "float: none !important;" +
+                    "width: 100% !important;" +
+                    "max-width: 99999px !important;" +
+                    "background-color: #fff !important;" +
+                "}" + //fnt...
+                "html body .uw-container, html body .uw-container * {" +
+                    "font-family: " + me.fontA.large.face + ", Comic Sans MS !important;" +
+                    "font-size: " + me.fontA.large.size + "px !important;" +
+                    "line-height: " + me.fontA.large.height + "px !important;" +
+                    "font-weight: " + me.fontA.large.weight + " !important;" +
+                    "color: " + me.fontA.large.color + " !important;" +
+                    "font-style: normal !important;" + /* uw-sty */
+                    "text-align: justify !important;" + /* uw-jfy */
+                "}" +
+                "html body.uw-large .uw-container, html body.uw-large .uw-container * {" +
+                    "font-family: " + me.fontB.large.face + ", Comic Sans MS !important;" +
+                    "font-size: " + me.fontB.large.size + "px !important;" +
+                    "line-height: " + me.fontB.large.height + "px !important;" +
+                    "font-weight: " + me.fontB.large.weight + " !important;" +
+                    "color: " + me.fontB.large.color + " !important;" +
+                "}" +
+                "html body .uw-read, html body .uw-read * {" +
+                    "color: #888 !important;" +
+                "}" +
+                "@media (max-width: 700px) {" +
+                    "html body .uw-container, html body .uw-container * {" +
+                        "font-family: " + me.fontA.small.face + ", Comic Sans MS !important;" +
+                        "font-size: " + me.fontA.small.size + "px !important;" +
+                        "line-height: " + me.fontA.small.height + "px !important;" +
+                        "font-weight: " + me.fontA.small.weight + " !important;" +
+                        "color: " + me.fontA.small.color + " !important;" +
+                    "}" +
+                    "html body.uw-large .uw-container, html body.uw-large .uw-container * {" +
+                        "font-family: " + me.fontB.small.face + ", Comic Sans MS !important;" +
+                        "font-size: " + me.fontB.small.size + "px !important;" +
+                        "line-height: " + me.fontB.small.height + "px !important;" +
+                        "font-weight: " + me.fontB.small.weight + " !important;" +
+                        "color: " + me.fontB.small.color + " !important;" +
+                    "}" +
+                    "html body .uw-popout {" +
+                        "min-width: 100px;" +
+                        "margin: 10px auto 800px !important;" +
+                    "}" +
+                "}"
+            );
+        };
+
+        me.getFontMsg = function () {
+            return me.fonts[me.currentFont] + " (" + me.fontSizeCurrent + "/" + me.getLineHeight() + ")";
+        };
+
+        me.getAltFontCss = function () {
+            log("getAltFontCss", me.getFontMsg());
+
+            return "" +
+                "html body .uw-container, html body .uw-container * {" +
+                    "font-family: " + me.fonts[me.currentFont] + ", Comic Sans MS !important;" +
+                    "font-size: " + me.fontSizeCurrent + "px !important;" +
+                    "line-height: " + me.getLineHeight() + "px !important;" +
+                "}";
+        };
+
+        me.setAltFont = function (change) { //fnt
             me.currentFont += change;
             if (me.currentFont >= me.fonts.length) me.currentFont = 0;
             if (me.currentFont < 0) me.currentFont = me.fonts.length - 1;
-
-            me.addStyle(me.getReadrFont());
+            me.addStyleElement("uw-set-font", me.getAltFontCss());
         };
 
-        me.setFontSize = function (change) {
-            me.fontSize += change; //fnt
-            me.fontSizeSmall += change;
-            me.addStyle(me.getReadrFont());
+        me.setAltFontSize = function (change) {
+            me.fontSizeCurrent += change;
+            me.addStyleElement("uw-set-font-size", me.getAltFontCss());
+        };
+
+        me.setFontA = function () {
+            $("body").removeClass("uw-large");
+        };
+
+        me.setFontB = function () {
+            $("body").addClass("uw-large");
+        };
+
+        me.isFontB = function () {
+            return $("body").hasClass("uw-large");
         };
 
         me.getLineHeight = function () {
-            return parseInt(me.fontSize * me.fontRatio, 10);
+            return parseInt(me.fontSizeCurrent * me.fontRatio, 10);
         };
 
-        me.getLineHeightSmall = function () {
-            return parseInt(me.fontSizeSmall * me.fontRatio, 10);
-        };
-
-        me.setClipboard = function (url) {
-            me.run(function () {
-                GM.setClipboard(me.selectedText.trim());
-            });
-        };
-
-        me.openSearch = function (url) {
-            me.run(function () {
-                window.open(url.replace("TESTSEARCH", encodeURIComponent(me.selectedText.trim()).replace(/%20/g, "+")), "", "");
-            });
-        };
-
-        me.navigateTo = function (url) {
-            me.run(function () {
-                url = url.trim();
-
-                if (url.indexOf("http") != 0) {
-                    url = "http://" + url;
-                }
-
-                window.open(url, "", "");
-            });
-        };
-
-        /* user style ********************************************************************************************************************** */
+        /*** user style *********************************************************************************************** */
 
         me.loadUserStyle = function () {
 
@@ -1413,7 +1185,7 @@ try {
                 reddit: { exp: /reddit\.com/i },
                 sonar: { exp: /\:9000/i },
                 stack_overflow: { exp: /(stackoverflow|stackexchange|superuser)\.com/i },
-                test: { exp: /(testlocal|home|dev|testinject|testxx)\.htm/i },
+                test: { exp: /(testlocal|home|dev|dev-fonts|testinject|testxx)\.htm/i },
                 tutorials_point: { exp: /tutorialspoint\.com/i },
                 yammer: { exp: /yammer\.com/i },
                 wikipedia: { exp: /wikipedia\.org/i }
@@ -1425,20 +1197,18 @@ try {
                 var cfg = config[name];
                 cfg.name = name;
 
-                if (me.url.match(cfg.exp) != null) {
-                    me.currentConfig = cfg;
+                if (me.url.match(cfg.exp) == null) continue;
 
-                    if (cfg.exp != "") {
-                        me.foundUserStyle = true;
+                me.currentConfig = cfg;
+                if (cfg.exp != "") {
+                    me.foundUserStyle = true;
 
-                        if (name == "feedly" && me.isSmall()) {
-                            name = "feedly_compact";
-                        }
-
-                        me.loadUserStyleSheet(name.replace(/_/ig, "-"));
-                        me.bindOnKeyDown();
-                        break;
+                    if (name == "feedly" && me.isSmall()) {
+                        name = "feedly_compact";
                     }
+
+                    me.loadUserStyleSheet(name.replace(/_/ig, "-"));
+                    break;
                 }
             }
 
@@ -1446,147 +1216,146 @@ try {
             me.refreshMenu();
         };
 
-        me.getUrl = function (path) {
-            var unique = settings.uniqueUrls ? "?" + new Date().valueOf() : "";
-            return me.getRoot() + path + unique;
-        };
-
         me.loadUserStyleSheet = function (name) {
             var url = me.getUrl("styles/" + name + ".css");
 
-            //console.log(logPrefix + "inserting style     :", url);
             log("inserting style", url);
 
             if (me.userStyleSheet == null) {
-                me.userStyleSheet = $('<link>')
-                    .attr('id', "user-web-css")
-                    .attr('rel', 'stylesheet')
-                    .attr('type', 'text/css');
+                me.userStyleSheet = $("<link>")
+                    .attr("id", "uw-css")
+                    .attr("rel", "stylesheet")
+                    .attr("type", "text/css");
 
                 $(document.head).append(me.userStyleSheet);
             }
 
-            me.userStyleSheet.attr('href', url);
+            me.userStyleSheet.attr("href", url);
             me.activeUserStyle = true;
         };
 
         me.unloadUserStyle = function () {
-            me.userStyleSheet.attr('href', "");
+            me.userStyleSheet.attr("href", "");
             me.activeUserStyle = false;
             me.refreshMenu();
         };
 
         me.openUserStyle = function () {
-            window.open(me.userStyleSheet.attr('href'));
+            window.open(me.userStyleSheet.attr("href"));
         };
 
-        /* readr... --------------------------------------------------------------- */
+        /*** display ************************************************************************************************** */
 
-        me.loadReadr = function (target, options) {
-            me.options = options || {};
+        me.tidyUp = function (e) {
+            if (me.url.match(/www\.inoreader\.com/i)) return;
 
-            if (target == null) {
-                log("readr binding", "mouseUpStart");
-                $('body').bind("mouseup.uws", me.mouseUpStart);
-            }
-            else {
-                // log("readr target", me.elToString($(target)));
-                me.find(target);
-            }
+            $("*").filter(function() {
+                var el = $(this);
+                var pos = el.css("position");
+
+                return (pos === "fixed" || pos === "sticky") && el.prop("tagName") != "PICTURE";
+            }).attr("style", "display:none !important");
         };
 
-        me.unloadReadr = function () {
-            $(".readr-container").removeClass("readr-container").removeClass("readr-container-forced");
-            me.activeReadr = false;
-        };
+        me.filterSpam = function () {
+            for (var i in me.filterConfig) {
+                var cfg = me.filterConfig[i];
+                if (me.url.match(cfg.exp) != null) {
+                    log("filter", cfg.filter);
 
-        me.mouseUpStart = function (e) {
-            me.run(function () {
-                $('body').unbind("mouseup.uws");
-                me.find(e.target);
-            });
-        };
+                    $(cfg.filter).each(function(i) {
+                        var id = this.id; if (id == "") id = "[none]";
+                        var className = this.className; if (className == "") className = "[none]";
+                        log("", "removing: id:", id, "; class:", className, ";");
+                        $(this).remove();
+                    });
 
-        me.find = function (target) {
-            me.el0 = $(target);
-            me.el = me.el0;
-            me.els.push(me.el);
-
-            if (me.options.find) {
-                me.boundAdvanced = true;
-                me.el0.css("background-color", "orange");
-                log("readr find", "adding bindings");
-
-                $('body').bind("keyup.uws", me.keyUp); //TODO: can this be bound repeatedly?
-                $('body').bind("mouseup.uws", me.mouseUpNext);
-
-                document.oncontextmenu = function () {
-                    return false;
-                };
-            }
-            else {
-                var main = me.findMain(me.el, me.el);
-
-                if (main) {
-                    me.el = main;
-                    me.found();
-                    me.lastTarget = target;
+                    me.addStyleElement(
+                        "uw-filter",
+                        cfg.filter + " { display: none !important; }"
+                    );
                 }
             }
         };
 
-        me.findMain = function (el, original) {
-            // log("findMain", me.elToString(el));
-            var parent = el.parent();
+        /*** reading ************************************************************************************************** */
 
-            if (parent.length == 0 || parent[0].tagName.toUpperCase() == "BODY") {
-                log("parent null, return", me.elToString(el));
-                return el;
-            }
-
-            if (parent.width() > el.width() + 30) {
-                if (el == original) el = parent;
-                // log("main found", me.elToString(el));
-                return el;
-            }
-
-            return me.findMain(parent, original);
+        me.readLite = function (e) {
+            me.tidyUp();
+            $("p").css({"text-align" : "justify"});
         };
 
-        me.autoPopout = function() {
-            me.el = me.findMainAuto();
-            if (me.el && me.el.length > 0) {
-                me.doPopout();
-                return true;
-            }
+        me.doReadAuto = function() {
+            var main = me.getMainAuto();
+            me.doRead(main);
+            var el = main.find("p:first");
+            if (me.marked.length > 0) el = me.marked;
+            me.markElementAndBind(el); //qqq
         };
 
-        me.doPopout = function () { //qq
+        me.doReadFromElement = function(el) {
+            var main = me.getMainFromElement(el);
+            if (main == null || main.length == 0) return;
+            me.doRead(main);
+        };
+
+        me.doRead = function(main) {
+            me.readingState = "reading";
             me.addStyles();
+            me.tidyUp();
+            main.addClass("uw-container");
+            me.activeReadr = true;
+            me.refreshMenu();
+        };
 
-            var rem = me.el.find("iframe, script, link, button, input, form, textarea, aside").remove();
-            // rem.each(function () {
-                // log($(this).html());
-            // });
+        me.undoRead = function () {
+            if (me.popoutDiv != null) {
+                me.popoutDiv.remove();
+                me.scrollToElement($("body"));
+            }
+            me.activePopout = false;
+            me.activeReadr = false;
+            me.readingState = "none";
+            me.setFontA();
+            $(".uw-container").removeClass("uw-container");
+            //qqq $(".uw-marked").removeClass("uw-marked");
+            me.markElementCancel();
+            me.refreshMenu();
+        };
+
+        me.doPopoutAuto = function() {
+            var main = me.getMainAuto();
+            if (main && main.length > 0) {
+                me.doPopout(main);
+            }
+        };
+
+        me.doPopout = function (el) {
+            me.tidyUp();
+            me.addStyles();
+            me.setFontB();
+            me.readingState = "popout";
+            me.activeReadr = true;
+
+            var rem = el.find("iframe, script, link, button, input, form, textarea, aside").remove();
+            // rem.each(function () { log($(this).html()); });
 
             var exclude = /share|sharing|social|twitter|tool|^side|related|comment|discussion|extra|contentWellBottom|kudo|^ad|keywords|secondary-column$|furniture|hidden|embedded-hyper/gi;
-            var hid = me.el.find("*").filter(function () {
+            var hid = el.find("*").filter(function () {
                 return (typeof (this.className) == "string" && this.className.match(exclude) !== null) ||
                     (typeof (this.id) == "string" && this.id.match(exclude) !== null) ||
-                    $(this).css('visibility') == 'hidden' ||
-                    $(this).css('display') == 'none';
+                    $(this).css("visibility") == "hidden" ||
+                    $(this).css("display") == "none";
             });
-            // hid.each(function () {
-                // log("removed", $(this).html().substr(0, 100));
-            // });
+            // hid.each(function () { log("removed", $(this).html().substr(0, 100)); });
             hid.remove();
 
-            me.el.find('*').attr('style', '');
+            el.find("*").attr("style", "");
 
-            var inner = me.el.html();
+            var inner = el.html();
             var doc = [];
-            doc.push("<div class='readr-popout readr-container'>");
-            doc.push(" <div class='readr-links'>");
+            doc.push("<div class='uw-popout uw-container'>");
+            doc.push(" <div class='uw-links'>");
             doc.push("  <a href='" + document.location.href + "'><h1>" + document.title + "</h1></a>");
             doc.push(" </div>");
             doc.push(" <div>");
@@ -1596,110 +1365,318 @@ try {
             var html = doc.join("");
 
             document.body.insertAdjacentHTML("afterbegin", html);
-            me.popoutDiv = $(".readr-popout");
-            me.scrollToElement(me.popoutDiv);
-
-            me.el = null;
-            me.el0 = null;
-            me.els = [];
-            me.activePopout = true;
-            me.refreshMenu();
-        };
-
-        me.undoPopout = function () {
-            if (me.popoutDiv != null) {
-                me.popoutDiv.remove();
-            }
-
-            me.activePopout = false;
-            me.refreshMenu();
-        };
-
-        me.testFonts = function () {
-            me.fontSize = 18;
-            me.addStyles();
-
-            var doc = [];
-            doc.push("<div class='readr-popout readr-container'>");
-            var len = me.fonts.length;
-            for (var i = 0; i < len; i++) {
-                var msg = me.fonts[i] + " (" + me.fontSize + "/" + me.getLineHeight() + ")";
-                doc.push(" <h4>" + msg + "</h4>");
-                doc.push(" <p style='font-family:" + me.fonts[i] + ", Comic Sans MS !important;'>");
-                doc.push(" Wikipedia began as a complementary project for Nupedia, a free online English-language encyclopedia project whose articles were written by experts and reviewed under a formal process. Nupedia was founded on March 9, 2000, under the ownership of Bomis, a web portal company. Its main figures were the Bomis CEO Jimmy Wales and Larry Sanger, editor-in-chief for Nupedia and later Wikipedia. Nupedia was licensed initially under its own Nupedia Open Content License, switching to the GNU Free Documentation License before Wikipedia's founding at the urging of Richard Stallman. Sanger and Wales founded Wikipedia. While Wales is credited with defining the goal of making a publicly editable encyclopedia, Sanger is credited with the strategy of using a wiki to reach that goal. On January 10, 2001, Sanger proposed on the Nupedia mailing list to create a wiki as a feeder project for Nupedia.");
-                doc.push(" </p>");
-            }
-            doc.push("</div>");
-            var html = doc.join("");
-
-            document.body.insertAdjacentHTML("afterbegin", html);
-            me.popoutDiv = $(".readr-popout");
-            me.scrollToElement(me.popoutDiv);
+            me.popoutDiv = $(".uw-popout");
+        
+            var el = $(".uw-popout p:first");
+            me.markElementAndBind(el); //qqq
 
             me.activePopout = true;
             me.refreshMenu();
         };
 
-        me.findMainAuto = function() {
-            var cen = me.findCentreElement();
-            if (cen == null) {
-                pop("popout", "can't find centre p");
-                return null;
-            }
-            else {
-                return me.findMain($(cen));
-            }
-        };
+        /*** content ************************************************************************************************** */
 
-        me.findCentreElement = function() {
-            var cenV = 500;
-            var cenH = document.documentElement.clientWidth / 2;
+        me.getMainAuto = function() {
+            var ps = $("p");
+            var parents = [];
+            var parentCounter = [];
 
-            var elements = $('p');
-            var cen = null;
+            //get array of parents of p's...
+            ps.each(function() {
+                var el = $(this);
+                var elP = el.parent();
 
-            elements.each(function() {
-                var el = $(this); //qq
-                var pos = this.getBoundingClientRect();
-                var ml = parseInt(el.css('marginLeft'), 10);
-                var mr = parseInt(el.css('marginRight'), 10);
-                var pl = parseInt(el.css('paddingLeft'), 10);
-                var pr = parseInt(el.css('paddingRight'), 10);
-                var l = parseInt(pos.left, 10) - ml;
-                var w = el.width() + ml + mr + pl + pr;
-                var r = l + w;
-                // var mt = parseInt(el.css('marginTop'), 10);
-                // var mb = parseInt(el.css('marginBottom'), 10);
-                // var pt = parseInt(el.css('paddingTop'), 10);
-                // var pb = parseInt(el.css('paddingBottom'), 10);
-                // var t = parseInt(pos.top, 10) - mt;
-                // var h = el.height() + mt + mb + pt + pb;
-                // var b = t + h;
+                var res = $.grep(parents, function(p, i) {
+                    return p.el[0] == elP[0];
+                });
 
-                // log(this.tagName);
-                // log("l", l);
-                // log("t", t);
-                // log("w", w);
-                // log("h", h);
-                // log("b", b);
-                // log("r", r);
-                // log("mt", mt);
-                // log("ml", ml);
-                // log("mr", mr);
-                // log("mb", mb);
-                // log("pt", pt);
-                // log("pl", pl);
-                // log("pr", pr);
-                // log("pb", pb);
-
-                // if (t < cenV && b > cenV && l < cenH && r > cenH) {
-                if (l < cenH && r > cenH) {
-                    cen = this;
-                    return false;
+                if (res.length == 0) {
+                    parents.push({ el:elP, ps:1 });
+                }
+                else {
+                    res[0].ps++;
                 }
             });
 
-            return cen;
+            //find parent with most p's...
+            var sorted = parents.sort(function(a, b) {
+                return b.ps - a.ps;
+            });
+
+            if (sorted.length == 0) {
+                log("getMainAuto", "can't find main p container");
+                return null;
+            }
+            else {
+                var main = sorted[0].el;
+                return main;
+            }
+        };
+
+        me.getMainFromElement = function (el, original) {
+            // log("getMainFromElement", me.elToString(el));
+            var parent = el.parent();
+
+            if (parent.length == 0 || parent[0].tagName.toUpperCase() == "BODY") {
+                log("parent null, return", me.elToString(el));
+                return el;
+            }
+
+            if (parent.width() > el.width() + 30) {
+                if (el == original) el = parent;
+                // log("main parent", me.elToString(el));
+                return el;
+            }
+
+            return me.getMainFromElement(parent, original);
+        };
+
+        /*** finding ************************************************************************************************** */
+
+        me.startFind = function () {
+            me.clearSelection();
+            me.finder = new function() {
+                this.els = [];
+                this.el = function() {
+                    return this.els[this.els.length - 1];
+                };
+                this.el0 = function() {
+                    return this.els[0];
+                };
+            }();
+
+            log("uw binding", "startFind");
+            $("body").bind("mouseup.uw-find-first",
+                function (e) {
+                    me.run(function () {
+                        $("body").unbind("mouseup.uw-find-first");
+                        var el = $(e.target);
+                        me.finder.els.push(el);
+                        el.css("background-color", "orange");
+                        log("uw find", "adding bindings");
+
+                        $("body").bind("keyup.uw-find", me.onFindingKeyUp);
+                        $("body").bind("mouseup.uw-find", me.onFindingMouseUp);
+
+                        document.oncontextmenu = function () {
+                            return false;
+                        };
+                    });
+                }
+            );
+
+            me.refreshMenu();
+        };
+
+        me.onFindingKeyUp = function (e) {
+            me.run(function () {
+                switch (e.keyCode) {
+                    case 27: //esc
+                        me.cancelFind();
+                        break;
+                    case 70: //f > force
+                        me.found("force");
+                        break;
+                    case 68: //d
+                    case 46: //DEL
+                        me.found("remove");
+                        break;
+                    case 13: //enter
+                    case 80: //p > popout
+                        me.found("popout");
+                        break;
+                    case 37: //back
+                        if (me.finder.el() != me.finder.el0()) {
+                            me.finder.el().css("background-color", "");
+                            me.finder.els.pop();
+                            //me.finder.el = me.finder.els[me.finder.els.length - 1];
+                        }
+                        break;
+                    case 39: //forward
+                        me.findParent();
+                        break;
+                }
+            });
+        };
+
+        me.onFindingMouseUp = function (e) {
+            me.run(function () {
+                switch (e.button) {
+                    case 0:
+                        me.findParent(); //chrome
+                        break;
+                    case 1:
+                        if (document.all) { //IE
+                            me.findParent();
+                        }
+                        break;
+                    case 2: //right click
+                        setTimeout(function () {
+                            me.found("remove");
+                        }, 1);
+                        break;
+                }
+            });
+        };
+
+        me.findParent = function () {
+            var el = me.finder.el();
+            if (el[0].tagName == "BODY") {
+                return;
+            }
+
+            var elp = el.parent();
+            if (elp[0].tagName == "BODY") {
+                elp.css("background-color", "red");
+            }
+            else {
+                elp.css("background-color", "gold");
+            }
+
+            elp.addClass("uw-find-el");
+            me.finder.els.push(elp);
+        };
+
+        me.found = function (option) {
+            var el = me.finder.el();
+            me.cancelFind();
+
+            switch (option) {
+                case "force":
+                    me.doRead(el);
+                    break;
+                case "remove":
+                    el.remove();
+                    return;
+                case "popout":
+                    me.doPopout(el);
+                    return;
+            }
+        };
+
+        me.cancelFind = function () {
+            $(".uw-find-el").css("background-color", "");
+            me.finder.el0().css("background-color", "");
+            $("*").unbind(".uw-find");
+            me.setReloader();
+            me.finder = null;
+        };
+
+        /*** mark and highlight *************************************************************************************** */
+
+        me.markElementAndBind = function (el) {
+            if (!me.marking) {
+                me.marking = true;
+                if (me.linkResumeMarkElement) {
+                    me.linkResumeMarkElement.show();
+                }
+                $("body").bind("mouseup.uw-marking", me.markElementMouseUp);
+                $("body").bind("keyup.uw-marking", me.markElementKeyUp);
+                $("body").bind("dblclick.uw-marking", me.markElementCancel);
+                
+                document.oncontextmenu = function () {
+                    me.markElementCancel();
+                    return false;
+                };
+            }
+
+            me.markElement(el);
+        };
+
+        me.markElementKeyUp = function (e) {
+            me.run(function () {
+                switch (e.keyCode) {
+                    case 27: //esc
+                        me.markElementCancel();
+                        break;
+                }
+            });
+        };
+
+        me.markElementCancel = function () {
+            if (me.marking) {
+                log("markElementCancel");
+                me.marking = false;
+                $("body").unbind("mouseup.uw-marking");
+                $("body").unbind("keyup.uw-marking");
+                $("body").unbind("dblclick.uw-marking");
+                me.scrollToElement(me.marked, true);
+            }
+
+            me.setReloader();
+        };
+
+        me.markElement = function (target) {
+            me.clearSelection();
+            $(".uw-marked").removeClass("uw-marked");
+            if (target.prop("tagName") != "P" && target.parent().prop("tagName") == "P") target = target.parent();
+            me.marked.addClass("uw-read");
+            me.marked = target;
+            target.removeClass("uw-read").addClass("uw-marked");
+            me.scrollToElement(target);
+        };
+
+        me.markElementMouseUp = function (e) {
+
+            //if we're selecting text then cancel marking...
+            var x = e.pageX - me.startX;
+            var y = e.pageY - me.startY;
+            if (x < -5 || y < -5 || x > 5 || y > 5) {
+                me.markElementCancel();
+                return;
+            }
+
+            switch (e.button) {
+                case 0: //chrome
+                    me.run(function () {
+                        me.markElement($(e.target));
+                    });
+                    break;
+                case 1:
+                    if (document.all) { //IE
+                        me.run(function () {
+                            me.markElement($(e.target));
+                        });
+                    }
+                    break;
+                case 2: //right click
+                    break;
+            }
+        };
+
+        me.highlightElement = function (target) {
+            me.clearSelection();
+            if (target.prop("tagName") != "P" && target.parent().prop("tagName") == "P") target = target.parent();
+            target.addClass("uw-highlight");
+        };
+
+        /*** utils **************************************************************************************************** */
+
+        me.getUrl = function (path) {
+            var unique = settings.uniqueUrls ? "?" + new Date().valueOf() : "";
+            return me.getRoot() + path + unique;
+        };
+
+        me.getRoot = function () {
+            return settings.localUrls ? "https://localhost:44300/" : "https://rawgit.com/james-zerty/user-web/master/";
+        };
+
+        me.isSmall = function () {
+            return $(window).width() < 700;
+        };
+
+        me.run = function (fn) {
+            if (settings.handleErrors) {
+                try {
+                    fn();
+                }
+                catch (ex) {
+                    log(ex);
+                }
+            }
+            else {
+                fn();
+            }
         };
 
         me.elToString = function (el) {
@@ -1723,156 +1700,64 @@ try {
             }
         };
 
-        me.keyUp = function (e) {
-            me.run(function () {
-                switch (e.keyCode) {
-                    case 27: //esc
-                        me.cancelFind();
-                        break;
-                    case 70: //force
-                        me.options.forced = true;
-                        me.found();
-                        break;
-                    case 46: //delete
-                        me.options.remove = true;
-                        me.found();
-                        break;
-                    case 13: //enter
-                    case 80: //popout
-                        me.options.popout = true;
-                        me.found();
-                        break;
-                    case 37: //back
-                        if (me.el != me.el0) {
-                            me.el.css("background-color", "");
-                            me.els.pop();
-                            me.el = me.els[me.els.length - 1];
-                        }
-                        break;
-                    case 39: //forward
-                        me.findNext();
-                        break;
-                }
-            });
-        };
-
-        me.mouseUpNext = function (e) {
-            me.run(function () {
-                switch (e.button) {
-                    case 0:
-                        me.findNext(); //chrome
-                        break;
-                    case 1:
-                        if (document.all) { //IE
-                            me.findNext();
-                        }
-                        break;
-                    case 2: //right click
-                        setTimeout(function () {
-                            me.options.remove = true;
-                            me.found();
-                        }, 1);
-                        break;
-                }
-            });
-        };
-
-        me.findNext = function () {
-            if (me.el[0].tagName == "BODY") {
-                return;
-            }
-
-            me.el = me.el.parent();
-
-            if (me.el[0].tagName == "BODY") {
-                me.el.css("background-color", "red");
+        me.scrollToElement = function (el, instant) {
+            if (el == null || el.length == 0) return;
+            
+            var top = el.offset().top - 15;
+            
+            if (instant) {
+                $('html, body').scrollTop(top);
             }
             else {
-                me.el.css("background-color", "gold");
+                $("html, body").animate({ scrollTop: top });
             }
-
-            me.el.addClass("uws-el");
-            me.els.push(me.el);
         };
 
-        me.found = function () {
+        /*** dev ****************************************************************************************************** */
 
-            // log("popout", me.options.popout);
-            // log("remove", me.options.remove);
-            // log("forced", me.options.forced);
-
-            me.cancelFind();
-
-            if (me.options.popout) {
-                me.doPopout();
-                return;
+        me.setReloader = function() {
+            if (settings.reloader) {
+                document.oncontextmenu = function (e) {
+                    document.location.reload(true);
+                    return false;
+                };
             }
             else {
-                if (me.options.forced) {
-                    log("forced");
-                    me.el.addClass("readr-container").addClass("readr-container-forced");
-                }
-                else if (me.options.remove) {
-                    log("removing");
-                    me.el.remove();
-                    return;
-                }
-                else {
-                    log("reading ", me.fonts[me.currentFont], " (", me.fontSize, "/", me.getLineHeight(), ")");
-                    me.findMainContainers(me.el);
-                }
-            }
-
-            me.activeReadr = true;
-            me.refreshMenu();
-        };
-
-        me.cancelFind = function () {
-            if (me.boundAdvanced) {
-                $(".uws-el").css("background-color", "");
-                me.el0.css("background-color", "");
-                me.boundAdvanced = false;
-                $("*").unbind(".uws");
                 document.oncontextmenu = null;
             }
         };
 
-        me.findMainContainers = function (content) {
-            var paras = $(content).find("*");
-            var parents = [];
+        me.testFonts = function () {
+            //test normal...
+            me.fontSizeCurrent = me.fontA.small.size;
+            me.fontRatio = me.fontA.small.height / me.fontA.small.size;
+            //test large...
+            me.fontSizeCurrent = me.fontB.large.size;
+            me.fontRatio = me.fontB.large.height / me.fontB.large.size;
 
-            paras.parent().data("readrParentId", null)
+            me.addStyles();
 
-            var parentId = 0;
-
-            for (var i = 0; i < paras.length; i++) {
-                var $para = $(paras[i]);
-                var $parent = $para.parent();
-
-                if ($parent.data("readrParentId") == null) {
-                    $parent.data("readrParentId", parentId);
-                    parents[$parent.data("readrParentId")] = {
-                        el: $parent,
-                        count: 1,
-                        parentId: parentId
-                    };
-                    parentId++;
-                }
-                else {
-                    var id = $parent.data("readrParentId");
-
-                    parents[id].count++;
-                }
+            var doc = [];
+            doc.push("<div class='uw-popout uw-container'>");
+            var len = me.fonts.length;
+            for (var i = 0; i < len; i++) {
+                var msg = me.getFontMsg();
+                doc.push(" <h4>" + msg + "</h4>");
+                doc.push(" <p style='font-family:" + me.fonts[i] + ", Comic Sans MS !important;'>");
+                doc.push(" Wikipedia began as a complementary project for Nupedia, a free online English-language encyclopedia project whose articles were written by experts and reviewed under a formal process. Nupedia was founded on March 9, 2000, under the ownership of Bomis, a web portal company. Its main figures were the Bomis CEO Jimmy Wales and Larry Sanger, editor-in-chief for Nupedia and later Wikipedia. Nupedia was licensed initially under its own Nupedia Open Content License, switching to the GNU Free Documentation License before Wikipedia's founding at the urging of Richard Stallman. Sanger and Wales founded Wikipedia. While Wales is credited with defining the goal of making a publicly editable encyclopedia, Sanger is credited with the strategy of using a wiki to reach that goal. On January 10, 2001, Sanger proposed on the Nupedia mailing list to create a wiki as a feeder project for Nupedia.");
+                doc.push(" </p>");
             }
+            doc.push("</div>");
+            var html = doc.join("");
 
-            if (parentId > 0) {
-                for (var j = 0; j < parents.length; j++) {
-                    if (parents[j].count > 0) {
-                        parents[j].el.addClass("readr-container");
-                    }
-                }
-            }
+            document.body.insertAdjacentHTML("afterbegin", html);
+            me.popoutDiv = $(".uw-popout");
+            me.scrollToElement(me.popoutDiv);
+
+            me.activePopout = true;
+            me.refreshMenu();
         };
+
     }();
 
     /* ================================================== */
