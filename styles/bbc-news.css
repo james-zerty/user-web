@@ -6,10 +6,10 @@
 .layout-main p *,
 .story-body h2,
 .layout-main h2 {
-    font-family: Ubuntu !important; /* uw-fnt */
-    font-size: 17px !important; /* uw-sz 17 */
-    line-height: 28px !important; /* uw-lh 28 */
-    font-weight: 300 !important; /* uw-wgt */
+    font-family: Open Sans !important; /* uw-fnt-alg */
+    font-size: 16px !important; /* uw-sz-alg */
+    line-height: 22px !important; /* uw-lh-alg */
+    font-weight: normal !important; /* uw-wgt */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
     color: #222 !important; /* uw-clr */
@@ -23,8 +23,8 @@
 .story-body a,
 .layout-main a {
     font-weight: normal !important; /* uw-wgt */
-    text-decoration: underline dotted #aaa !important; /* uw-uln */
-	border-bottom: none !important; + /* uw-btm */
+    text-decoration: underline #ccc !important; /* uw-uln */
+    border-bottom: none !important; /* uw-btm */
 }
 
 .story-body p {
@@ -36,6 +36,10 @@
 .story-body figure {
     max-width: 785px !important;
     margin: 0 auto !important;
+}
+
+.story-body figure.body-narrow-width {
+    margin-left: 15px !important;
 }
 
 .story-body__inner {
@@ -51,6 +55,8 @@
 .section-header__orb,
 .navigation__orb-stuck,
 .column--secondary,
+.js-breaking-news-banner,
+.nw-c-breaking-news-banner,
 .pullout {
     display: none !important;
 }
@@ -78,8 +84,8 @@
     .layout-main p *,
     .story-body h2,
     .layout-main h2 {
-        font-size: 14px !important; /* uw-sz-sm 14 */
-        line-height: 23px !important; /* uw-lh-sm 23 */
+        font-size: 14px !important; /* uw-sz-asm */
+        line-height: 18px !important; /* uw-lh-asm */
     }
 
     .column--primary,

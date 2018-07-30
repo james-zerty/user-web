@@ -1,20 +1,21 @@
-all notes
 .RfDI4d-mAKE4e-DyVDA-haAclf *,
 .VIpgJd-TUo6Hb *,
 .neVct-SX9D7d-ObfsIf *,
 .RfDI4d-bN97Pc *,
-.IZ65Hb-n0tgWb *
+.IZ65Hb-n0tgWb *,
 .h1U9Be-xhiy4 *,
+.CmABtb *,
 .gkA7Yd-sKfxWe * {
-    font-family: Ubuntu !important; /* uw-fnt */
-    font-size: 14px !important; /* uw-b-sz-sm 14 */
-    line-height: 23px !important; /* uw-lh-sm 23 */
-    font-weight: 300 !important; /* uw-wgt */
-    font-style: normal !important; /* uw-sty */
-    text-align: justify !important; /* uw-jfy */
-    color: #222 !important; /* uw-clr */
+    font-family: Open Sans !important; /* uw-fnt-bsm */
+    font-size: 14px !important; /* uw-sz-bsm */
+    line-height: 23px !important; /* uw-lh-bsm */
+    font-weight: normal !important;
+    font-style: normal !important;
+    text-align: justify !important;
+    color: #000 !important;
 }
 
-[aria-label="Title"] {
-	font-size: 22px !important;
+.IZ65Hb-n0tgWb .IZ65Hb-s2gQvd [aria-label="Title"] {
+    font-size: 20px !important;
+    font-weight: bold !important;
 }

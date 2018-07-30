@@ -1,47 +1,18 @@
 /********** reading... **********/
-.usertext-body p {
-    font-family: Ubuntu !important; /* uw-fnt */
-    font-size: 17px !important; /* uw-sz 17 */
-    line-height: 28px !important; /* uw-lh 28 */
-    font-weight: 300 !important; /* uw-wgt */
-    font-style: normal !important; /* uw-sty */
-    text-align: justify !important; /* uw-jfy */
-    color: #222 !important; /* uw-clr */
-}
-
-.usertext-body p + p {
-    text-align: justify !important; /* uw-jfy */
-    margin: 15px 0 !important; /* uw-pmgn */
-}
-
-.usertext-body a,
-.usertext-body a:hover {
-    text-decoration: underline dotted #aaa !important; /* uw-uln */
-    border-bottom: none !important; + /* uw-btm */
-}
-
-.score, .live-timestamp, .flat-list *, .flair {
-    color: #000 !important;
-    max-height: 5px !important;
-    opacity: 0.1;
-}
-
 .infobar,
+.s3u5zk-0, .fWoCOj,
 .commentsignupbar,
 .side,
+.ui4xkp-6.iVRdu,
+.s405nnu-3.jQNnZV,
 #header,
 #eu-cookie-policy,
 .footer-parent {
     display: none !important;
 }
 
-/******************************************/
-
-/********** small window... **********/
-@media (max-width: 800px) {
-    .usertext-body * {
-        font-size: 14px !important; /* uw-sz-sm 14 */
-        line-height: 23px !important; /* uw-lh-sm 23 */
-    }
+.dRaiVv .s1mkwget-2 {
+    margin-top: 0 !important;
 }
-/*************************************/
+
+/******************************************/

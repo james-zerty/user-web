@@ -2,10 +2,10 @@
 #reader_pane,
 .article_content,
 .article_content * {
-    font-family: Ubuntu !important; /* uw-fnt */
-    font-size: 17px !important; /* uw-sz 17 */
-    line-height: 28px !important; /* uw-lh 28 */
-    font-weight: 300 !important; /* uw-wgt */
+    font-family: Open Sans !important; /* uw-fnt-alg */
+    font-size: 16px !important; /* uw-sz-alg */
+    line-height: 22px !important; /* uw-lh-alg */
+    font-weight: normal !important; /* uw-wgt */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
     color: #222 !important; /* uw-clr */
@@ -21,8 +21,13 @@
 
 .article_content a,
 .article_content a:hover {
-    text-decoration: underline dotted #aaa !important; /* uw-uln */
-    border-bottom: none !important; + /* uw-btm */
+    text-decoration: underline #ccc !important; /* uw-uln */
+    border-bottom: none !important; /* uw-btm */
+}
+
+.article_content blockquote,
+.article_content blockquote * {
+    font-style: italic !important;
 }
 
 .article_content {
@@ -36,7 +41,7 @@
 
 /******************************/
 
-/* uw-lhS Tree */
+/* LHS Tree */
 #subscriptions_fieldset legend span.sf_refresh {
     margin-left: -6px; !important;
 }
@@ -76,7 +81,7 @@
 
 
 /********** small window... **********/
-@media (max-width: 840px) {
+@media (max-width: 800px) {
     
     body {
         background-color: #fff !important;
@@ -89,8 +94,8 @@
     .article_magazine_title_link,
     .article_magazine_content,
     .article_title {
-        font-size: 14px !important; /* uw-sz-sm 14 */
-        line-height: 23px !important; /* uw-lh-sm 23 */
+        font-size: 14px !important; /* uw-sz-asm */
+        line-height: 18px !important; /* uw-lh-asm */
     }
 
     .article_magazine_content {

@@ -1,11 +1,3 @@
-* {
-    min-width: 10px !important;
-}
-
-body * {
-    max-width: 866px !important;
-}
-
 #answers,
 #mainbar,
 #question,
@@ -14,10 +6,10 @@ body * {
 .post-text,
 .question-status
 {
-    font-family: Ubuntu !important; /* uw-fnt */
-    font-size: 17px !important; /* uw-sz 17 */
-    line-height: 28px !important; /* uw-lh 28 */
-    font-weight: 300 !important; /* uw-wgt */
+    font-family: Open Sans !important; /* uw-fnt-asm */
+    font-size: 14px !important; /* uw-sz-asm */
+    line-height: 18px !important; /* uw-lh-asm */
+    font-weight: normal !important; /* uw-wgt */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
     color: #222 !important; /* uw-clr */
@@ -25,8 +17,25 @@ body * {
     max-width: 900px !important;
 }
 
+* {
+    min-width: 10px !important;
+}
+
+body * {
+    max-width: 850px !important;
+}
+
+@media (max-width: 950px) {
+    .container {
+        margin: 0 !important;
+    }
+}
+
 /* header, */
 #announcement-banner,
+#left-sidebar,
+.js-dismissable-hero,
+#js-gdpr-consent-banner,
 #feed-link,
 #footer,
 #header,

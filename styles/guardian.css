@@ -1,29 +1,30 @@
-.content__main-column {
-    max-width: 800px !important;
-    margin-right: 0 !important;
-}
-
 .facia-page, .facia-page *, article, article * {
-    font-family: Ubuntu !important; /* uw-fnt */
+    font-family: Open Sans !important; /* uw-fnt-blg */
 }
 
 .content__article-body * {
-    font-family: Ubuntu !important; /* uw-fnt */
-    font-size: 17px !important; /* uw-sz 17 */
-    line-height: 28px !important; /* uw-lh 28 */
-    font-weight: 300 !important; /* uw-wgt */
+    font-family: Open Sans !important; /* uw-fnt-blg */
+    font-size: 16px !important; /* uw-sz-blg */
+    line-height: 26px !important; /* uw-lh-blg */
+    font-weight: normal !important; /* uw-wgt */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
     color: #222 !important; /* uw-clr */
 }
+
 .content__article-body p {
     margin: 15px 0 !important; /* uw-pmgn */
 }
 
 .content__article-body a {
     border-bottom: 0 !important;
-    text-decoration: underline dotted #aaa !important; /* uw-uln */
-    border-bottom: none !important; + /* uw-btm */
+    text-decoration: underline #ccc !important; /* uw-uln */
+    border-bottom: none !important; /* uw-btm */
+}
+
+.content__main-column {
+    max-width: 800px !important;
+    margin-right: 0 !important;
 }
 
 .content__main-column:before {

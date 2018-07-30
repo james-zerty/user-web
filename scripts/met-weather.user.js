@@ -44,7 +44,7 @@ try {
                     $(this).css("background-color", "#DEEDFF"); // day
                 }
             });
-            
+
             $(".weatherRain td").each(function(i) {
                 var val = parseInt($(this).text().match(/\d+/i, ""), 10);
 
@@ -57,6 +57,18 @@ try {
                 else {
                     $(this).css("background-color", "#f88");
                 }
+            });
+
+            $(".weatherFeel td").each(function(i) {
+                var val = parseInt($(this).text().match(/\d+/i, ""), 10);
+
+                $(this).addClass("icon icon-animated").attr("data-value", val)
+                    .css({
+                        display: "table-cell",
+                        borderRight: "solid 1px #fff",
+                        height: "auto",
+                        paddingTop: "2px"
+                    });
             });
 
             var url = document.location.href;

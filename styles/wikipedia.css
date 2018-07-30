@@ -1,8 +1,8 @@
 /* reading... */
-body .mw-content-ltr * {
-    font-family: Yu Mincho !important; /* uw-b-fnt */
-    font-size: 19px !important; /* uw-b-sz 19 */
-    line-height: 29px !important; /* uw-b-lh 29 */
+body .mw-content-ltr p {
+    font-family: Open Sans !important; /* uw-fnt-blg */
+    font-size: 16px !important; /* uw-sz-blg */
+    line-height: 26px !important; /* uw-lh-blg */
     font-weight: normal !important; /* uw-wgt */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
@@ -13,110 +13,10 @@ p {
     margin: 15px 0 !important; /* uw-pmgn */
 }
 
-body .mw-content-ltr a {
+.mw-content-ltr a {
     color: #222 !important; /* uw-clr */
-    text-decoration: underline dotted #aaa !important; /* uw-uln */
-    border-bottom: none !important; + /* uw-btm */
-}
-
-html body.uw-large .uw-container a {
-    text-decoration: none !important;
-}
-
-blockquote {
-    border-left: 0 !important;
-}
-
-h2 {
-	padding:0 !important;
-}
-
-.image.view-border-box img {
-	margin-bottom: 5px !important;
-}
-
-.mw-editsection,
-.mw-ui-icon,
-sup,
-html body.uw-large .uw-container .mw-editsection,
-html body.uw-large .uw-container .IWA {
-    display: none !important;
-}
-
-/* ...reading */
-
-html {
-    text-align: center;
-}
-
-body {
-    margin: 0 auto;
-    text-align: left;
-}
-
-
-body, #mw-head {
-    max-width: 900px;
-}
-
-div#mw-head {
-    right: auto !important;
-}
-
-.mw-body {
-    border-right-width: 1px !important;
-}
-
-#left-navigation {
-    margin-left: 10px !important;
-}
-
-.toc-mobile, .view-border-box,
-table.infobox, .biography, .vcard {
-	float: none !important;
-	clear: none !important;
-	max-width: none !important;
-	width: auto !important;
-}
-
-#mw-panel {
-    top: 0 !important;
-    left: 0 !important;
-    width: 10px !important;
-    height: 10px !important;
-    position: absolute !important;
-    overflow: hidden !important;
-    background-color: #fff !important;
-    border: solid 1px #A7D7F9 !important;
-    padding: 0 !important;
-}
-
-#mw-panel:hover {
-    width: auto !important;
-    height: auto !important;
-    position: absolute !important;
-    overflow: hidden !important;
-}
-
-#content {
-    margin-left: 10px !important;
-}
-
-.content .section-heading, .content .in-block {
-    display: unset !important;
-}
-.content h2 {
-    clear: none !important;
-}
-
-.suggestions {
-    right: 196.5px !important;
-}
-
-
-.wikitable th[scope='col'] {
-    color: #000 !important;
-    background-color: #9FC6E7 !important;
+    text-decoration: underline #ccc !important; /* uw-uln */
+    border-bottom: none !important; /* uw-btm */
 }
 
 sup,
@@ -137,21 +37,3 @@ body .mw-content-ltr sup.Inline-Template * {
     border-bottom: 0 !important;
     color: #ccc !important;
 }
-
-#footer-places-mobileview {
-  position: absolute !important;
-    top: 0 !important;
-    font-weight: bold !important;
-}
-
-#mw-mf-page-center {
-    background-color: #fff;
-}
-
-/********** small window... **********/
-@media (max-width: 600px) {
-    #mw-content-text table {
-        float: none !important;
-    }
-}
-/********** ...small window. **********/
