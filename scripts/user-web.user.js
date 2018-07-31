@@ -9,6 +9,7 @@
 // @include     http*://*/*
 // @exclude     https://localhost:44300/dev*
 // @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-2.1.0.min.js
+// @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery.cookie.js
 // ==/UserScript==
 "use strict";
 try {
@@ -460,6 +461,18 @@ try {
                     me.readLite();
                 }, null, "Tidy and justify");
 
+            me.linkTidyOff =
+                me.addLink(me.ulReadr, "Tidy off", function() {
+                    $.cookie("tidy", "off", { path: '/' });
+                    document.location.reload(true);
+                }, null, "Turn tidy off and reload");
+
+            me.linkTidyOn =
+                me.addLink(me.ulReadr, "Tidy on", function() {
+                    $.cookie("tidy", "on", { path: '/' });
+                    document.location.reload(true);
+                }, null, "Turn tidy on and reload");
+
             me.linkRunReadrFind =
                 me.addLink(me.ulReadr, "Find...", function() {
                     me.startFind();
@@ -669,6 +682,15 @@ try {
                     me.linkUndoReadr.hide();
                     me.linkShowLinks.hide();
                     me.linkHideLinks.hide();
+                }
+                
+                if ($.cookie("tidy") == "off") {
+                    me.linkTidyOff.hide();
+                    me.linkTidyOn.show();
+                }
+                else {
+                    me.linkTidyOff.show();
+                    me.linkTidyOn.hide();
                 }
             }
         };
@@ -1159,7 +1181,9 @@ try {
         me.tidyLast = new Date().valueOf();
         me.tidyUp = function(e) { //qqq
             if (me.tidyUpExclude) return;
-
+            
+            if ($.cookie("tidy") == "off") return;
+            
             log("tidyUp", "tidying");
             me.tidyLast = new Date().valueOf();
             me.tidyWaiting = false;
