@@ -1,384 +1,208 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>user-web - home</title>
-    <link rel="stylesheet" href="styles/dev.css">
+<title>user-web - home</title>
+
+<style>
+article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary {
+    display: block;
+}
+
+body {
+    font: 12px/18px Consolas, Verdana;
+}
+
+.wrapper {
+    min-width: 500px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Header
+-----------------------------------------------------------------------------*/
+.header {
+    xxbackground: #FFFFEE;
+    padding: 1px 10px;
+}
+
+.nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav li {
+    display: table-cell;
+    padding: 0 30px 0 0;
+    margin: 0;
+}
+
+a {
+    white-space: nowrap;
+}
+
+.nav li a:visited {
+    color: blue;
+}
+
+/* Middle
+-----------------------------------------------------------------------------*/
+.middle {
+    border-right: 270px solid #f4f4ff;
+    position: relative;
+}
+
+.middle:after {
+    display: table;
+    clear: both;
+    content: '';
+}
+
+.container {
+    width: 100%;
+    float: left;
+    overflow: hidden;
+    margin-right: -100%;
+    xxbackground: #dfd;
+}
+
+.content {
+    padding: 20px 40px;
+}
+
+.rightFloat {
+    float: right;
+    margin: 0 0 0 10px;
+    padding: 10px;
+    border: solid 1px #888;
+    max-width: 200px;
+}
+
+/* Right Sidebar
+-----------------------------------------------------------------------------*/
+.right-sidebar {
+    float: right;
+    margin-right: -270px;
+    width: 250px;
+    position: relative;
+    xxbackground: #FFF8F8;
+    padding: 10px;
+}
+
+.right-sidebar ul {
+    list-style: none;
+    margin: 10px 0;
+    padding: 0;
+}
+
+.right-sidebar li {
+    margin: 0;
+}
+
+/* Footer
+-----------------------------------------------------------------------------*/
+.footer {
+    xxbackground: #f0fff0;
+    padding: 1px 10px;
+}
+
+.fixed {
+    position: fixed;
+    right: 15px;
+}
+
+/* tests
+-----------------------------------------------------------------------------*/
+.narrow {
+    max-width: 500px;
+}
+
+.align-container {
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: solid 1px #888;
+}
+
+.no-select {
+    user-select: none;
+}
+
+@media (max-width: 800px) {
+    .wrapper {
+        min-width: 0px;
+    }
+    .middle {
+        border-right: 0px
+    }
+    .right-sidebar {
+        display:none;
+    }
+}
+</style>
 </head>
 <body>
-    <div class="fixed">Fixed</div>
-    <div class="wrapper">
-        <header class="header">
-            <ul class="nav">
-                <li>
-                    <h1><a href="home.htm">home</a></h1>
-                </li>
-                <li><a href="dev.htm">dev</a></li>
-                <li><a href="time.htm">time</a></li>
-                <li><a href="about:blank">blank</a></li>
-                <li><a href="http://m.bbc.co.uk/news/">BBC News</a></li>
-                <li><a href="https://www.google.co.uk/">Google</a></li>
-                <li><a href="scripts"><strong>Scripts</strong></a></li>
-            </ul>
-            <ul class="nav">
-                <li><a href="new-tab.htm">new-tab</a></li>
-                <li><a href="new-tab-dev.htm">new-tab-dev</a></li>
-                <li><a href="new-tab-fixed.htm">new-tab-fixed</a></li>
-                <li><a href="new-tab-mobile.htm">new-tab-mobile</a></li>
-            </ul>
-            <ul class="nav">
-                <li><a href="layout.htm">layout</a></li>
-                <li><a href="simple.htm">simple</a></li>
-                <li><a href="time.htm">time</a></li>
-                <li><a href="fonts.htm">fonts</a></li>
-                <li><a href="scripts/user-web.user.js">user-web</a></li>
-            </ul>
-            <!-- <h1>Aenean malesuada porttitor laoreet quisque eu consectetur sapien</h1> -->
-            <!-- <h2>Praesent dignissim scelerisque tellus, et lobortis turpis viverra quis</h2> -->
-        </header>
-        <div class="middle">
-            <div class="container">
-                <main class="content">
-                    <!-- <h2>Heading 2</h2> -->
-                    <!-- <p>‪https://www.google.co.uk‬</p> -->
-                    <p>
-                        <a href="https://en.wikipedia.org/wiki/Visual_FoxPro">Visual FoxPro</a> is a discontinued data-centric, 
-                        object-oriented, procedural, programming language produced by
-                        Microsoft. It was derived from FoxPro (originally known as FoxBASE) which was developed by Fox Software
-                        beginning in 1984. Fox Technologies merged with Microsoft in 1992, after which the software acquired further
-                        features and the prefix "Visual". FoxPro 2.6 worked on Mac OS, DOS, Windows, and Unix. Visual FoxPro 3.0, the
-                        first "Visual" version, reduced platform support to only Mac and Windows, and later versions 5, 6, 7, 8 and 9
-                        were Windows-only. The current version of Visual FoxPro is COM-based and Microsoft has stated that they do
-                        not intend to create a Microsoft .NET version.
-                    </p>
-                    <p>
-                        Version 9.0, released in 2004 and updated in 2007, is the final version of the product.
-                    </p>
-                    <p>
-                        Visual FoxPro originated as a member of the class of languages commonly referred to as "xBase" languages,
-                        which have syntax based on the dBase programming language. Other members of the xBase language family include Clipper and Recital.
-                    </p>
-                    <p>
-                        Visual FoxPro, commonly abbreviated as VFP, is tightly integrated with its own relational database engine,
-                        which extends FoxPro's xBase capabilities to support SQL query and data manipulation. Unlike most database
-                        management systems, Visual FoxPro is a full-featured, dynamic programming language that does not require the
-                        use of an additional general-purpose programming environment. It can be used to write not just traditional
-                        "fat client" applications, but also middleware and web applications.
-                    </p>
-                    <p>
-                        In late 2002, it was demonstrated that Visual FoxPro can run on Linux under the Wine Windows compatibility
-                        suite. In 2003, this led to complaints by Microsoft: it was claimed that the deployment of runtime FoxPro code
-                        on non-Windows machines violates the End User License Agreement.
-                    </p>
-                    <p>
-                        Visual FoxPro had a rapid rise and fall in popularity as measured by the TIOBE Programming Community Index.
-                        In December 2005, VFP broke into the top 20 for the first time. In June 2006 it peaked at position 12, making
-                        it (at the time) a "B" language. By September 2010, FoxPro and its variants had fallen out of the top 50, where
-                        it has remained ever since.
-                    </p>
-                    <p>
-                        In March 2007, Microsoft announced that there will be no VFP 10, thus making VFP9 (released to manufacturing
-                        on December 17, 2004) the last commercial VFP release from Microsoft. The support of Version 9 ended on December 31, 2015.
-                    </p>
-                    <p>
-                        At the time of the end of life announcement, work on the next release codenamed Sedna (named after a recently
-                        discovered dwarf planet) which was built on top of the VFP9 codebase had already begun. "Sedna" is a set of
-                        add-ons to VFP 9.0 of xBase components to support a number of interoperability scenarios with various Microsoft
-                        technologies including SQL Server 2005, .NET Framework, Windows Vista, Office 2007, Windows Search and Team
-                        Foundation Server (TFS). Microsoft released Sedna under the Shared source license on the CodePlex site. 
-                        Microsoft has clarified that the VFP core will still remain closed source. Sedna was released on January 25,
-                        2008. As of March 2008, all xBase components of the VFP 9 SP2 (including Sedna) were available for 
-                        community-development on CodePlex.
-                    </p>
-                    <p>
-                        In late March 2007 a grassroots campaign was started by the Spanish-speaking FoxPro community at MásFoxPro 
-                        ("MoreFoxPro" in English) to sign a petition to Microsoft to continue updating Visual FoxPro or release it to
-                        the community as Open Source. On April 3, 2007 the movement was noted by the technical press.
-                        On April 3, 2007, Microsoft responded to the petition with this statement from Alan Griver:
-                        "We're very aware of the FoxPro community and that played a large part in what we announced on March 13th. It's
-                        never an easy decision to announce that we're not going to release another version of a product and it's one
-                        that we consider very carefully.
-                    </p>
-                    <p>
-                        "We're not announcing the end of FoxPro: Obviously, FoxPro applications will continue to work. By some of our
-                        internal estimates, there are more applications running in FoxPro 2.6 than there are in VFP and FoxPro 2.6
-                        hasn't been supported in many years. Visual FoxPro 9 will be supported by Microsoft through 2015.
-                    </p>
-                    <p>
-                        "For Microsoft to continue to evolve the FoxPro base, we would need to look at creating a 64-bit development
-                        environment and that would involve an almost complete rewrite of the core product. We've also invested in 
-                        creating a scalable database with SQL Server, including the freely available SQL Server Express Edition. As 
-                        far as forming a partnership with a third-party is concerned, we've heard from a number of large FoxPro 
-                        customers that this would make it impossible for them to continue to use FoxPro since it would no longer 
-                        be from an approved vendor. We felt that putting the environment into open source on CodePlex, which 
-                        balances the needs of both the community and the large customers, was the best path forward."
-                    </p>
-                    <p>
-                        On a summer day in the <a href="#">San Joaquin Valley</a>, 101 in the shade, I merge onto Highway 99 past downtown Fresno
-                        and steer through the vibrations of heat. I’m headed to the valley’s deep south, to a little farmworker
-                        town in a far corner of Kern County called Lost Hills. This is where the biggest irrigated farmer in the
-                        world — the one whose mad plantings of almonds and pistachios have triggered California’s nut rush — keeps
-                        on growing, no matter drought or flood. He doesn’t live in Lost Hills. He lives in Beverly Hills. How has
-                        he managed to outwit nature for so long?
-                    </p>
-                    <p>
-                        The GPS tells me to take Interstate 5, the fastest route through the belly of the state, but I’m partial
-                        to Highway 99, the old road that brought the Okies and Mexicans to the fields and deposited a twang on my
-                        Armenian tongue. The highway runs two lanes here, three lanes there, through miles of agriculture broken
-                        every 20 minutes by fast food, gas station, and cheap motel. Tracts of houses, California’s last
-                        affordable dream, civilize three or four exits, and then it’s back to the open road splattered with the
-                        guts and feathers of chickens that jumped ship on the slaughterhouse drive. Pink and white oleanders
-                        divide the highway, and every third vehicle that whooshes by is a big rig. More often than not, it is
-                        hauling away some piece of the valley’s bounty. The harvest begins in January with one type of mandarin
-                        and ends in December with another type of mandarin and in between spills forth everything in your
-                        supermarket produce and dairy aisles except for bananas and mangoes, though the farmers here are working
-                        on the tropical, too.
-                    </p>
-                    <p>
-                        I stick to the left lane and try to stay ahead of the pack. The big-rig drivers are cranky two ways,
-                        and the farmworkers in their last-leg vans are half-asleep. Ninety-nine is the deadliest highway in
-                        America. Deadly in the rush of harvest, deadly in the quiet of fog, deadly in the blur of Saturday
-                        nights when the fieldwork is done and the beer drinking becomes a second humiliation. Twenty miles
-                        outside Fresno, I cross the Kings, the river that irrigates more farmland than any other river here.
-                        The Kings is bone-dry as usual. To find its flow, I’d have to go looking in a thousand irrigation
-                        ditches in the fields beyond.
-                    </p>
-                    <p>
-                        In November 2009, a researcher at the Rey Juan Carlos University in Madrid (Spain) found that the
-                        English Wikipedia had lost 49,000 editors during the first three months of 2009.
-                    </p>
-                    <p> 
-                        In comparison, the project lost only 4,900 editors during the same period in 2008.
-                    </p>
-                    <p> 
-                        The Wall Street Journal cited the array of rules applied to editing and disputes related to 
-                        such content among the reasons for this trend.
-                    </p>
-                    <p> 
-                        Wales disputed these claims in 2009, denying the decline and questioning the methodology of the study.
-                    </p>
-                    <p>
-                        There’s a mountain range to my left and a mountain range to my right and in between a plain flatter
-                        than Kansas where crop and sky meet. One of the most dramatic alterations of the earth’s surface in
-                        human history took place here. The hillocks that existed back in Yokut Indian days were flattened by
-                        a hunk of metal called the Fresno Scraper. Every river busting out of the Sierra was bent sideways,
-                        if not backward, by a bulwark of ditches, levees, canals, and dams. The farmer corralled the snowmelt
-                        and erased the valley, its desert and marsh. He leveled its hog wallows, denuded its salt brush, and
-                        killed the last of its mustang, antelope, and tule elk. He emptied the sky of tens of millions of
-                        geese and drained the 800 square miles of Tulare Lake dry.
-                    </p>
-                    <p>
-                        He did this first in the name of wheat and then beef, milk, raisins, cotton, and nuts. Once he finished
-                        grabbing the flow of the five rivers that ran across the plain, he used his turbine pumps to seize the
-                        water beneath the ground. As he bled the aquifer dry, he called on the government to bring him an even
-                        mightier river from afar. Down the great aqueduct, by freight of politics and gravity, came the excess
-                        waters of the Sacramento River. The farmer moved the rain. The more water he got, the more crops he
-                        planted, and the more crops he planted, the more water he needed to plant more crops, and on and on.
-                        One million acres of the valley floor, greater than the size of Rhode Island, are now covered in almond
-                        trees.
-                    </p>
-                    <p>
-                        I pity the outsider trying to make sense of it. My grandfather, a survivor of the Armenian genocide,
-                        traveled 7,000 miles by ship and train in 1920 to find out if his uncle’s exhortation — “The grapes
-                        here are the size of jade eggs” — was true. My father, born in a vineyard outside Fresno, was a raisin
-                        grower before he became a bar owner. I grew up in the suburbs where our playgrounds were named after
-                        the pioneers of fruit and canals of irrigation shot through our neighborhoods to the farms we did not
-                        know. For half my life, I never stopped to wonder: How much was magic? How much was plunder?
-                    </p>
-                    <p class="narrow">
-                        <strong>Content:</strong> Sed placerat accumsan ligula. Aliquam felis magna, congue quis, tempus eu,
-                        aliquam vitae, ante. Cras neque justo, ultrices at, rhoncus a, facilisis eget, nisl. Quisque vitae pede.
-                        Nam et augue. Sed a elit. Ut vel massa. Suspendisse nibh pede, ultrices vitae, ultrices nec, mollis non,
-                        nibh. In sit amet pede quis leo vulputate hendrerit. Cras laoreet leo et justo auctor condimentum.
-                        Integer id enim. Suspendisse egestas, dui ac egestas mollis, libero orci hendrerit lacus, et malesuada
-                        lorem neque ac libero. Morbi tempor pulvinar pede. Donec vel elit.
-                    </p>
-                    <p class="narrow">
-                        Sed placerat accumsan ligula. Aliquam felis magna, congue quis, tempus eu,
-                        aliquam vitae, ante. Cras neque justo, ultrices at, rhoncus a, facilisis eget, nisl. Quisque vitae pede.
-                        Nam et augue. Sed a elit. Ut vel massa. Suspendisse nibh pede, ultrices vitae, ultrices nec, mollis non,
-                        nibh. In sit amet pede quis leo vulputate hendrerit. Cras laoreet leo et justo auctor condimentum.
-                        Integer id enim. Suspendisse egestas, dui ac egestas mollis, libero orci hendrerit lacus, et malesuada
-                        lorem neque ac libero. Morbi tempor pulvinar pede. Donec vel elit.
-                    </p>
-                    <p>
-                        <strong>Wikipedia</strong> began as a complementary project for Nupedia, a free online
-                        English-language encyclopedia project whose articles were written by experts and reviewed under a formal
-                        process. <a href="http://m.bbc.co.uk/news">Nupedia was founded on March 9, 2000</a>, under the ownership
-                        of Bomis, a web portal company. Its main figures were the Bomis CEO Jimmy Wales and Larry Sanger,
-                        editor-in-chief for Nupedia and later Wikipedia. Nupedia was licensed initially under its own Nupedia
-                        Open Content License, switching to the GNU Free Documentation License before Wikipedia's founding at the
-                        urging of Richard Stallman. Sanger and Wales founded Wikipedia. While Wales is credited with defining
-                        the goal of making a publicly editable encyclopedia, Sanger is credited with the strategy of using a
-                        wiki to reach that goal. On January 10, 2001, Sanger proposed on the Nupedia mailing list to create a
-                        wiki as a "feeder" project for Nupedia.
-                    </p>
-                    <div style="display:none">none</div>
-                    <h3>Heading 3</h3>
-                    <p>
-                        Wikipedia was formally launched on January 15, 2001, as a single English-language edition at
-                        www.wikipedia.com, and announced by Sanger on the Nupedia mailing list. Wikipedia's policy of
-                        "neutral point-of-view" was codified in its first months. Otherwise, there were relatively few rules
-                        initially and Wikipedia operated independently of Nupedia. Originally, Bomis intended to make
-                        Wikipedia a business for profit.
-                    </p>
-                    <p>
-                        Wikipedia gained early contributors from Nupedia, Slashdot postings, and web search engine
-                        indexing. By August 8, 2001, Wikipedia had over 8,000 articles. On September 25, 2001, Wikipedia had
-                        over 13,000 articles. And by the end of 2001 it had grown to approximately 20,000 articles and 18
-                        language editions. It had reached 26 language editions by late 2002, 46 by the end of 2003, and 161
-                        by the final days of 2004. Nupedia and Wikipedia coexisted until the former's servers were taken
-                        down permanently in 2003, and its text was incorporated into Wikipedia. English Wikipedia passed the
-                        mark of two million articles on September 9, 2007, making it the largest encyclopedia ever
-                        assembled, surpassing even the 1408 Yongle Encyclopedia, which had held the record for almost 600
-                        years.
-                    </p>
-                    <p>
-                        Citing fears of commercial advertising and lack of control in Wikipedia, users of the Spanish
-                        Wikipedia forked from Wikipedia to create the Enciclopedia Libre in February 2002. These moves
-                        encouraged Wales to announce that Wikipedia would not display advertisements, and to change
-                        Wikipedia's domain from wikipedia.com to wikipedia.org.
-                    </p>
-                    <div style="visibility:hidden">hidden</div>
-                    <h4>Heading 4</h4>
-                    <p>
-                        Though the English Wikipedia reached three million articles in August 2009, the growth of the
-                        edition, in terms of the numbers of articles and of contributors, appears to have peaked around
-                        early 2007. Around 1,800 articles were added daily to the encyclopedia in 2006; by 2013 that average
-                        was roughly 800. A team at the Palo Alto Research Center attributed this slowing of growth to the
-                        project's increasing exclusivity and resistance to change. Others suggest that the growth is
-                        flattening naturally because articles that could be called "low-hanging fruit"—topics that clearly
-                        merit an article—have already been created and built up extensively.
-                    </p>
-                    <div class="rightFloat">
-                        Some right float content. Aenean magna ligula, consequat sed faucibus et, sollicitudin et sapien.
-                    </div>
-                    <p> 
-                        Two years later, Wales acknowledged the presence of a slight decline, noting a decrease from "a little
-                        more than 36,000 writers" in June 2010 to 35,800 in June 2011. In the same interview, Wales also
-                        claimed the number of editors was "stable and sustainable", a claim which was questioned by MIT's
-                        Technology Review in a 2013 article titled "The Decline of Wikipedia." In July 2012, the Atlantic
-                        reported that the number of administrators is also in decline. In the November 25, 2013, issue of
-                        New York magazine, Katherine Ward stated "Wikipedia, the sixth-most-used website, is facing an
-                        internal crisis. In 2013, MIT's Technology Review revealed that since 2007, the site has lost a
-                        third of the volunteer editors who update and correct the online encyclopedia's millions of pages
-                        and those still there have focused increasingly on minutiae."
-                    </p>
-                    <div>
-                        <textarea id="output" rows="3" cols="90" style="width: 100%; height: 30px;"></textarea>
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td style="width: 145px;">
-                                        <input type="text" value="Lorem ipsum" id="txt1" />
-                                    </td>
-                                    <td rowspan="3">
-                                        <textarea id="txta" rows="3" cols="50" style="height: 75px; width: 100%;">Lorem
-                                            ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo, felis
-                                            vitae malesuada lobortis, metus massa condimentum nisi, at faucibus dolor
-                                            sem et metus.</textarea>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" value="Consectetur adipiscing " id="txt2" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="text" value="Consectetur adipiscing " id="Text1" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <p>
-                                            Phasellus ac justo quam. Suspendisse congue ultrices venenatis. Etiam in mauris
-                                            ipsum. Sed convallis scelerisque lectus, vel venenatis velit posuere nec. Nunc accumsan
-                                            luctus pretium. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
-                                            posuere cubilia Curae; Aliquam erat volutpat. Duis tincidunt venenatis ante sodales
-                                            posuere. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur
-                                            ridiculus mus.
-                                        </p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="align-container">
-                        <div>Hello</div>
-                        <div>Center align</div>
-                        <p>
-                            <img src="Styles/images/sample.png" alt="An image, yesterday" />
-                        </p>
-                    </div>
-                    <div>
-                        <h4>Last Bit...</h4>
-                        <p>
-                           Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
-                            posuere cubilia Curae; Aliquam erat volutpat.
-                        </p>
-                    </div>
-                </main>
-            </div>
-            <aside class="right-sidebar">
-                <ul>
-                    <li><a href="scripts"><strong>Scripts</strong></a></li>
-                    <li><a href="scripts/new-tab.user.js">new-tab</a></li>
-                    <li><a href="scripts/google-search.user.js">google-search</a></li>
-                    <li><a href="scripts/google-calendar.user.js">google-calendar</a></li>
-                    <li><a href="scripts/met-weather.user.js">met-weather</a></li>
-                    <li><a href="scripts/outlook-auto.user.js">outlook-auto</a></li>
-                    <li><a href="scripts/pocket-add-redirect.user.js">pocket-add-redirect</a></li>
-                    <li><a href="scripts/template-script.user.js">template-script</a></li>
-                    <li><a href="scripts/user-web.user.js">user-web</a></li>
-                    <li><a href="scripts/user-web-local.user.js">user-web-local</a></li>
-                </ul>
-                <hr />
-                <p>
-                    Version 9.0, released in 2004 and updated in 2007, is the final version of the product.
-                </p>
-                <p>
-                    Visual FoxPro originated as a member of the class of languages commonly referred to as "xBase" languages,
-                    which have syntax based on the dBase programming language. Other members of the xBase language family include Clipper and Recital.
-                </p>
-                <p>
-                    Visual FoxPro, commonly abbreviated as VFP, is tightly integrated with its own relational database engine,
-                    which extends FoxPro's xBase capabilities to support SQL query and data manipulation. Unlike most database
-                    management systems, Visual FoxPro is a full-featured, dynamic programming language that does not require the
-                    use of an additional general-purpose programming environment. It can be used to write not just traditional
-                    "fat client" applications, but also middleware and web applications.
-                </p>
-                <p>
-                    In late 2002, it was demonstrated that Visual FoxPro can run on Linux under the Wine Windows compatibility
-                    suite. In 2003, this led to complaints by Microsoft: it was claimed that the deployment of runtime FoxPro code
-                    on non-Windows machines violates the End User License Agreement.
-                </p>
-                <div class="ad">ad 1</div>
-                <div id="ad1">ad 2</div>
-                <div id="ad-thing2" class="ad">ad 3</div>
-                <div class="align-container">
-                    <h4>An Image</h4>
-                    <img src="Styles/images/sample.png" alt="An image, yesterday" />
-                    <p>A p caption</p>
-                    <span>A sub caption</span>
-                </div>
-                <h4 class="no-select">Unselectable text</h4>
-                <p class="no-select">
-                    Aenean malesuada porttitor laoreet quisque eu consectetur sapien
-                </p>
-            </aside>
-        </div>
-        <footer class="footer">
-            <p>
-                <strong>Footer:</strong> Mus elit Morbi mus enim lacus at quis Nam eget morbi. Et semper urna urna non
-                at cursus dolor vestibulum neque enim. Tellus interdum at laoreet laoreet lacinia lacinia sed Quisque
-                justo quis. Hendrerit scelerisque lorem elit orci tempor tincidunt enim Phasellus dignissim tincidunt.
-                Nunc vel et Sed nisl Vestibulum odio montes Aliquam volutpat pellentesque. Ut pede sagittis et quis nunc
-                gravida porttitor ligula.
-            </p>
-            <p>
-                HTML + CSS layout from <a href="http://csslayoutgenerator.com/">http://csslayoutgenerator.com/</a>
-            </p>
-        </footer>
-    </div>
+    <h4><a href="/"><strong>Pages</strong></a></h4>
+    <ul>
+        <li>
+            <h1><a href="home.htm">home</a></h1>
+        </li>
+        <li><a href="dev.htm">dev</a></li>
+        <li><a href="layout.htm">layout</a></li>
+        <li><a href="simple.htm">simple</a></li>
+        <li><a href="time.htm">time</a></li>
+        <li><a href="fonts.htm">fonts</a></li>
+    </ul>
+    <h4><strong>Other</strong></h4>
+    <ul>
+        <li><a href="about:blank">blank</a></li>
+        <li><a href="http://m.bbc.co.uk/news/">BBC News</a></li>
+        <li><a href="https://www.google.co.uk/">Google</a></li>
+    </ul>
+    <h4><a href="scripts"><strong>Scripts</strong></a></h4>
+    <ul>
+        <li><a href="scripts/new-tab.user.js">new-tab</a></li>
+        <li><a href="scripts/google-search.user.js">google-search</a></li>
+        <li><a href="scripts/google-calendar.user.js">google-calendar</a></li>
+        <li><a href="scripts/met-weather.user.js">met-weather</a></li>
+        <li><a href="scripts/outlook-auto.user.js">outlook-auto</a></li>
+        <li><a href="scripts/pocket-add-redirect.user.js">pocket-add-redirect</a></li>
+        <li><a href="scripts/template-script.user.js">template-script</a></li>
+        <li><a href="scripts/user-web.user.js">user-web</a></li>
+        <li><a href="scripts/user-web-local.user.js">user-web-local</a></li>
+    </ul>
+    <h4><a href="styles"><strong>Styles</strong></a></h4>
+    <ul>
+        <li><a href="styles/amazon.css">amazon</a></li>
+        <li><a href="styles/bbc-news.css">bbc-news</a></li>
+        <li><a href="styles/bbc-weather.css">bbc-weather</a></li>
+        <li><a href="styles/bing-maps.css">bing-maps</a></li>
+        <li><a href="styles/dev.css">dev</a></li>
+        <li><a href="styles/feedly.css">feedly</a></li>
+        <li><a href="styles/gmail.css">gmail</a></li>
+        <li><a href="styles/google-calendar.css">google-calendar</a></li>
+        <li><a href="styles/google-keep.css">google-keep</a></li>
+        <li><a href="styles/google-maps.css">google-maps</a></li>
+        <li><a href="styles/google-search.css">google-search</a></li>
+        <li><a href="styles/guardian.css">guardian</a></li>
+        <li><a href="styles/icons.css">icons</a></li>
+        <li><a href="styles/images.css">images</a></li>
+        <li><a href="styles/inoreader.css">inoreader</a></li>
+        <li><a href="styles/met-weather.css">met-weather</a></li>
+        <li><a href="styles/office.css">office</a></li>
+        <li><a href="styles/outlook.css">outlook</a></li>
+        <li><a href="styles/pocket.css">pocket</a></li>
+        <li><a href="styles/readr.css">readr</a></li>
+        <li><a href="styles/reddit.css">reddit</a></li>
+        <li><a href="styles/stack-overflow.css">stack-overflow</a></li>
+        <li><a href="styles/test.css">test</a></li>
+        <li><a href="styles/tutorials-point.css">tutorials-point</a></li>
+        <li><a href="styles/wikipedia.css">wikipedia</a></li>
+        <li><a href="styles/you-tube.css">you-tube</a></li>    </ul>
+
+
+
 </body>
 </html>

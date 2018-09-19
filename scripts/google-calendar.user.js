@@ -36,7 +36,8 @@ try {
         };
 
         me.setEventBgColor = function (shrt, lng) {
-            $(".VrDepf[style='border-color: #" + shrt + ";'], .VrDepf[style='border-color: rgb(" + lng + ");']")
+            // $(".VrDepf[style='border-color: #D81B60;'], .VrDepf[style='border-color: rgb(216, 27, 96);']")
+            $(".VrDepf[style='border-color:#" + shrt + ";'], .VrDepf[style='border-color: #" + shrt + ";'], .VrDepf[style='border-color:rgb(" + lng + ");'], .VrDepf[style='border-color: rgb(" + lng + ");']")
                 .parent().hide().parent().css({"background-color": "#" + shrt + "", "color": "#fff"});
         };
     };
@@ -189,11 +190,11 @@ function getDateStamp(dt) {
 }
 function getDateString(dt) {
     if (dt == null ) dt = new Date();
-    return dt.getFullYear() + "-" + 
+    return dt.getFullYear() + "-" +
         zeroFill(dt.getMonth() + 1) + "-" +
-        zeroFill(dt.getDate()) + "_" + 
-        zeroFill(dt.getHours()) + ":" + 
-        zeroFill(dt.getMinutes()) + ":" + 
+        zeroFill(dt.getDate()) + "_" +
+        zeroFill(dt.getHours()) + ":" +
+        zeroFill(dt.getMinutes()) + ":" +
         zeroFill(dt.getSeconds());
 }
 function zeroFill(val, n) {

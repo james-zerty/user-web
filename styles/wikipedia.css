@@ -37,3 +37,7 @@ body .mw-content-ltr sup.Inline-Template * {
     border-bottom: 0 !important;
     color: #ccc !important;
 }
+
+.banner-container {
+    display: none !important;
+}

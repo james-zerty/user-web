@@ -44,9 +44,9 @@ try {
             { exp: /messengernewspapers\.co\.uk/i, filter: "#__nq__hh" },
             { exp: /(thenib|medium)\.com/i, filter: ".metabar, .postActionsBar, .promoCardWrapper, [data-image-id='1*8Ns0Hg0Tbw8jFjaMLN-qYw.gif']" },
             { exp: /tumblr\.com/i, filter: ".tumblr_controls, #notes" },
-            { exp: /amazon\.co/i, filter: "#dp-ads-middle-3psl, #tellAFriendBox_feature_div, #quickPromoBucketContent, #quickPromoDivId, #sc-new-upsell, #nav-swmslot, #hqpWrapper, #huc-v2-cobrand-stripe, #nav-upnav, #detail-ilm_div" },
+            { exp: /amazon\.co/i, filter: "#dp-ads-middle-3psl, #tellAFriendBox_feature_div, #quickPromoBucketContent, #quickPromoDivId, #sc-new-upsell, #nav-swmslot, #hqpWrapper, #huc-v2-cobrand-stripe, #nav-upnav, #detail-ilm_div, #navFooter" },
         ];
-        
+
         me.tidyUpExcludes = "www.inoreader.com|google.com|getpocket.com|outlook.office.com".replace(/\./g, "\\\.");
 
         me.load = function() {
@@ -190,7 +190,7 @@ try {
         me.onPageKeyDown = function(e) {
             // log("onPageKeyDown", "key:", e.key, " code:", e.keyCode, " ctrl:", e.ctrlKey, " alt:", e.altKey, " shift:", e.shiftKey);
             me.run(function() {
-                switch (e.keyCode) { //qqq
+                switch (e.keyCode) { //qq
                     case 192: // ` firefox
                     case 223: // ` chrome
                         if (navigator.userAgent.indexOf("Chrome") > -1 && e.keyCode == 192) return;
@@ -225,6 +225,7 @@ try {
                         else { //reading...
                             switch (me.readingState) {
                                 case 0:
+                                    me.tidyUp();
                                     me.readLite();
                                     break;
                                 case 1:
@@ -458,6 +459,7 @@ try {
 
             me.linkRunReadrLite =
                 me.addLink(me.ulReadr, "Read Lite", function() { //lite = hide fixed + justify all p's
+                    me.tidyUp();
                     me.readLite();
                 }, null, "Tidy and justify");
 
@@ -557,6 +559,13 @@ try {
                 me.addLink(me.ulReadr, "Show Images", function() {
                     me.showImages();
                 }, null, "Redisplay hidden images").hide();
+
+            me.addSeparator(me.ulReadr);
+
+            me.linkLevelUp =
+                me.addLink(me.ulReadr, "Up", function() {
+                    me.levelUp();
+                }, null, "Got to URL parent");
 
             me.addSeparator(me.ulReadr);
 
@@ -683,7 +692,7 @@ try {
                     me.linkShowLinks.hide();
                     me.linkHideLinks.hide();
                 }
-                
+
                 if ($.cookie("tidy") == "off") {
                     me.linkTidyOff.hide();
                     me.linkTidyOn.show();
@@ -749,6 +758,13 @@ try {
             $("img").show();
             me.imageHide = false;
             me.refreshMenu();
+        };
+
+        me.levelUp = function() {
+            var url = document.location.href;
+            url = url.replace(/\/[^\/]*\/*$/g, "");
+            log("new url", url);
+            document.location.href = url;
         };
 
         me.enableSelect = function() {
@@ -1179,11 +1195,11 @@ try {
         me.tidyBound = false;
         me.tidyWaiting = false;
         me.tidyLast = new Date().valueOf();
-        me.tidyUp = function(e) { //qqq
+        me.tidyUp = function(e) { //qqqq
             if (me.tidyUpExclude) return;
-            
+
             if ($.cookie("tidy") == "off") return;
-            
+
             log("tidyUp", "tidying");
             me.tidyLast = new Date().valueOf();
             me.tidyWaiting = false;
@@ -1195,6 +1211,8 @@ try {
                 // if (match) log("tidyUp", "found: ", me.elToString(el));
                 return match;
             }).attr("style", "display:none !important");
+
+            $("html, body").css({overflow: "auto", height: "auto"})
 
             if (!me.tidyBound) {
                 me.tidyBound = true;
@@ -1264,8 +1282,7 @@ try {
 
         /*** reading ************************************************************************************************** */
 
-        me.readLite = function(e) {
-            me.tidyUp();
+        me.readLite = function() { //qqqq
             $("p").css({"text-align" : "justify"});
             me.readingState = 1;
         };

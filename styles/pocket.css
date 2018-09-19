@@ -104,7 +104,9 @@ div.reader_content_wrapper {
 .reading_progress,
 .nav-premupgrade,
 aside.quote, /*bbc*/
-figure.media-primary /*guardian?*/
+figure.media-primary, /*guardian?*/
+.in-story, .RIL_IMG, .sm-button-red, /*longreads*/
+hr.paywall, h3.paywall, ul.paywall, #PKT_footer_message, .inset-left-component /*longreads*/
 {
     display: none !important;
 }
