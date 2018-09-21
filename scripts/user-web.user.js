@@ -5,6 +5,7 @@
 // @version     15
 // @author      2010+, james_zerty
 // @grant       GM.setClipboard
+// @grant       GM_setClipboard
 // @noframes
 // @include     http*://*/*
 // @exclude     https://localhost:44300/dev*
@@ -20,7 +21,7 @@ try {
 
     var settings = { localUrls: 0, uniqueUrls: 0, reloader: 0, autoShow: 0, handleErrors: 1 };
     if (url.match(/localhost.*\/(home|dev).*\.htm/i) != null) {
-        settings = { localUrls: 0, uniqueUrls: 0, reloader: 1, autoShow: 1, handleErrors: 0 };
+        settings = { localUrls: 0, uniqueUrls: 0, reloader: 1, autoShow: 0, handleErrors: 0 };
     }
 
     if (navigator.userAgent.indexOf("Mozilla/5.0 (Windows NT 6.3; Win64; x64;" > -1)) {
@@ -55,23 +56,22 @@ try {
 
             //fnt
             me.fontA = {
-                large: { size: 16, height: 22, face: "Open Sans", weight: "normal", color: "#222", "indent": 0 },
-                small: { size: 14, height: 18, face: "Open Sans", weight: "normal", color: "#222", "indent": 0 },
+                large: { size: 14, height: 20, face: "Verdana", weight: "normal", color: "#333", "indent": 0 },
+                small: { size: 13, height: 18, face: "Verdana", weight: "normal", color: "#333", "indent": 0 },
             };
             me.fontB = {
-                large: { size: 16, height: 26, face: "Open Sans", weight: "normal", color: "#222", "indent": 10 },
-                small: { size: 14, height: 23, face: "Open Sans", weight: "normal", color: "#222", "indent": 10 }
+                large: { size: 18, height: 25, face: "Corbel", weight: "normal", color: "#333", "indent": 10 },
+                small: { size: 15, height: 19, face: "Corbel", weight: "normal", color: "#333", "indent": 10 }
             };
             me.fontC = {
-                large: { size: 18, height: 29, face: "Georgia", weight: "normal", color: "#222", "indent": 15 },
-                small: { size: 18, height: 29, face: "Georgia", weight: "normal", color: "#222", "indent": 15 }
+                large: { size: 17, height: 27, face: "Georgia", weight: "normal", color: "#555", "indent": 15 },
+                small: { size: 14, height: 21, face: "Georgia", weight: "normal", color: "#555", "indent": 15 }
             };
 
             me.marked = $();
             me.forced = $();
             me.readingState = 0;
             me.menuTimeoutTime = 1000;
-            me.noRead = me.url.match(/:9000/i) != null;
 
             me.setReloader();
             me.siteConfig();
@@ -233,6 +233,9 @@ try {
                                     break;
                                 case 2:
                                     me.setFontB();
+                                    break;
+                                case 3:
+                                    me.setFontC();
                                     break;
                                 default:
                                     me.undoRead();
@@ -789,7 +792,13 @@ try {
 
         me.setClipboard = function(url) {
             me.run(function() {
-                window.GM.setClipboard(trim(me.selectedText));
+                var text = trim(me.selectedText);
+                if (window.GM && window.GM.setClipboard) {
+                    window.GM.setClipboard(text);
+                }
+                else {
+                    GM_setClipboard(text);
+                }
             });
         };
 
@@ -1022,6 +1031,9 @@ try {
                 "html body.uw-fontB .uw-container p, html body.uw-fontB p.uw-container {" +
                     "text-indent: " + me.fontB.large.indent + "px !important;" +
                 "}" +
+                "html body.uw-fontC .uw-container p, html body.uw-fontC p.uw-container {" +
+                    "text-indent: " + me.fontC.large.indent + "px !important;" +
+                "}" +
                 "html body .uw-container img + * {" +
                     "font-style: italic !important;" +
                 "}" +
@@ -1056,6 +1068,9 @@ try {
                     "max-width: 99999px !important;" +
                     "background-color: #fff !important;" +
                 "}" + //fnt...
+                "html body .uw-lite {" +
+                    "text-align: justify !important;" + /* uw-jfy */
+                "}" + //fnt...
                 "html body .uw-container, html body .uw-container * {" +
                     "font-family: " + me.fontA.large.face + ", Comic Sans MS !important;" +
                     "font-size: " + me.fontA.large.size + "px !important;" +
@@ -1071,6 +1086,13 @@ try {
                     "line-height: " + me.fontB.large.height + "px !important;" +
                     "font-weight: " + me.fontB.large.weight + " !important;" +
                     "color: " + me.fontB.large.color + " !important;" +
+                "}" +
+                "html body.uw-fontC .uw-container, html body.uw-fontC .uw-container * {" +
+                    "font-family: " + me.fontC.large.face + ", Comic Sans MS !important;" +
+                    "font-size: " + me.fontC.large.size + "px !important;" +
+                    "line-height: " + me.fontC.large.height + "px !important;" +
+                    "font-weight: " + me.fontC.large.weight + " !important;" +
+                    "color: " + me.fontC.large.color + " !important;" +
                 "}" +
                 "html body .uw-read, html body .uw-read * {" +
                     "opacity: 0.5 !important;" +
@@ -1090,6 +1112,13 @@ try {
                         "font-weight: " + me.fontB.small.weight + " !important;" +
                         "color: " + me.fontB.small.color + " !important;" +
                     "}" +
+                    "html body.uw-fontC .uw-container, html body.uw-fontC .uw-container * {" +
+                        "font-family: " + me.fontC.small.face + ", Comic Sans MS !important;" +
+                        "font-size: " + me.fontC.small.size + "px !important;" +
+                        "line-height: " + me.fontC.small.height + "px !important;" +
+                        "font-weight: " + me.fontC.small.weight + " !important;" +
+                        "color: " + me.fontC.small.color + " !important;" +
+                    "}" +
                     "html body .uw-popout {" +
                         "min-width: 100px;" +
                         "margin: 10px auto 800px !important;" +
@@ -1100,11 +1129,19 @@ try {
 
         me.setFont1 = function() {
             $("body").removeClass("uw-fontB");
+            $("body").removeClass("uw-fontC");
         };
 
         me.setFontB = function() {
+            $("body").removeClass("uw-fontC");
             $("body").addClass("uw-fontB");
             me.readingState = 3;
+        };
+
+        me.setFontC = function() {
+            $("body").removeClass("uw-fontB");
+            $("body").addClass("uw-fontC");
+            me.readingState = 4;
         };
 
         /*** user style *********************************************************************************************** */
@@ -1283,7 +1320,8 @@ try {
         /*** reading ************************************************************************************************** */
 
         me.readLite = function() { //qqqq
-            $("p").css({"text-align" : "justify"});
+            me.addStyles();
+            $("p").addClass("uw-lite");
             me.readingState = 1;
         };
 
@@ -1325,6 +1363,7 @@ try {
             me.activePopout = false;
             me.activeReadr = false;
             me.setFont1();
+            $(".uw-lite").removeClass("uw-lite");
             $(".uw-marked").removeClass("uw-marked");
             $(".uw-read").removeClass("uw-read");
             $(".uw-container").removeClass("uw-container");
@@ -1377,7 +1416,7 @@ try {
             me.popoutDiv = $(".uw-popout");
             me.activePopout = true;
             me.refreshMenu();
-            me.readingState = 4;
+            me.readingState = 5;
             $('html, body').scrollTop(0);
         };
 
