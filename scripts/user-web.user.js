@@ -20,13 +20,13 @@ try {
     var url = document.location.href;
 
     var settings = { localUrls: 0, uniqueUrls: 0, reloader: 0, autoShow: 0, handleErrors: 1 };
-    if (url.match(/localhost.*\/(home|dev).*\.htm/i) != null) {
-        settings = { localUrls: 0, uniqueUrls: 0, reloader: 1, autoShow: 0, handleErrors: 0 };
-    }
+    // if (url.match(/localhost.*\/(home|dev).*\.htm/i) != null) {
+        // settings = { localUrls: 0, uniqueUrls: 0, reloader: 1, autoShow: 0, handleErrors: 0 };
+    // }
 
-    if (navigator.userAgent.indexOf("Mozilla/5.0 (Windows NT 6.3; Win64; x64;" > -1)) {
-        settings.localUrls = 1;
-    }
+    // if (navigator.userAgent.indexOf("Mozilla/5.0 (Windows NT 6.3; Win64; x64;" > -1)) {
+        // settings.localUrls = 1;
+    // }
 
     log("url", url.substr(0, 100));
     log("loaded", new Date());
@@ -35,24 +35,23 @@ try {
     var userWeb = new function() {
         var me = this;
 
-        // config...
-        me.siteConfigs = [
-            { exp: /localhost:44300/i, filter: ".ad, #ad1" },
-            { exp: /calendar\.google\.com\/calendar/i, icon: "https://calendar.google.com/googlecalendar/images/favicon_v2014_31.ico" },
-            { exp: /bbc\.co\.uk\/weather/i, icon: "https://localhost:44300/styles/icons/bbc-weather.png" },
-            { exp: /bbc\.co.\uk\/news/i, filter: "#breaking-news-container, .share", icon: "https://localhost:44300/styles/icons/bbc-news.png" },
-            { exp: /\/dana\/home\/index\.cgi/i, icon: "https://localhost:44300/styles/icons/net-home.ico" },
-            { exp: /messengernewspapers\.co\.uk/i, filter: "#__nq__hh" },
-            { exp: /(thenib|medium)\.com/i, filter: ".metabar, .postActionsBar, .promoCardWrapper, [data-image-id='1*8Ns0Hg0Tbw8jFjaMLN-qYw.gif']" },
-            { exp: /tumblr\.com/i, filter: ".tumblr_controls, #notes" },
-            { exp: /amazon\.co/i, filter: "#dp-ads-middle-3psl, #tellAFriendBox_feature_div, #quickPromoBucketContent, #quickPromoDivId, #sc-new-upsell, #nav-swmslot, #hqpWrapper, #huc-v2-cobrand-stripe, #nav-upnav, #detail-ilm_div, #navFooter" },
-        ];
-
-        me.tidyUpExcludes = "www.inoreader.com|google.com|getpocket.com|outlook.office.com".replace(/\./g, "\\\.");
-
         me.load = function() {
             me.url = document.location.href;
+            me.tidyUpExcludes = "www.inoreader.com|google.com|getpocket.com|outlook.office.com".replace(/\./g, "\\\.");
             me.tidyUpExclude = me.url.match(me.tidyUpExcludes) != null;
+
+            // config...
+            me.siteConfigs = [
+                { exp: /localhost:44300/i, filter: ".ad, #ad1" },
+                { exp: /calendar\.google\.com\/calendar/i, icon: "https://calendar.google.com/googlecalendar/images/favicon_v2014_31.ico" },
+                { exp: /bbc\.co\.uk\/weather/i, icon: me.getUrl("styles/icons/bbc-weather.png") },
+                { exp: /bbc\.co.\uk\/news/i, filter: "#breaking-news-container, .share", icon: me.getUrl("styles/icons/bbc-news.png") },
+                { exp: /\/dana\/home\/index\.cgi/i, icon: me.getUrl("styles/icons/net-home.ico") },
+                { exp: /messengernewspapers\.co\.uk/i, filter: "#__nq__hh" },
+                { exp: /(thenib|medium)\.com/i, filter: ".metabar, .postActionsBar, .promoCardWrapper, [data-image-id='1*8Ns0Hg0Tbw8jFjaMLN-qYw.gif']" },
+                { exp: /tumblr\.com/i, filter: ".tumblr_controls, #notes" },
+                { exp: /amazon\.co/i, filter: "#dp-ads-middle-3psl, #tellAFriendBox_feature_div, #quickPromoBucketContent, #quickPromoDivId, #sc-new-upsell, #nav-swmslot, #hqpWrapper, #huc-v2-cobrand-stripe, #nav-upnav, #detail-ilm_div, #navFooter" },
+            ];
 
             //fnt
             me.fontA = {

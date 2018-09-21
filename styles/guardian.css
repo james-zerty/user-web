@@ -1,11 +1,11 @@
 .facia-page, .facia-page *, article, article * {
-    font-family: Open Sans !important; /* uw-fnt-blg */
+    font-family: Corbel !important; /* uw-fnt-b */
 }
 
 .content__article-body * {
-    font-family: Open Sans !important; /* uw-fnt-blg */
-    font-size: 16px !important; /* uw-sz-blg */
-    line-height: 26px !important; /* uw-lh-blg */
+    font-family: Corbel !important; /* uw-fnt-b */
+    font-size: 18px !important; /* uw-sz-blg */
+    line-height: 25px !important; /* uw-lh-blg */
     font-weight: normal !important; /* uw-wgt */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */

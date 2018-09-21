@@ -6,9 +6,9 @@
 .layout-main p *,
 .story-body h2,
 .layout-main h2 {
-    font-family: Open Sans !important; /* uw-fnt-alg */
-    font-size: 16px !important; /* uw-sz-alg */
-    line-height: 22px !important; /* uw-lh-alg */
+    font-family: Verdana !important; /* uw-fnt-a */
+    font-size: 14px !important; /* uw-sz-alg */
+    line-height: 20px !important; /* uw-lh-alg */
     font-weight: normal !important; /* uw-wgt */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
@@ -84,7 +84,7 @@
     .layout-main p *,
     .story-body h2,
     .layout-main h2 {
-        font-size: 14px !important; /* uw-sz-asm */
+        font-size: 13px !important; /* uw-sz-asm */
         line-height: 18px !important; /* uw-lh-asm */
     }
 

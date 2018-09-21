@@ -1,9 +1,9 @@
 /********** reading... **********/
 .text_body *,
 .reader_content h1 {
-    font-family: Open Sans !important; /* uw-fnt-blg */
-    font-size: 16px !important; /* uw-sz-blg */
-    line-height: 26px !important; /* uw-lh-blg */
+    font-family: Corbel !important; /* uw-fnt-b */
+    font-size: 18px !important; /* uw-sz-blg */
+    line-height: 25px !important; /* uw-lh-blg */
     font-weight: normal !important; /* uw-wgt */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
@@ -11,7 +11,7 @@
 }
 
 body * {
-    font-family: Open Sans !important; /* uw-fnt-blg */
+    font-family: Corbel !important; /* uw-fnt-b */
     font-weight: normal !important; /* uw-wgt */
 }
 
@@ -21,7 +21,7 @@ nav.pkt-nav.readr-container a,
 }
 
 .text_body p {
-    text-indent: 10px !important;
+    text-indent: 10px !important; /* uw-fnt-bind */
     text-align: justify !important; /* uw-jfy */
     margin: 15px 0 !important; /* uw-pmgn */
 }
@@ -164,8 +164,8 @@ a[href='/a/queue/list/inoreader'], .topic_1 {
 
     .text_body *,
     .reader_content h1 {
-        font-size: 14px !important; /* uw-sz-bsm */
-        line-height: 23px !important; /* uw-lh-bsm */
+        font-size: 15px !important; /* uw-sz-bsm */
+        line-height: 19px !important; /* uw-lh-bsm */
     }
 
     #page_queue * {
