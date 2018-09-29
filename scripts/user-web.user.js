@@ -54,18 +54,9 @@ try {
             ];
 
             //fnt
-            me.fontA = {
-                large: { size: 14, height: 20, face: "Verdana", weight: "normal", color: "#333", "indent": 0 },
-                small: { size: 13, height: 18, face: "Verdana", weight: "normal", color: "#333", "indent": 0 },
-            };
-            me.fontB = {
-                large: { size: 18, height: 25, face: "Corbel", weight: "normal", color: "#333", "indent": 10 },
-                small: { size: 15, height: 19, face: "Corbel", weight: "normal", color: "#333", "indent": 10 }
-            };
-            me.fontC = {
-                large: { size: 17, height: 27, face: "Georgia", weight: "normal", color: "#555", "indent": 15 },
-                small: { size: 14, height: 21, face: "Georgia", weight: "normal", color: "#555", "indent": 15 }
-            };
+            me.fontA = { size: 14, height: 20, sizeS: 13, heightS: 18, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0,  face: 'Verdana' };
+            me.fontB = { size: 18, height: 25, sizeS: 15, heightS: 19, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 10, face: 'Corbel' };
+            me.fontC = { size: 19, height: 30, sizeS: 15, heightS: 23, weight: '400', color: '#555', serif: 1, fixed: 0, indent: 15, face: 'Georgia' };
 
             me.marked = $();
             me.forced = $();
@@ -79,6 +70,10 @@ try {
             me.bindPageMouse();
             me.bindPageKeyDown();
             me.readLite();
+
+            if ($.cookie("tidy") == "on") {
+                me.tidyUp();
+            }
 
             if (settings.autoShow) {
                 me.run(function() {
@@ -299,12 +294,16 @@ try {
                             me.showHelp();
                         }
                         break;
-                    default:
+                    case 65: // a
+                    case 27: // esc
                         if (me.marking) {
                             log(e.keyCode, "Cancel Marking");
                             me.markElementCancel();
-                            //e.preventDefault();
-                            //e.stopPropagation();
+                        }
+                        break;
+                    default:
+                        if (me.marking) {
+                            log(e.keyCode, "Marking");
                         }
                         break;
                 }
@@ -474,7 +473,7 @@ try {
             me.linkTidyOn =
                 me.addLink(me.ulReadr, "Tidy on", function() {
                     $.cookie("tidy", "on", { path: '/' });
-                    document.location.reload(true);
+                    me.tidyUp();
                 }, null, "Turn tidy on and reload");
 
             me.linkRunReadrFind =
@@ -695,13 +694,13 @@ try {
                     me.linkHideLinks.hide();
                 }
 
-                if ($.cookie("tidy") == "off") {
-                    me.linkTidyOff.hide();
-                    me.linkTidyOn.show();
-                }
-                else {
+                if ($.cookie("tidy") == "on") {
                     me.linkTidyOff.show();
                     me.linkTidyOn.hide();
+                }
+                else {
+                    me.linkTidyOff.hide();
+                    me.linkTidyOn.show();
                 }
             }
         };
@@ -722,7 +721,7 @@ try {
                     "<tr><td>Shift+`</td><td>Undo read</td></tr>" +
                     "<tr><td>Ctrl+Shift+`</td><td>Toggle user style</td></tr>" +
                     "<tr><td>F2</td><td>Mark</td></tr>" +
-                    "<tr><td>Ctrl+Shift+?</td><td>Show help</td></tr>" +
+                    "<tr><td>Ctrl+Shift+Alt+?</td><td>Show help</td></tr>" +
                     "<tr><td>&nbsp;</td></tr>" +
                     "<tr><th>Marking...</th></tr>" +
                     "<tr><td>Left or k</td><td>Previous paragraph</td></tr>" +
@@ -741,7 +740,7 @@ try {
             var cls = $("<div class='uw-help-button'>")
                 .text("Close")
                 .click(function(e) {
-                    pop.hide();
+                    pop.remove();
                     return false;
                 });
             pop.append(cls);
@@ -1017,21 +1016,21 @@ try {
                     "text-decoration: none !important;" +
                 "}" +
                 "html body .uw-container h1, html body .uw-container h2, html body .uw-container h3, html body .uw-container h4 {" +
-                    "font-family: " + me.fontA.large.face + ", Comic Sans MS !important;" +
+                    "font-family: " + me.fontA.face + ", Comic Sans MS !important;" +
                     "font-weight: bold !important;" +
                     "margin-top: 30px !important;" +
                     "margin-bottom: 10px !important;" +
                 "}" +
                 "html body .uw-container p, html body p.uw-container {" +
-                    "text-indent: " + me.fontA.large.indent + "px !important;" +
+                    "text-indent: " + me.fontA.indent + "px !important;" +
                     "margin-top: 15px !important;" + /* uw-pmgn */
                     "margin-bottom: 15px !important;" +
                 "}" +
                 "html body.uw-fontB .uw-container p, html body.uw-fontB p.uw-container {" +
-                    "text-indent: " + me.fontB.large.indent + "px !important;" +
+                    "text-indent: " + me.fontB.indent + "px !important;" +
                 "}" +
                 "html body.uw-fontC .uw-container p, html body.uw-fontC p.uw-container {" +
-                    "text-indent: " + me.fontC.large.indent + "px !important;" +
+                    "text-indent: " + me.fontC.indent + "px !important;" +
                 "}" +
                 "html body .uw-container img + * {" +
                     "font-style: italic !important;" +
@@ -1071,52 +1070,52 @@ try {
                     "text-align: justify !important;" + /* uw-jfy */
                 "}" + //fnt...
                 "html body .uw-container, html body .uw-container * {" +
-                    "font-family: " + me.fontA.large.face + ", Comic Sans MS !important;" +
-                    "font-size: " + me.fontA.large.size + "px !important;" +
-                    "line-height: " + me.fontA.large.height + "px !important;" +
-                    "font-weight: " + me.fontA.large.weight + " !important;" +
-                    "color: " + me.fontA.large.color + " !important;" +
+                    "font-family: " + me.fontA.face + ", Comic Sans MS !important;" +
+                    "font-size: " + me.fontA.size + "px !important;" +
+                    "line-height: " + me.fontA.height + "px !important;" +
+                    "font-weight: " + me.fontA.weight + " !important;" +
+                    "color: " + me.fontA.color + " !important;" +
                     "font-style: normal !important;" + /* uw-sty */
                     "text-align: justify !important;" + /* uw-jfy */
                 "}" +
                 "html body.uw-fontB .uw-container, html body.uw-fontB .uw-container * {" +
-                    "font-family: " + me.fontB.large.face + ", Comic Sans MS !important;" +
-                    "font-size: " + me.fontB.large.size + "px !important;" +
-                    "line-height: " + me.fontB.large.height + "px !important;" +
-                    "font-weight: " + me.fontB.large.weight + " !important;" +
-                    "color: " + me.fontB.large.color + " !important;" +
+                    "font-family: " + me.fontB.face + ", Comic Sans MS !important;" +
+                    "font-size: " + me.fontB.size + "px !important;" +
+                    "line-height: " + me.fontB.height + "px !important;" +
+                    "font-weight: " + me.fontB.weight + " !important;" +
+                    "color: " + me.fontB.color + " !important;" +
                 "}" +
                 "html body.uw-fontC .uw-container, html body.uw-fontC .uw-container * {" +
-                    "font-family: " + me.fontC.large.face + ", Comic Sans MS !important;" +
-                    "font-size: " + me.fontC.large.size + "px !important;" +
-                    "line-height: " + me.fontC.large.height + "px !important;" +
-                    "font-weight: " + me.fontC.large.weight + " !important;" +
-                    "color: " + me.fontC.large.color + " !important;" +
+                    "font-family: " + me.fontC.face + ", Comic Sans MS !important;" +
+                    "font-size: " + me.fontC.size + "px !important;" +
+                    "line-height: " + me.fontC.height + "px !important;" +
+                    "font-weight: " + me.fontC.weight + " !important;" +
+                    "color: " + me.fontC.color + " !important;" +
                 "}" +
                 "html body .uw-read, html body .uw-read * {" +
                     "opacity: 0.5 !important;" +
                 "}" +
                 "@media (max-width: 800px) {" +
                     "html body .uw-container, html body .uw-container * {" +
-                        "font-family: " + me.fontA.small.face + ", Comic Sans MS !important;" +
-                        "font-size: " + me.fontA.small.size + "px !important;" +
-                        "line-height: " + me.fontA.small.height + "px !important;" +
-                        "font-weight: " + me.fontA.small.weight + " !important;" +
-                        "color: " + me.fontA.small.color + " !important;" +
+                        "font-family: " + me.fontA.face + ", Comic Sans MS !important;" +
+                        "font-size: " + me.fontA.sizeS + "px !important;" +
+                        "line-height: " + me.fontA.heightS + "px !important;" +
+                        "font-weight: " + me.fontA.weight + " !important;" +
+                        "color: " + me.fontA.color + " !important;" +
                     "}" +
                     "html body.uw-fontB .uw-container, html body.uw-fontB .uw-container * {" +
-                        "font-family: " + me.fontB.small.face + ", Comic Sans MS !important;" +
-                        "font-size: " + me.fontB.small.size + "px !important;" +
-                        "line-height: " + me.fontB.small.height + "px !important;" +
-                        "font-weight: " + me.fontB.small.weight + " !important;" +
-                        "color: " + me.fontB.small.color + " !important;" +
+                        "font-family: " + me.fontB.face + ", Comic Sans MS !important;" +
+                        "font-size: " + me.fontB.sizeS + "px !important;" +
+                        "line-height: " + me.fontB.heightS + "px !important;" +
+                        "font-weight: " + me.fontB.weight + " !important;" +
+                        "color: " + me.fontB.color + " !important;" +
                     "}" +
                     "html body.uw-fontC .uw-container, html body.uw-fontC .uw-container * {" +
-                        "font-family: " + me.fontC.small.face + ", Comic Sans MS !important;" +
-                        "font-size: " + me.fontC.small.size + "px !important;" +
-                        "line-height: " + me.fontC.small.height + "px !important;" +
-                        "font-weight: " + me.fontC.small.weight + " !important;" +
-                        "color: " + me.fontC.small.color + " !important;" +
+                        "font-family: " + me.fontC.face + ", Comic Sans MS !important;" +
+                        "font-size: " + me.fontC.sizeS + "px !important;" +
+                        "line-height: " + me.fontC.heightS + "px !important;" +
+                        "font-weight: " + me.fontC.weight + " !important;" +
+                        "color: " + me.fontC.color + " !important;" +
                     "}" +
                     "html body .uw-popout {" +
                         "min-width: 100px;" +

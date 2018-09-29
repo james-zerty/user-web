@@ -2,153 +2,30 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <title>user-web - home</title>
-
 <style>
-article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary {
-    display: block;
-}
-
 body {
     font: 12px/18px Consolas, Verdana;
 }
 
-.wrapper {
-    min-width: 500px;
-    max-width: 1000px;
-    margin: 0 auto;
+h4 {
+    margin: 10px 0 0;
 }
 
-/* Header
------------------------------------------------------------------------------*/
-.header {
-    xxbackground: #FFFFEE;
-    padding: 1px 10px;
-}
-
-.nav {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.nav li {
-    display: table-cell;
-    padding: 0 30px 0 0;
+ul {
     margin: 0;
 }
 
-a {
+a,
+a:visited {
     white-space: nowrap;
-}
-
-.nav li a:visited {
-    color: blue;
-}
-
-/* Middle
------------------------------------------------------------------------------*/
-.middle {
-    border-right: 270px solid #f4f4ff;
-    position: relative;
-}
-
-.middle:after {
-    display: table;
-    clear: both;
-    content: '';
-}
-
-.container {
-    width: 100%;
-    float: left;
-    overflow: hidden;
-    margin-right: -100%;
-    xxbackground: #dfd;
-}
-
-.content {
-    padding: 20px 40px;
-}
-
-.rightFloat {
-    float: right;
-    margin: 0 0 0 10px;
-    padding: 10px;
-    border: solid 1px #888;
-    max-width: 200px;
-}
-
-/* Right Sidebar
------------------------------------------------------------------------------*/
-.right-sidebar {
-    float: right;
-    margin-right: -270px;
-    width: 250px;
-    position: relative;
-    xxbackground: #FFF8F8;
-    padding: 10px;
-}
-
-.right-sidebar ul {
-    list-style: none;
-    margin: 10px 0;
-    padding: 0;
-}
-
-.right-sidebar li {
-    margin: 0;
-}
-
-/* Footer
------------------------------------------------------------------------------*/
-.footer {
-    xxbackground: #f0fff0;
-    padding: 1px 10px;
-}
-
-.fixed {
-    position: fixed;
-    right: 15px;
-}
-
-/* tests
------------------------------------------------------------------------------*/
-.narrow {
-    max-width: 500px;
-}
-
-.align-container {
-    height: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: solid 1px #888;
-}
-
-.no-select {
-    user-select: none;
-}
-
-@media (max-width: 800px) {
-    .wrapper {
-        min-width: 0px;
-    }
-    .middle {
-        border-right: 0px
-    }
-    .right-sidebar {
-        display:none;
-    }
+    color: #000;
 }
 </style>
 </head>
 <body>
     <h4><a href="/"><strong>Pages</strong></a></h4>
     <ul>
-        <li>
-            <h1><a href="home.htm">home</a></h1>
-        </li>
+        <li><strong><a href="home.htm">home</a></strong></li>
         <li><a href="dev.htm">dev</a></li>
         <li><a href="layout.htm">layout</a></li>
         <li><a href="simple.htm">simple</a></li>
@@ -200,9 +77,7 @@ a {
         <li><a href="styles/test.css">test</a></li>
         <li><a href="styles/tutorials-point.css">tutorials-point</a></li>
         <li><a href="styles/wikipedia.css">wikipedia</a></li>
-        <li><a href="styles/you-tube.css">you-tube</a></li>    </ul>
-
-
-
+        <li><a href="styles/you-tube.css">you-tube</a></li>
+    </ul>
 </body>
 </html>
