@@ -1,4 +1,67 @@
-﻿"use strict";
+﻿// ==UserScript==
+// @name        feedly
+// @description add pocket links to feedly
+// @namespace   https://github.com/james-zerty/
+// @version     2
+// @author      2010+, james_zerty
+// @grant       none
+// @noframes
+// @include     https://feedly.com/i/*
+// @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-2.1.0.min.js
+// ==/UserScript==
+"use strict";
+try {
+    var $ = window.$;
+    var loadAfter = 100;
+    var logPrefix = "[feedly] ";
+    var obj = new function () {
+        var me = this;
+
+        me.load = function () {
+            me.url = document.location.href;
+            me.switchLinks();
+            
+            $(document).bind("DOMNodeInserted", function(){
+                me.switchLinks();
+            });
+
+        };
+
+        me.switchLinks = function() {
+            $(".entryholder a").each(function() {
+                var el = $(this);
+                var href = el.attr("href");
+                if (href) {
+                    var prefix = "https://getpocket.com/edit?";
+                    if (href.indexOf(prefix) > -1) return;
+                    
+                    var u = encodeURIComponent(href);
+                    //var title = encodeURIComponent(window.document.title);
+                    var pocketUrl = prefix + "url=" + u; // + "&title=" + title;
+                            
+                    el.attr("href", pocketUrl);
+                    log("switching", el.text(), " : ", href, " to ", pocketUrl);
+                }
+            });
+        };
+    }();
+
+    /* ================================================== */
+
+    window.self.setTimeout(function () {
+        try {
+            obj.load();
+        }
+        catch (ex) {
+            log(ex);
+        }
+    }, loadAfter);
+}
+catch (ex) {
+    log(ex);
+}
+
+/* == utils ================================================================= */
 var logPopup;
 var DO_POP = "DO_POP";
 function hidePop() {
