@@ -185,13 +185,18 @@ try {
             // log("onPageKeyDown", "key:", e.key, " code:", e.keyCode, " ctrl:", e.ctrlKey, " alt:", e.altKey, " shift:", e.shiftKey);
             me.run(function() {
                 switch (e.keyCode) { //qq
+                    case 13: // enter
+                        if (e.ctrlKey) {
+                            me.doPopoutAuto();
+                        }
+                        break;
                     case 192: // ` firefox
                     case 223: // ` chrome
                         if (navigator.userAgent.indexOf("Chrome") > -1 && e.keyCode == 192) return;
                         // `                read cycle > Lite, Read, Large, Off
                         // Alt+`            show menu
                         // F2               mark next clicked element / resume marking
-                        // Ctrl+`           find > [DEL/d/RC] delete, [ENTER/r] read, [m] mark, [p] popout
+                        // Ctrl+`           find > [DEL/d] delete, [r] read, [m] mark, [h] highlight, [ENTER/p/RC] popout
                         // Shift+`          undo read
                         // Ctrl+Shift+`     toggle user style
                         if (e.ctrlKey && e.shiftKey) { //toggle user style...
@@ -205,7 +210,8 @@ try {
                             }
                         }
                         else if (e.shiftKey) {
-                            log("Shift+`", "undo read");
+                            log("Shift+`", "undo read + popout");
+                            me.undoPopout();
                             me.undoRead();
                         }
                         else if (e.altKey) {
@@ -217,7 +223,7 @@ try {
                             me.startFind();
                         }
                         else { //reading...
-                            switch (me.readingState) {
+                            switch (me.readingState) { //qq
                                 case 0:
                                     me.tidyUp();
                                     me.readLite();
@@ -450,13 +456,25 @@ try {
 
             me.menu.append(me.ulReadr);
 
+            me.linkScrollTop =
+                me.addLink(me.ulReadr, "Top", function() { //qq
+                    window.scrollTo(0, 0);
+                }, null, "Scroll to top");
+
+            me.userStyleSeparator = me.addSeparator(me.ulReadr);
+
+            me.linkPopoutAuto =
+                me.addLink(me.ulReadr, "Popout", function() {
+                    me.doPopoutAuto();
+                }, null, "Auto popout");
+
             me.linkRunReadrFull =
                 me.addLink(me.ulReadr, "Read", function() { //normal = hide fixed + style all p's
                     var el = $(me.clickEvent.target);
                     me.doReadFromElement(el);
                     me.clearSelection();
                     me.scrollToElement(el);
-                }, null, "Tidy + set font for elements with same width (`)");
+                }, null, "Tidy + set font for elements with same width");
 
             me.linkRunReadrLite =
                 me.addLink(me.ulReadr, "Read Lite", function() { //lite = hide fixed + justify all p's
@@ -479,14 +497,14 @@ try {
             me.linkRunReadrFind =
                 me.addLink(me.ulReadr, "Find...", function() {
                     me.startFind();
-                }, null, "Find an element then choose to read, popout or delete - see help for more info (Ctrl+Shift+`)");
+                }, null, "Find an element then choose to read, popout or delete - see help for more info");
 
             me.separatorRead1 = me.addSeparator(me.ulReadr).hide();
 
             me.linkUndoReadr =
                 me.addLink(me.ulReadr, "Undo Read", function() {
                     me.undoRead();
-                }, null, "Remove reading styles and highlights (Shift+`)").hide();
+                }, null, "Remove reading styles, highlights and popout").hide();
 
             me.userStyleSeparator = me.addSeparator(me.ulReadr);
 
@@ -494,7 +512,7 @@ try {
                 me.addLink(me.ulReadr, "Reload style", function() {
                     settings.uniqueUrls = 1;
                     me.loadUserStyle();
-                }, null, "Reload the user style (Ctrl+Shift+`)").hide();
+                }, null, "Reload the user style").hide();
 
             me.linkReloadStyleOnDblClick =
                 me.addLink(me.ulReadr, "Reload dblclick", function() {
@@ -533,7 +551,7 @@ try {
                 }, null, "Unload the user style").hide();
 
             me.linkShowLinks =
-                me.addLink(me.ulReadr, "Show links", function() { //qq
+                me.addLink(me.ulReadr, "Show links", function() {
                     $(".uw-container a").attr("style", "text-decoration: underline #ccc !important"); /* uw-uln */
                 }, null, "Show hidden links").hide();
 
@@ -613,6 +631,7 @@ try {
             me.addLink(me.ulSearch, "Twitter", function() { me.openSearch("https://twitter.com/search?q=TESTSEARCH&src=typd"); });
             me.addLink(me.ulSearch, "Wikipedia", function() { me.openSearch("https://en.m.wikipedia.org/wiki/Special:Search?search=TESTSEARCH&go=Go"); });
             me.addLink(me.ulSearch, "Amazon", function() { me.openSearch("http://www.amazon.co.uk/s/ref=nb_sb_noss_1?url=search-alias%3Daps&field-keywords=TESTSEARCH&x=0&y=0"); });
+            me.addLink(me.ulSearch, "Reddit", function() { me.openSearch("https://www.reddit.com/search?q=TESTSEARCH"); });
 
             $("body").append(me.menu);
 
@@ -707,10 +726,11 @@ try {
 
         me.showHelp = function(e) {
             me.addStyles();
-            var pop = $("<div class='uw-help'>");
+            var pop = $("<div class='uw-help'>"); //qq
             pop.html(
                 "<table>" +
                     "<tr><th>General...</th></tr>" +
+                    "<tr><td>Ctrl+Enter</td><td>Auto popout</td></tr>" +
                     "<tr><td>`</td><td>Toggle...</td></tr>" +
                     "<tr><td></td><td>Read Lite</td></tr>" +
                     "<tr><td></td><td>Read</td></tr>" +
@@ -726,13 +746,15 @@ try {
                     "<tr><th>Marking...</th></tr>" +
                     "<tr><td>Left or k</td><td>Previous paragraph</td></tr>" +
                     "<tr><td>Right or j</td><td>Next paragraph</td></tr>" +
-                    "<tr><td>ESC</td><td>Cancel Marking</td></tr>" +
+                    "<tr><td>Esc</td><td>Cancel Marking</td></tr>" +
                     "<tr><td>&nbsp;</td></tr>" +
                     "<tr><th>Finding...</th></tr>" +
-                    "<tr><td>Enter or f</td><td>Forced read</td></tr>" +
-                    "<tr><td>p</td><td>Popout read</td></tr>" +
-                    "<tr><td>DEL</td><td>Delete elements</td></tr>" +
-                    "<tr><td>ESC</td><td>Cancel find</td></tr>" +
+                    "<tr><td>r</td><td>Read</td></tr>" +
+                    "<tr><td>m</td><td>Mark</td></tr>" +
+                    "<tr><td>h</td><td>Highlight</td></tr>" +
+                    "<tr><td>p / Enter / RC</td><td>Popout</td></tr>" +
+                    "<tr><td>d / Del</td><td>Delete elements</td></tr>" +
+                    "<tr><td>Esc</td><td>Cancel find</td></tr>" +
                     "<tr><td>Right / Left</td><td>Next / Previous node</td></tr>" +
                 "</table>"
             );
@@ -1038,7 +1060,7 @@ try {
                 "html body .uw-marked {" +
                     "border-top: dotted 1px #f8f !important; padding-top: 5px !important;" +
                 "}" +
-                "html body .uw-highlight {" +
+                "html body .uw-highlight, html body .uw-popout .uw-highlight {" +
                     "background-color: #ffff80 !important;" +
                 "}" +
                 "html body .uw-popout {" +
@@ -1091,9 +1113,6 @@ try {
                     "line-height: " + me.fontC.height + "px !important;" +
                     "font-weight: " + me.fontC.weight + " !important;" +
                     "color: " + me.fontC.color + " !important;" +
-                "}" +
-                "html body .uw-read, html body .uw-read * {" +
-                    "opacity: 0.5 !important;" +
                 "}" +
                 "@media (max-width: 800px) {" +
                     "html body .uw-container, html body .uw-container * {" +
@@ -1230,7 +1249,7 @@ try {
         me.tidyBound = false;
         me.tidyWaiting = false;
         me.tidyLast = new Date().valueOf();
-        me.tidyUp = function(e) { //qqqq
+        me.tidyUp = function(e) { //qq
             if (me.tidyUpExclude) return;
 
             if ($.cookie("tidy") == "off") return;
@@ -1317,7 +1336,7 @@ try {
 
         /*** reading ************************************************************************************************** */
 
-        me.readLite = function() { //qqqq
+        me.readLite = function() { //qq
             me.addStyles();
             $("p").addClass("uw-lite");
             me.readingState = 1;
@@ -1351,14 +1370,7 @@ try {
             me.readingState = 2;
         };
 
-        me.undoRead = function() {
-            if (me.popoutDiv != null) {
-                me.popoutDiv.remove();
-                me.popoutDiv = null;
-                me.scrollToElement($("body"));
-                me.marked = $();
-            }
-            me.activePopout = false;
+        me.undoRead = function() { //qq
             me.activeReadr = false;
             me.setFont1();
             $(".uw-lite").removeClass("uw-lite");
@@ -1377,7 +1389,7 @@ try {
             }
         };
 
-        me.doPopout = function(el) {
+        me.doPopout = function(el) { //qq
             me.tidyUp();
             me.addStyles();
             me.setFontB();
@@ -1412,12 +1424,22 @@ try {
 
             document.body.insertAdjacentHTML("afterbegin", html);
             me.popoutDiv = $(".uw-popout");
+            me.forced = me.popoutDiv;
             me.activePopout = true;
             me.refreshMenu();
-            me.readingState = 5;
             $('html, body').scrollTop(0);
         };
 
+        me.undoPopout = function() {
+            if (me.popoutDiv != null) {
+                me.popoutDiv.remove();
+                me.popoutDiv = null;
+                me.scrollToElement($("body"));
+                me.marked = $();
+                me.forced = $();
+            }
+            me.activePopout = false;
+        };
         /*** content ************************************************************************************************** */
 
         me.getMainAuto = function() {
@@ -1501,7 +1523,7 @@ try {
                         $("body").unbind("mouseup.uw-find-first");
                         var el = $(e.target);
                         me.finder.els.push(el);
-                        el.css("background-color", "orange");
+                        el.attr("style", "background-color: orange !important");
                         log("uw find", "adding bindings");
 
                         $("body").bind("keyup.uw-find", me.onFindingKeyUp);
@@ -1519,12 +1541,10 @@ try {
 
         me.onFindingKeyUp = function(e) {
             me.run(function() {
-                switch (e.keyCode) {
+                switch (e.keyCode) { //qq
                     case 27: //esc
                         me.cancelFind();
                         break;
-                    case 13: //enter > force read
-                    case 70: //f
                     case 82: //r
                         me.found("force");
                         break;
@@ -1535,6 +1555,10 @@ try {
                     case 77: //m > mark
                         me.found("mark");
                         break;
+                    case 72: //h > highlight
+                        me.found("highlight");
+                        break;
+                    case 13: //enter > popout
                     case 80: //p > popout
                         me.found("popout");
                         break;
@@ -1564,7 +1588,7 @@ try {
                         break;
                     case 2: //right click
                         setTimeout(function() {
-                            me.found("remove");
+                            me.found("popout");
                         }, 1);
                         break;
                 }
@@ -1579,10 +1603,10 @@ try {
 
             var elp = el.parent();
             if (elp[0].tagName == "BODY") {
-                elp.css("background-color", "red");
+                elp.attr("style", "background-color: red !important");
             }
             else {
-                elp.css("background-color", "gold");
+                elp.attr("style", "background-color: gold !important");
             }
 
             elp.addClass("uw-find-el");
@@ -1600,7 +1624,10 @@ try {
                     break;
                 case "mark":
                     me.markElementAndBind(el);
-                    return;;
+                    return;
+                case "highlight":
+                    me.highlightElement(el); //qq
+                    return;
                 case "remove":
                     el.remove();
                     return;
