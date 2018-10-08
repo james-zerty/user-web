@@ -24,12 +24,10 @@ try {
         // settings = { localUrls: 0, uniqueUrls: 0, reloader: 1, autoShow: 0, handleErrors: 0 };
     // }
 
-    // if (navigator.userAgent.indexOf("Mozilla/5.0 (Windows NT 6.3; Win64; x64;" > -1)) {
-        // settings.localUrls = 1;
-    // }
+    // settings.localUrls = 1; // for dev machine
 
     log("url", url.substr(0, 100));
-    log("loaded", new Date());
+    // log("loaded", new Date());
     // log("navigator.userAgent", navigator.userAgent);
 
     var userWeb = new function() {
@@ -82,6 +80,7 @@ try {
                     // me.doReadAuto();
                     // me.doPopoutAuto();
                     // throw new Error("test!");
+                    me.showMenu([]); //also need to stop hideMenu
                 });
             }
         };
@@ -331,7 +330,7 @@ try {
 
             var ePageX = e.pageX;
             var ePageY = e.pageY;
-            log("", "ePageX: ", ePageX, "; ePageY: ", ePageY);
+            // log("", "ePageX: ", ePageX, "; ePageY: ", ePageY);
             if (isNaN(ePageY)) {
                 ePageY = $(window).scrollTop();
             }
@@ -339,7 +338,7 @@ try {
                 ePageX = $(window).scrollLeft();
                 adjustX = -10;
             }
-            log("", "ePageX: ", ePageX, "; ePageY: ", ePageY);
+            // log("", "ePageX: ", ePageX, "; ePageY: ", ePageY);
 
             if (me.menu == null) {
                 me.createMenu();
@@ -351,14 +350,6 @@ try {
             if (me.selectedText) {
                 offsetY = 10;
                 offsetX = 70;
-                me.ulReadr.show();
-                me.ulSearch.show();
-                me.ulReadr.css("min-height", "161px"); //hack for the vertical separator
-            }
-            else {
-                me.ulReadr.show();
-                me.ulSearch.hide();
-                me.ulReadr.css("min-height", "1px");
             }
 
             var top = ePageY - adjustY + offsetY;
@@ -366,9 +357,6 @@ try {
             if (left < 10) {
                 left = 10;
             }
-
-            // log("top", top);
-            // log("left", left);
 
             me.menu.css({
                 top: top + "px",
@@ -421,6 +409,8 @@ try {
         };
 
         me.hideMenu = function() {
+            if (settings.autoShow) return;
+            
             if (me.menu) {
                 me.menu.hide();
                 me.menuTimeoutClear();
@@ -428,7 +418,7 @@ try {
 
             me.menuShowing = false;
         };
-
+        
         me.createMenu = function() {
             if (me.menu) {
                 return;
@@ -436,8 +426,21 @@ try {
 
             me.addStyles();
             me.menu = $("<div id='UserWebMenu' class='uw-menu'>");
-            me.ulReadr = $("<ul class='uw-menu-left'>");
-
+            $("body").append(me.menu);
+            
+            var tbl = me.addEl(me.menu, "table");
+            var row1 = me.addEl(tbl, "tr");
+            var row2 = me.addEl(tbl, "tr");
+            
+            var rowX = me.addEl(tbl, "tr");
+            var td = me.addEl(rowX, "td", "uw-separator"); td.attr("colspan", 4);
+            
+            var row3 = me.addEl(tbl, "tr");
+            var td = me.addEl(row3, "td"); td.attr("colspan", 2);
+            me.ulReader = me.addEl(td, "ul", "uw-menu-left");
+            var td = me.addEl(row3, "td"); td.attr("colspan", 2);
+            me.ulSearch = me.addEl(td, "ul", "uw-menu-right");
+            
             me.menu.hover(
                 function() { // on hover
                     me.menuTimeoutClear();
@@ -454,68 +457,115 @@ try {
                 });
             });
 
-            me.menu.append(me.ulReadr);
+            //--------------------------------------------------------------------------------------
 
-            me.linkScrollTop =
-                me.addLink(me.ulReadr, "Top", function() { //qq
-                    window.scrollTo(0, 0);
+            me.lnkScrollTop =
+                me.addCellLink(row1, "Top", function() { //qqqq
+                    $("html").scrollTop(0);
                 }, null, "Scroll to top");
-
-            me.userStyleSeparator = me.addSeparator(me.ulReadr);
-
-            me.linkPopoutAuto =
-                me.addLink(me.ulReadr, "Popout", function() {
+            me.lnkScrollBottom =
+                me.addCellLink(row2, "Bottom", function() {
+                    $("html").scrollTop($(document).height());
+                }, null, "Scroll to bottom");
+            me.lnkPopoutAuto =
+                me.addCellLink(row1, "Popout", function() {
                     me.doPopoutAuto();
                 }, null, "Auto popout");
+            me.lnkRunReadrFind =
+                me.addCellLink(row2, "Find", function() {
+                    me.startFind();
+                }, null, "Find an element then choose to read, popout or delete - see help for more info");
 
-            me.linkRunReadrFull =
-                me.addLink(me.ulReadr, "Read", function() { //normal = hide fixed + style all p's
+            me.lnkMarkElement =
+                me.addCellLink(row1, "Mark", function() {
+                    var el = $(me.clickEvent.target);
+                    me.markElementAndBind(el);
+                });
+            me.lnkHighlightElement =
+                me.addCellLink(row2, "Highlight", function() {
+                    me.highlightElement($(me.clickEvent.target));
+                });
+            
+            me.addCellLink(row1, "Copy", function() {
+                me.setClipboard();
+            });
+            me.lnkTidyOff =
+                me.addCellLink(row2, "Tidy off", function() {
+                    $.cookie("tidy", "off", { path: '/' });
+                    document.location.reload(true);
+                }, null, "Turn tidy off and reload").hide();
+            me.lnkTidyOn =
+                me.addCellLink(row2, "Tidy on", function() {
+                    $.cookie("tidy", "on", { path: '/' });
+                    me.tidyUp();
+                    me.refreshMenu();
+                }, null, "Turn tidy on");
+
+            //--------------------------------------------------------------------------------------
+
+            me.lnkLevelUp =
+                me.addLink(me.ulReader, "Up", function() {
+                    me.levelUp();
+                }, null, "Got to URL parent");
+
+            me.lnkClose =
+                me.addLink(me.ulReader, "Close", function() {
+                    document.location.href = "about:blank";
+                }, null, "Got to new tab");
+
+            me.addSeparator(me.ulReader); //--------------------------------------------------------
+            
+            me.lnkEnableSelect =
+                me.addLink(me.ulReader, "Enable selection", function() {
+                    me.enableSelect();
+                }, null, "Allow selection of text");
+
+            me.lnkShowImages =
+                me.addLink(me.ulReader, "Show images", function() {
+                    me.showImages();
+                }, null, "Redisplay hidden images").hide();
+
+            me.lnkHideImages =
+                me.addLink(me.ulReader, "Hide images", function() {
+                    me.hideImages();
+                }, null, "Hide all images in the page");
+            
+            me.lnkShowLinks =
+                me.addLink(me.ulReader, "Show links", function() {
+                    me.showLinks();
+                }, null, "Show hidden links").hide();
+
+            me.lnkHideLinks =
+                me.addLink(me.ulReader, "Hide links", function() {
+                    me.hideLinks();
+                }, null, "Hide link underlines");
+
+            me.addSeparator(me.ulReader); //--------------------------------------------------------
+
+            me.lnkRunReadrFull =
+                me.addLink(me.ulReader, "Read", function() { //normal = hide fixed + style all p's
                     var el = $(me.clickEvent.target);
                     me.doReadFromElement(el);
                     me.clearSelection();
                     me.scrollToElement(el);
                 }, null, "Tidy + set font for elements with same width");
-
-            me.linkRunReadrLite =
-                me.addLink(me.ulReadr, "Read Lite", function() { //lite = hide fixed + justify all p's
-                    me.tidyUp();
-                    me.readLite();
-                }, null, "Tidy and justify");
-
-            me.linkTidyOff =
-                me.addLink(me.ulReadr, "Tidy off", function() {
-                    $.cookie("tidy", "off", { path: '/' });
-                    document.location.reload(true);
-                }, null, "Turn tidy off and reload");
-
-            me.linkTidyOn =
-                me.addLink(me.ulReadr, "Tidy on", function() {
-                    $.cookie("tidy", "on", { path: '/' });
-                    me.tidyUp();
-                }, null, "Turn tidy on and reload");
-
-            me.linkRunReadrFind =
-                me.addLink(me.ulReadr, "Find...", function() {
-                    me.startFind();
-                }, null, "Find an element then choose to read, popout or delete - see help for more info");
-
-            me.separatorRead1 = me.addSeparator(me.ulReadr).hide();
-
-            me.linkUndoReadr =
-                me.addLink(me.ulReadr, "Undo Read", function() {
+                
+            me.lnkUndoReadr =
+                me.addLink(me.ulReader, "Undo read", function() {
+                    me.undoPopout();
                     me.undoRead();
-                }, null, "Remove reading styles, highlights and popout").hide();
+                }, null, "Remove reading styles, highlights and popout");
 
-            me.userStyleSeparator = me.addSeparator(me.ulReadr);
+            me.userStyleSeparator = me.addSeparator(me.ulReader); //--------------------------------
 
-            me.linkReloadStyle =
-                me.addLink(me.ulReadr, "Reload style", function() {
+            me.lnkReloadStyle =
+                me.addLink(me.ulReader, "Reload style", function() {
                     settings.uniqueUrls = 1;
                     me.loadUserStyle();
-                }, null, "Reload the user style").hide();
+                }, null, "Reload the user style");
 
-            me.linkReloadStyleOnDblClick =
-                me.addLink(me.ulReadr, "Reload dblclick", function() {
+            me.lnkReloadStyleOnDblClick =
+                me.addLink(me.ulReader, "Reload dblclick", function() {
                     $("body").bind("dblclick.uw-find", function() {
                         me.run(function() {
                             settings.uniqueUrls = 1;
@@ -527,115 +577,90 @@ try {
                     });
 
                     me.reloadStyleOnDblClickIsBound = true;
-                    me.linkReloadStyleOnDblClick.hide();
-                    me.linkReloadStyleOnDblClickOff.show();
+                    me.lnkReloadStyleOnDblClick.hide();
+                    me.lnkReloadStyleOnDblClickOff.show();
                     settings.uniqueUrls = 1;
                     me.loadUserStyle();
-                }, null, "Reload the user style on dblclick").hide();
+                }, null, "Reload the user style on dblclick");
 
-            me.linkReloadStyleOnDblClickOff =
-                me.addLink(me.ulReadr, "Reload cancel", function() {
+            me.lnkReloadStyleOnDblClickOff =
+                me.addLink(me.ulReader, "Reload cancel", function() {
                     $("body").unbind("dblclick.uw-find");
-                    me.linkReloadStyleOnDblClick.show();
-                    me.linkReloadStyleOnDblClickOff.hide();
+                    me.lnkReloadStyleOnDblClick.show();
+                    me.lnkReloadStyleOnDblClickOff.hide();
                 }, null, "Stop reloading the user style on dblclick").hide();
 
-            me.linkOpenStyle =
-                me.addLink(me.ulReadr, "Open style", function() {
+            me.lnkOpenStyle =
+                me.addLink(me.ulReader, "Open style", function() {
                     me.openUserStyle();
-                }, null, "Open user style in new tab").hide();
+                }, null, "Open user style in new tab");
 
-            me.linkUnloadStyle =
-                me.addLink(me.ulReadr, "Unload style", function() {
+            me.lnkUnloadStyle =
+                me.addLink(me.ulReader, "Unload style", function() {
                     me.unloadUserStyle();
-                }, null, "Unload the user style").hide();
+                }, null, "Unload the user style");
 
-            me.linkShowLinks =
-                me.addLink(me.ulReadr, "Show links", function() {
-                    $(".uw-container a").attr("style", "text-decoration: underline #ccc !important"); /* uw-uln */
-                }, null, "Show hidden links").hide();
+            me.addSeparator(me.ulReader); //--------------------------------------------------------
 
-            me.linkHideLinks =
-                me.addLink(me.ulReadr, "Hide links", function() {
-                    $(".uw-container a").attr("style", "text-decoration: none !important"); /* uw-uln */
-                }, null, "Hide link underlines").hide();
-
-            me.addSeparator(me.ulReadr);
-
-            me.linkEnableSelect =
-                me.addLink(me.ulReadr, "Enable selection", function() {
-                    me.enableSelect();
-                    me.clearSelection();
-                    me.hideMenu();
-                }, null, "Allow selection of text");
-
-            me.linkImagesHide =
-                me.addLink(me.ulReadr, "Hide Images", function() {
-                    me.hideImages();
-                }, null, "Hide all images in the page");
-
-            me.linkImagesShow =
-                me.addLink(me.ulReadr, "Show Images", function() {
-                    me.showImages();
-                }, null, "Redisplay hidden images").hide();
-
-            me.addSeparator(me.ulReadr);
-
-            me.linkLevelUp =
-                me.addLink(me.ulReadr, "Up", function() {
-                    me.levelUp();
-                }, null, "Got to URL parent");
-
-            me.addSeparator(me.ulReadr);
-
-            me.addLink(me.ulReadr, "Help", function() {
+            me.addLink(me.ulReader, "Help", function() {
                 me.showHelp();
             });
 
-            me.ulSearch = $("<ul class='uw-menu-right'>");
-            me.menu.append(me.ulSearch);
-
-            me.addLink(me.ulSearch, "Copy", function() { me.setClipboard(); });
-            me.linkMarkElement =
-                me.addLink(me.ulSearch, "Mark", function() {
-                    var el = $(me.clickEvent.target);
-                    me.markElementAndBind(el);
-                });
-            me.linkResumeMarkElement =
-                me.addLink(me.ulSearch, "Resume Marking", function() {
-                    me.markElementAndBind(me.marked);
-                }).hide();
-            me.linkHighlightElement =
-                me.addLink(me.ulSearch, "Highlight", function() {
-                    me.highlightElement($(me.clickEvent.target));
-                });
-            me.addSeparator(me.ulSearch);
             var u = encodeURIComponent(window.location.href);
             var title = encodeURIComponent(window.document.title);
             var prefix = "https://getpocket.com/edit?";
             var pocketUrl = prefix + "url=" + u + "&title=" + title;
             me.addLink(me.ulSearch, "Add to Pocket", null, pocketUrl);
-            me.addSeparator(me.ulSearch);
-            me.linkNavigateTo = me.addLink(me.ulSearch, "Go to", function() { me.navigateTo(me.selectedText); });
-            me.addSeparator(me.ulSearch);
-            me.linkSearchTitle = me.addListItem(me.ulSearch, "Search...").addClass("bold");
+            me.addLink(me.ulSearch, "Browse URL", function() { me.navigateTo(me.selectedText); });
+            
+            me.addSeparator(me.ulSearch); //--------------------------------------------------------
             me.addLink(me.ulSearch, "Google", function() { me.openSearch("https://www.google.co.uk/search?q=TESTSEARCH"); });
             me.addLink(me.ulSearch, "Google Define", function() { me.openSearch("https://www.google.co.uk/search?q=define:TESTSEARCH"); });
             me.addLink(me.ulSearch, "Google Maps", function() { me.openSearch("https://maps.google.co.uk/maps?q=TESTSEARCH"); });
             me.addLink(me.ulSearch, "Google Images", function() { me.openSearch("https://www.google.co.uk/search?tbm=isch&q=TESTSEARCH"); });
-            me.addSeparator(me.ulSearch);
+            
+            me.addSeparator(me.ulSearch); //--------------------------------------------------------
             me.addLink(me.ulSearch, "Stack Overflow", function() { me.openSearch("https://www.google.co.uk/search?q=site%3Astackoverflow.com+TESTSEARCH"); });
             me.addLink(me.ulSearch, "Super User", function() { me.openSearch("https://www.google.co.uk/search?q=site%3Asuperuser.com+TESTSEARCH"); });
             me.addLink(me.ulSearch, "Stack Exchange", function() { me.openSearch("https://www.google.co.uk/search?q=site%3Astackexchange.com+TESTSEARCH"); });
-            me.addSeparator(me.ulSearch);
+            
+            me.addSeparator(me.ulSearch); //--------------------------------------------------------
             me.addLink(me.ulSearch, "Twitter", function() { me.openSearch("https://twitter.com/search?q=TESTSEARCH&src=typd"); });
             me.addLink(me.ulSearch, "Wikipedia", function() { me.openSearch("https://en.m.wikipedia.org/wiki/Special:Search?search=TESTSEARCH&go=Go"); });
             me.addLink(me.ulSearch, "Amazon", function() { me.openSearch("http://www.amazon.co.uk/s/ref=nb_sb_noss_1?url=search-alias%3Daps&field-keywords=TESTSEARCH&x=0&y=0"); });
             me.addLink(me.ulSearch, "Reddit", function() { me.openSearch("https://www.reddit.com/search?q=TESTSEARCH"); });
 
-            $("body").append(me.menu);
-
             me.refreshMenu();
+        };
+        
+        me.addEl = function(parent, tag, className, text) { //qqq move / replace addElement
+            var el = $("<" + tag + ">");
+
+            if (className != null) {
+                el.addClass(className);
+            }
+
+            if (text != null) {
+                el.text(text);
+            }
+
+            if (parent != null) {
+                parent.append(el);
+            }
+
+            return el;
+        };
+
+        me.addCellLink = function(parent, text, fn, href, title) { //qqqq merge
+            var td = $("<td>")
+                .append($("<a>" + text + "</a>")
+                    .click(function() { me.run(fn); }));
+
+            if (href != null) td.find("a").prop("href", href);
+            if (title != null) td.prop("title", title);
+
+            parent.append(td);
+            return td;
         };
 
         me.addLink = function(parent, text, fn, href, title) {
@@ -650,76 +675,64 @@ try {
             return li;
         };
 
-        me.addListItem = function(parent, text) {
+        me.addSeparator = function(parent) {
             var li = $("<li>")
-                .append($("<span>" + text + "</span>"));
+                .addClass("uw-separator");
 
             parent.append(li);
             return li;
         };
 
-        me.addSeparator = function(parent) {
-            return me.addListItem(parent, "").addClass("uw-separator");
-        };
-
         me.refreshMenu = function() {
             if (me.menu) {
-                if (me.imageHide) {
-                    me.linkImagesShow.show();
-                    me.linkImagesHide.hide();
+                if (me.imagesHidden) {
+                    me.lnkShowImages.show();
+                    me.lnkHideImages.hide();
                 }
                 else {
-                    me.linkImagesShow.hide();
-                    me.linkImagesHide.show();
+                    me.lnkShowImages.hide();
+                    me.lnkHideImages.show();
                 }
-
-                if (me.marked.length > 0) {
-                    me.linkResumeMarkElement.show();
+                
+                if (me.linksHidden) {
+                    me.lnkShowLinks.show();
+                    me.lnkHideLinks.hide();
+                }
+                else {
+                    me.lnkShowLinks.hide();
+                    me.lnkHideLinks.show();
                 }
 
                 if (me.foundUserStyle) {
                     me.userStyleSeparator.show();
-                    me.linkReloadStyle.show();
+                    me.lnkReloadStyle.show();
 
                     if (!me.reloadStyleOnDblClickIsBound) {
-                        me.linkReloadStyleOnDblClick.show();
+                        me.lnkReloadStyleOnDblClick.show();
                     }
                 }
                 else {
                     me.userStyleSeparator.hide();
-                    me.linkReloadStyle.hide();
-                    me.linkReloadStyleOnDblClick.hide();
+                    me.lnkReloadStyle.hide();
+                    me.lnkReloadStyleOnDblClick.hide();
                 }
 
                 if (me.activeUserStyle) {
-                    me.linkOpenStyle.show();
-                    me.linkUnloadStyle.show();
+                    me.lnkOpenStyle.show();
+                    me.lnkUnloadStyle.show();
                 }
                 else {
-                    me.linkOpenStyle.hide();
-                    me.linkUnloadStyle.hide();
-                }
-
-                if (me.activeReadr) {
-                    me.separatorRead1.show();
-                    me.linkUndoReadr.show();
-                    me.linkShowLinks.show();
-                    me.linkHideLinks.show();
-                }
-                else {
-                    me.separatorRead1.hide();
-                    me.linkUndoReadr.hide();
-                    me.linkShowLinks.hide();
-                    me.linkHideLinks.hide();
+                    me.lnkOpenStyle.hide();
+                    me.lnkUnloadStyle.hide();
                 }
 
                 if ($.cookie("tidy") == "on") {
-                    me.linkTidyOff.show();
-                    me.linkTidyOn.hide();
+                    me.lnkTidyOff.show();
+                    me.lnkTidyOn.hide();
                 }
                 else {
-                    me.linkTidyOff.hide();
-                    me.linkTidyOn.show();
+                    me.lnkTidyOff.hide();
+                    me.lnkTidyOn.show();
                 }
             }
         };
@@ -732,7 +745,7 @@ try {
                     "<tr><th>General...</th></tr>" +
                     "<tr><td>Ctrl+Enter</td><td>Auto popout</td></tr>" +
                     "<tr><td>`</td><td>Toggle...</td></tr>" +
-                    "<tr><td></td><td>Read Lite</td></tr>" +
+                    "<tr><td></td><td>Read lite</td></tr>" +
                     "<tr><td></td><td>Read</td></tr>" +
                     "<tr><td></td><td>Read large</td></tr>" +
                     "<tr><td></td><td>Undo reading</td></tr>" +
@@ -740,13 +753,13 @@ try {
                     "<tr><td>Ctrl+`</td><td>Find element</td></tr>" +
                     "<tr><td>Shift+`</td><td>Undo read</td></tr>" +
                     "<tr><td>Ctrl+Shift+`</td><td>Toggle user style</td></tr>" +
-                    "<tr><td>F2</td><td>Mark</td></tr>" +
+                    "<tr><td>F2</td><td>Mark / resume marking</td></tr>" +
                     "<tr><td>Ctrl+Shift+Alt+?</td><td>Show help</td></tr>" +
                     "<tr><td>&nbsp;</td></tr>" +
                     "<tr><th>Marking...</th></tr>" +
                     "<tr><td>Left or k</td><td>Previous paragraph</td></tr>" +
                     "<tr><td>Right or j</td><td>Next paragraph</td></tr>" +
-                    "<tr><td>Esc</td><td>Cancel Marking</td></tr>" +
+                    "<tr><td>Esc</td><td>Cancel marking</td></tr>" +
                     "<tr><td>&nbsp;</td></tr>" +
                     "<tr><th>Finding...</th></tr>" +
                     "<tr><td>r</td><td>Read</td></tr>" +
@@ -755,7 +768,7 @@ try {
                     "<tr><td>p / Enter / RC</td><td>Popout</td></tr>" +
                     "<tr><td>d / Del</td><td>Delete elements</td></tr>" +
                     "<tr><td>Esc</td><td>Cancel find</td></tr>" +
-                    "<tr><td>Right / Left</td><td>Next / Previous node</td></tr>" +
+                    "<tr><td>Right / Left</td><td>Next / previous node</td></tr>" +
                 "</table>"
             );
 
@@ -773,13 +786,25 @@ try {
 
         me.hideImages = function() {
             $("img").hide();
-            me.imageHide = true;
+            me.imagesHidden = true;
             me.refreshMenu();
         };
 
         me.showImages = function() {
             $("img").show();
-            me.imageHide = false;
+            me.imagesHidden = false;
+            me.refreshMenu();
+        };
+        
+        me.hideLinks = function() {
+            $("a").attr("style", "text-decoration: none !important"); /* uw-uln */
+            me.linksHidden = true;
+            me.refreshMenu();
+        };
+        
+        me.showLinks = function() {
+            $("a").attr("style", "text-decoration: underline #ccc !important"); /* uw-uln */
+            me.linksHidden = false;
             me.refreshMenu();
         };
 
@@ -808,135 +833,34 @@ try {
                 .attr("onselectstart", allowNormal)
                 .attr("oncontextmenu", allowNormal)
                 .attr("ondragstart",allowNormal);
+                
+            me.clearSelection();
+            me.hideMenu();
         };
 
         me.setClipboard = function(url) {
-            me.run(function() {
-                var text = trim(me.selectedText);
-                if (window.GM && window.GM.setClipboard) {
-                    window.GM.setClipboard(text);
-                }
-                else {
-                    GM_setClipboard(text);
-                }
-            });
+            var text = trim(me.selectedText);
+            if (window.GM && window.GM.setClipboard) {
+                window.GM.setClipboard(text);
+            }
+            else {
+                GM_setClipboard(text);
+            }
         };
 
         me.openSearch = function(url) {
-            me.run(function() {
-                window.open(url.replace("TESTSEARCH", encodeURIComponent(trim(me.selectedText)).replace(/%20/g, "+")), "", "");
-            });
+            window.open(url.replace("TESTSEARCH", encodeURIComponent(trim(me.selectedText)).replace(/%20/g, "+")), "", "");
         };
 
         me.navigateTo = function(url) {
-            me.run(function() {
-                url = trim(url);
-                if (url.indexOf("http") != 0) {
-                    url = "http://" + url;
-                }
+            url = trim(url);
+            if (url.indexOf("http") != 0) {
+                url = "http://" + url;
+            }
 
-                window.open(url, "", "");
-            });
+            window.open(url, "", "");
         };
-
-        /*** fonts **************************************************************************************************** */
-
-        me.fonts = [ //fnt
-            "Ubuntu",
-            "Kalinga",
-            "open sans",
-            "Yu Mincho",
-            "Georgia",
-            "Urdu Typesetting", //sans...
-            "Euphemia",
-            "Corbel",
-            "Segoe UI",
-            "Levenim MT",
-            "Leelawadee UI",
-            "Century Gothic",
-            "Gadugi",
-            "Yu Gothic",
-            "Estrangelo Edessa",
-            "Malgun Gothic",
-            "Comic Sans MS", //serif...
-            "Batang",
-            "Traditional Arabic",
-            "Comic Sans MS", //more...
-            "Gisha",
-            "Candara",
-            "SimSun-ExtB",
-            "Sitka Display",
-            "Verdana",
-            "Arial",
-            "BatangChe",
-            "Book Antiqua",
-            "Calibri",
-            "Calibri Light",
-            "Cambria",
-            "Cambria Math",
-            "Consolas",
-            "Constantia",
-            "Courier New",
-            "David",
-            "DokChampa",
-            "Dotum",
-            "DotumChe",
-            "Ebrima",
-            "FangSong",
-            "Gabriola",
-            "Gautami",
-            "Gulim",
-            "GulimChe",
-            "Gungsuh",
-            "KaiTi",
-            "Kartika",
-            "Khmer UI",
-            "Lao UI",
-            "Latha",
-            "Leelawadee",
-            "Lucida Console",
-            "Lucida Sans Unicode",
-            "Mangal",
-            "Meiryo",
-            "Microsoft JhengHei",
-            "Microsoft New Tai Lue",
-            "Microsoft Sans Serif",
-            "Microsoft Tai Le",
-            "Microsoft YaHei",
-            "Microsoft Yi Baiti",
-            "Miriam, Miriam Fixed",
-            "MS Gothic, MS PGothic",
-            "MS UI Gothic",
-            "MV Boli",
-            "Myanmar Text",
-            "Narkisim",
-            "Nirmala UI",
-            "NSimSun",
-            "Nyala",
-            "Palatino Linotype",
-            "Plantagenet Cherokee",
-            "Raavi",
-            "Rod",
-            "Sakkal Majalla",
-            "Segoe Print",
-            "Segoe Script",
-            "Segoe UI Symbol",
-            "Shruti",
-            "SimHei",
-            "Simplified Arabic",
-            "SimSun",
-            "Sitka Banner",
-            "Sitka Heading",
-            "Sitka Small",
-            "Sitka Subheading",
-            "Sitka Text",
-            "Sylfaen",
-            "Tahoma",
-            "Vani",
-            "Vrinda",
-            "Comic Sans MS"
-        ];
-
+        
         /*** menu and reading styles ********************************************************************************** */
 
         me.addStyleElement = function(id, css) {
@@ -962,19 +886,21 @@ try {
                 "html body .uw-help-button { " +
                     "border:solid 1px #000; padding:5px; margin-top:20px; text-align:center; cursor:pointer;" +
                 "}" +
+                //----------------------------------------------------------------------------------
                 "html body .uw-menu { " +
                     "text-align: left !important;" +
                     "padding: 0 !important;" +
                     "position: absolute;" +
-                    "border: solid 1px #000;" +
                     "font-family: calibri;" +
                     "font-size: 12px;" +
                     "color: #000;" +
                     "z-index: 999999999;" +
                     "text-align: center;" +
                     "user-select: none;" +
+                    "border-collapse: collapse !important;" +
+                    "border: solid 1px #000 !important;" + //qqqq
                 "}" +
-                "html body .uw-menu, html body .uw-menu *, html body .uw-menu ul li a, html body .uw-menu ul li span, html body .uw-help td, html body .uw-help th { " +
+                "html body .uw-menu, html body .uw-menu *, html body .uw-menu ul li a, html body .uw-help td, html body .uw-help th { " +
                     "font-family: Corbel, Comic Sans MS !important;" +
                     "font-size: 13px !important;" +
                     "font-style: normal !important;" +
@@ -985,51 +911,49 @@ try {
                     "text-align: left !important;" +
                     "margin: 0 !important;" +
                 "}" +
-                "html body .uw-menu ul {" +
-                    "display: table-cell !important;" +
+                "html body .uw-menu table, html body .uw-menu table td {" +
+                    "border-collapse: collapse !important;" +
+                    "vertical-align: top !important;" +
+                    "padding: 0 !important;" +
                 "}" +
-                "html body .uw-menu ul.uw-menu-left {" +
-                    "border-right: solid 1px #000 !important;" +
+                "html body .uw-menu table td {" +
+                    "border: solid 1px #aaa !important;" +
+                    "background-color: #eee !important;" +
+                "}" +
+                "html body .uw-menu ul {" +
+                    "display: block !important;" +
                 "}" +
                 "html body .uw-menu ul, html body .uw-menu li {" +
-                    "margin: 0 !important;" +
                     "padding: 0 !important;" +
                     "list-style-type: none !important;" +
                     "list-style: none !important;" +
                     "white-space: nowrap !important;" +
                 "}" +
-                "html body .uw-menu a:visited {" +
-                    " color: #000 !important;" +
+                "html body .uw-menu li {" +
+                    "border-top: solid 1px #ddd !important;" +
+                    "min-width: 140px !important;" +
+                "}" +
+                "html body .uw-menu li:last-child {" + //qqq
+                    "border-bottom: solid 1px #ddd !important;" +
+                "}" +
+                "html body .uw-menu .uw-separator {" +
+                    "padding: 17px 0 0 0 !important;" +
+                    "background-color: #eee !important;" +
                 "}" +
                 "html body .uw-menu a {" +
                     "text-decoration: none !important;" +
                     "cursor: pointer !important;" +
-                "}" +
-                "html body .uw-menu li {" +
-                    "border-top: solid 1px #ddd !important;" +
-                "}" +
-                "html body .uw-menu li.bold * {" +
-                    "font-weight: bold !important;" +
-                "}" +
-                "html body .uw-menu li.uw-separator {" +
-                    "padding: 0 !important;" +
-                    "border-top: solid 1px #aaa !important;" +
-                "}" +
-                "html body .uw-menu li.uw-separator span {" +
-                    "padding: 0 !important;" +
-                "}" +
-                "html body .uw-menu a, html body .uw-menu span {" +
-                    "padding: 1px 10px !important;" +
+                    "padding: 2px 10px !important;" +
                     "font-weight: normal !important;" +
                     "display: block !important;" +
-                "}" +
-                "html body .uw-menu span {" +
-                    "color: #888 !important;" +
-                    "font-style: italic !important;" +
                 "}" +
                 "html body .uw-menu a:hover {" +
                     "background-color: #def !important;" +
                 "}" +
+                "html body .uw-menu a:visited {" +
+                    " color: #000 !important;" +
+                "}" +
+                //----------------------------------------------------------------------------------
                 "html body .uw-container a {" +
                     "text-decoration: underline #ccc !important;" + /* uw-uln */
                     "border-bottom: none !important;" + /* uw-btm */
@@ -1271,8 +1195,6 @@ try {
             if (!me.tidyBound) {
                 me.tidyBound = true;
 
-                //DOMNodeInserted vs DOMSubtreeModified
-
                 $(document).bind("DOMNodeInserted", function(){
                     var now = new Date().valueOf();
                     log("tidyUp", "DOMNodeInserted ", now);
@@ -1427,7 +1349,7 @@ try {
             me.forced = me.popoutDiv;
             me.activePopout = true;
             me.refreshMenu();
-            $('html, body').scrollTop(0);
+            $("html").scrollTop(0);
         };
 
         me.undoPopout = function() {
@@ -1517,7 +1439,7 @@ try {
             }();
 
             log("uw binding", "startFind");
-            $("body").bind("mouseup.uw-find-first",
+            $("body").bind("mouseup.uw-find-first", 
                 function(e) {
                     me.run(function() {
                         $("body").unbind("mouseup.uw-find-first");
@@ -1617,7 +1539,7 @@ try {
             var el = me.finder.el();
             me.cancelFind();
 
-            switch (option) {
+            switch (option) { //qq
                 case "force":
                     me.forced = el;
                     me.doRead(el);
@@ -1626,7 +1548,7 @@ try {
                     me.markElementAndBind(el);
                     return;
                 case "highlight":
-                    me.highlightElement(el); //qq
+                    me.highlightElement(el);
                     return;
                 case "remove":
                     el.remove();
@@ -1651,9 +1573,6 @@ try {
         me.markElementAndBind = function(el) {
             if (!me.marking) {
                 me.marking = true;
-                if (me.linkResumeMarkElement) {
-                    me.linkResumeMarkElement.show();
-                }
                 me.addStyles();
                 $("body").bind("mouseup.uw-marking", me.markElementMouseUp);
                 $("body").bind("keyup.uw-marking", me.markElementKeyUp);
@@ -1783,7 +1702,7 @@ try {
             if (el == null || el.length == 0) return;
 
             var top = el.offset().top - 15;
-            $('html, body').scrollTop(top);
+            $("html").scrollTop(top);
         };
 
         /*** dev ****************************************************************************************************** */
