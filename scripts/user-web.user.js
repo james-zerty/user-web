@@ -354,6 +354,9 @@ try {
 
             var top = ePageY - adjustY + offsetY;
             var left = ePageX - adjustX + offsetX;
+            if (top < 10) {
+                top = 10;
+            }
             if (left < 10) {
                 left = 10;
             }
@@ -376,18 +379,24 @@ try {
             wpos.scrollBottom = wpos.scrollTop + wpos.height;
 
             if (pos.bottom > wpos.scrollBottom) {
-                me.menu.css("top", ePageY - pos.height - 20 + "px");
+                top = ePageY - pos.height - 20;
+                if (top < 0) {
+                    top = 0;
+                }
+                me.menu.css("top", top + "px");
             }
-
-            if (pos.top < 0) {
+            else if (pos.top < 0) {
                 me.menu.css("top", "0px");
             }
 
             if (pos.right > wpos.width) {
-                me.menu.css("left", wpos.width - pos.width - 20 + "px");
+                left = wpos.width - pos.width - 20;
+                if (left < 0) {
+                    left = 0;
+                }
+                me.menu.css("left", left + "px");
             }
-
-            if (pos.left < 0) {
+            else if (pos.left < 0) {
                 me.menu.css("left", "0px");
             }
 
