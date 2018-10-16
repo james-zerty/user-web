@@ -806,13 +806,14 @@ try {
         };
         
         me.hideLinks = function() {
-            $("a").attr("style", "text-decoration: none !important"); /* uw-uln */
+            $("a").attr("style", "text-decoration: none !important");
             me.linksHidden = true;
             me.refreshMenu();
         };
         
         me.showLinks = function() {
-            $("a").attr("style", "text-decoration: underline #ccc !important"); /* uw-uln */
+            $("a").attr("style", "background-color: lime !important");
+            $(".uw-menu a").attr("style", null);
             me.linksHidden = false;
             me.refreshMenu();
         };
