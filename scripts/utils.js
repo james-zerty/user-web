@@ -1,6 +1,10 @@
 ﻿"use strict";
 var logPopup;
+var logPrefix;
 var DO_POP = "DO_POP";
+function setupLog(prefix) {
+    logPrefix = prefix;
+}
 function hidePop() {
     if (logPopup && logPopup.style) {
         logPopup.style.display = "none";
@@ -96,17 +100,17 @@ function log() {
     try {
         var dt = getDateStamp() + " ";
         if (window.console) {
-            window.console.log(dt + logPrefix + text1, text2);
+            window.console.log(dt + logPrefix + " " + text1, text2);
         }
         else {
         }
 
         if (doPop) {
-            popup(dt + logPrefix + text1 + text2);
+            popup(dt + logPrefix + " " + text1 + text2);
         }
     }
     catch (ex) {
-        window.alert(logPrefix + text1 + "\r\r" + ex.message);
+        window.alert(logPrefix + " " + text1 + "\r\r" + ex.message);
     }
 }
 function addElement(parent, tag, className, text) {

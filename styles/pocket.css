@@ -58,17 +58,19 @@ nav.pkt-nav.readr-container a,
     padding: 0 10px !important;
 }
 
+/*
 .content__standfirst:nth-child(n+3),
 ._RIL_KEEPER_CLASS_:nth-child(n+3) {
     color: #888 !important;
 }
+*/
 
-    aside,
-    .item .thumb,
-    #page_queue .tags,
-    .topic {
-        display: none !important;
-    }
+aside,
+.item .thumb,
+#page_queue .tags,
+.topic {
+    display: none !important;
+}
 
 /******************************************/
 

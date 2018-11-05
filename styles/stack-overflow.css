@@ -81,6 +81,7 @@ body,
 ._full,
 .container
 {
+    padding-top: 0 !important;
     margin-top: 0 !important;
     background: none !important;
 }
