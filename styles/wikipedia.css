@@ -1,5 +1,5 @@
 /* reading... */
-body .mw-content-ltr p {
+body .mw-content-ltr p, body .mw-content-ltr ul {
     font-family: Corbel !important; /* uw-fnt-b */
     font-size: 18px !important; /* uw-sz-blg */
     line-height: 25px !important; /* uw-lh-blg */

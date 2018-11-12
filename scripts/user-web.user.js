@@ -69,6 +69,7 @@ try {
             me.loadUserStyle();
             me.bindPageMouse();
             me.bindPageKeyDown();
+            me.tidyUp();
             me.readLite();
 
             if ($.cookie("tidy") == "on") {
