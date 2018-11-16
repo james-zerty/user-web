@@ -10,7 +10,7 @@
 // @include     http*://*/*
 // @exclude     https://localhost:44300/dev*
 // @require     https://rawgit.com/james-zerty/user-web/master/scripts/utils.js
-// @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-2.1.0.min.js
+// @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-3.3.1.min.js
 // @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery.cookie.js
 // ==/UserScript==
 "use strict";
@@ -21,11 +21,6 @@ try {
     setupLog("[user-web]");
 
     var settings = { localUrls: 0, uniqueUrls: 0, reloader: 0, autoShow: 0, handleErrors: 1 };
-    // if (url.match(/localhost.*\/(home|dev).*\.htm/i) != null) {
-        // settings = { localUrls: 0, uniqueUrls: 0, reloader: 1, autoShow: 0, handleErrors: 0 };
-    // }
-
-    // settings.localUrls = 1; // for dev machine
 
     log("url", url.substr(0, 100));
     // log("loaded", new Date());
@@ -71,10 +66,6 @@ try {
             me.bindPageKeyDown();
             me.tidyUp();
             me.readLite();
-
-            if ($.cookie("tidy") == "on") {
-                me.tidyUp();
-            }
 
             if (settings.autoShow) {
                 me.run(function() {
@@ -482,11 +473,11 @@ try {
 
             me.lnkScrollTop =
                 me.addCellLink(row1, "Top", function() { //qqqq
-                    $("html").scrollTop(0);
+                    me.scrollToY(0);
                 }, null, "Scroll to top");
             me.lnkScrollBottom =
                 me.addCellLink(row2, "Bottom", function() {
-                    $("html").scrollTop($(document).height());
+                    me.scrollToY($(document).height());
                 }, null, "Scroll to bottom");
             me.lnkPopoutAuto =
                 me.addCellLink(row1, "Popout", function() {
@@ -747,7 +738,7 @@ try {
                     me.lnkUnloadStyle.hide();
                 }
 
-                if ($.cookie("tidy") == "on") {
+                if (me.tidyBound) {
                     me.lnkTidyOff.show();
                     me.lnkTidyOn.hide();
                 }
@@ -1200,10 +1191,12 @@ try {
         me.tidyBound = false;
         me.tidyWaiting = false;
         me.tidyLast = new Date().valueOf();
+        me.tidyIsOn = function(e) { return $.cookie("tidy") == "on"; };
+        me.tidyIsOff = function(e) { return $.cookie("tidy") == "off"; };
         me.tidyUp = function(e) { //qq
             if (me.tidyUpExclude) return;
 
-            if ($.cookie("tidy") == "off") return;
+            if (me.tidyIsOff()) return;
 
             log("tidyUp", "tidying");
             me.tidyLast = new Date().valueOf();
@@ -1217,7 +1210,7 @@ try {
                 return match;
             }).attr("style", "display:none !important");
 
-            $("html, body").css({overflow: "auto", height: "auto"})
+            me.restoreScroll();
 
             if (!me.tidyBound) {
                 me.tidyBound = true;
@@ -1382,7 +1375,8 @@ try {
             me.forced = me.popoutDiv;
             me.activePopout = true;
             me.refreshMenu();
-            $("html").scrollTop(0);
+            me.scrollToY(0);
+            me.restoreScroll();
         };
 
         me.undoPopout = function() {
@@ -1395,6 +1389,7 @@ try {
             }
             me.activePopout = false;
         };
+
         /*** content ************************************************************************************************** */
 
         me.getMainAuto = function() {
@@ -1740,7 +1735,20 @@ try {
             if (wh < 600) ot = 0;
 
             var top = el.offset().top - 15 - ot;
-            $("html").scrollTop(top);
+
+            me.scrollToY(top);
+        };
+
+        me.scrollToY = function(y) {
+            window.scroll({
+                top: y,
+                left: 0,
+                behavior: "smooth"
+            });
+        };
+
+        me.restoreScroll = function() {
+            $("html, body").css({overflow: "auto", height: "auto"});
         };
 
         /*** dev ****************************************************************************************************** */

@@ -8,7 +8,7 @@
 // @noframes
 // @include     https://www.google.*/search*
 // @include     xhttps://localhost:44300/Home.htm
-// @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-2.1.0.min.js
+// @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-3.3.1.min.js
 // ==/UserScript==
 "use strict";
 try {

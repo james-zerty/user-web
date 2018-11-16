@@ -338,12 +338,12 @@
             </p>
         </footer>
     </div>
-    <script type="text/javascript" src="scripts/jquery/jquery-2.1.0.min.js"></script>
+    <script type="text/javascript" src="scripts/jquery/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="scripts/jquery/jquery.cookie.js"></script>
-    <script type="text/javascript" id="ScriptLocalUtils"></script>
+    <script type="text/javascript" id="ScriptLocalUtils" src="scripts/utils.js"></script>
     <script type="text/javascript" id="ScriptLocalUw"></script>
     <script type="text/javascript">
-        $("#ScriptLocalUtils").attr("src", "scripts/utils.js?" + new Date().valueOf());
+        //$("#ScriptLocalUtils").attr("src", "scripts/utils.js?" + new Date().valueOf());
         $("#ScriptLocalUw").attr("src", "scripts/user-web.user.js?" + new Date().valueOf());
 
         // $("body").bind("click.tester", function (e) {

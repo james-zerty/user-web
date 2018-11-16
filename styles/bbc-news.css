@@ -47,7 +47,7 @@
 }
 
 .column--primary, .container, .container-width-only {
-    width: 800px !important;
+    xwidth: 800px !important;
 }
 
 #bbccookies,

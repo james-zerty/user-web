@@ -7,7 +7,7 @@
 // @grant       none
 // @noframes
 // @include     https://www.metoffice.gov.uk/mobile/forecast/*
-// @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-2.1.0.min.js
+// @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-3.3.1.min.js
 // ==/UserScript==
 "use strict";
 try {
