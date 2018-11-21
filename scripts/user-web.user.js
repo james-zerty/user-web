@@ -104,6 +104,24 @@ try {
             $("html").mouseup(function(e) {
                 me.onPageMouseUp(e);
             });
+            $("html").dblclick(function(e) {
+                me.onPageDblClick(e);
+            });
+        };
+        
+        me.onPageDblClick = function(e) {
+            me.run(function() {
+                if (me.menuShowing) {
+                    log("dbl", "skip");
+                    return;
+                }
+
+                log("dbl", "go");
+                me.showMenu(e);
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            });
         };
 
         me.onPageMouseUp = function(e) {
@@ -113,6 +131,7 @@ try {
                 }
                 if (me.saveSelection(e)) {
                     if (me.menuShowing) {
+                        log("mu", "skip");
                         me.hideMenu();
                         return;
                     }
@@ -122,11 +141,12 @@ try {
                     switch (tagName) {
                         case "IMG":  //img doesn't clear selection
                         case "HTML": //scrollbar
-                            log("not showing!", e.target.tagName, e.target, e.pageX, e.pageY);
+                            log("not showing!", e.target.tagName, " ", e.target, " ", e.pageX, " ", e.pageY);
                             me.hideMenu();
                             return;
                     }
 
+                    log("mu", "go");
                     me.showMenu(e);
                     e.preventDefault();
                     e.stopPropagation();
