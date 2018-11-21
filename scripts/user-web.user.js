@@ -1732,7 +1732,7 @@ try {
             var wh = $(window).height();
             var ot = wh / 2 * 0.5;
 
-            if (wh < 600) ot = 0;
+            if (wh < 800) ot = 0;
 
             var top = el.offset().top - 15 - ot;
 

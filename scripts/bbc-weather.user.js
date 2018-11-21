@@ -14,7 +14,7 @@
 try {
     var $ = window.$;
     var loadAfter = 100;
-    var logPrefix = "[bbc-weather] ";
+    setupLog("[bbc-weather]");
 
     var obj = new function () {
         var me = this;
