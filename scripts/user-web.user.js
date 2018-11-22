@@ -2,11 +2,11 @@
 // @name        user-web
 // @description insert user styles
 // @namespace   https://github.com/james-zerty/
-// @version     15
 // @author      2010+, james_zerty
+// @version     15
+// @noframes
 // @grant       GM.setClipboard
 // @grant       GM_setClipboard
-// @noframes
 // @include     http*://*/*
 // @exclude     https://localhost:44300/dev*
 // @require     https://rawgit.com/james-zerty/user-web/master/scripts/utils.js
@@ -62,10 +62,22 @@ try {
             me.setReloader();
             me.siteConfig();
             me.loadUserStyle();
+            me.readLite();
+            
+            //scripts on bbc video pages will clear events so we wait 1 second...
+            window.self.setTimeout(function() {
+                me.setEvents();
+            }, 1000);
+        };
+
+        me.setEvents = function() {
             me.bindPageMouse();
             me.bindPageKeyDown();
-            me.tidyUp();
-            me.readLite();
+
+            // me.tidyUp();
+            if (me.tidyIsOn()) {
+                me.tidyUp();
+            }
 
             if (settings.autoShow) {
                 me.run(function() {
@@ -78,7 +90,6 @@ try {
                 });
             }
         };
-
         /*** custom functions ***************************************************************************************** */
 
         me.switchWikipediaLinks = function() { //used on google search results...
@@ -103,8 +114,7 @@ try {
         me.bindPageMouse = function() {
             $("html").mouseup(function(e) {
                 me.onPageMouseUp(e);
-            });
-            $("html").dblclick(function(e) {
+            }).dblclick(function(e) {
                 me.onPageDblClick(e);
             });
         };

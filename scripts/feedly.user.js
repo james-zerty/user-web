@@ -2,10 +2,10 @@
 // @name        feedly
 // @description add pocket links to feedly
 // @namespace   https://github.com/james-zerty/
-// @version     2
 // @author      2010+, james_zerty
-// @grant       none
+// @version     2
 // @noframes
+// @grant       none
 // @include     https://feedly.com/i/*
 // @require     https://rawgit.com/james-zerty/user-web/master/scripts/utils.js
 // @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-3.3.1.min.js

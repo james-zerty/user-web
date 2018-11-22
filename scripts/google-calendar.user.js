@@ -2,10 +2,10 @@
 // @name        google-calendar
 // @description fix google calendar
 // @namespace   https://github.com/james-zerty/
-// @version     1
 // @author      2010+, james_zerty
-// @grant       none
+// @version     1
 // @noframes
+// @grant       none
 // @include     https://calendar.google.com/*
 // @require     https://rawgit.com/james-zerty/user-web/master/scripts/utils.js
 // @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-3.3.1.min.js

@@ -57,7 +57,8 @@
 .column--secondary,
 .js-breaking-news-banner,
 .nw-c-breaking-news-banner,
-.pullout {
+.pullout,
+.share-tools--event-tag {
     display: none !important;
 }
 

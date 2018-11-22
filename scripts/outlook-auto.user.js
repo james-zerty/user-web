@@ -2,10 +2,10 @@
 // @name        outlook-auto
 // @description auto login to outlook
 // @namespace   https://github.com/james-zerty/
-// @version     10
 // @author      2010+, james_zerty
-// @grant       none
+// @version     10
 // @noframes
+// @grant       none
 // @include     /^https://.*/adfs/.*/
 // @match       https://login.microsoftonline.com/*
 // @match       https://outlook.office.com/owa/*

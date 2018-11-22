@@ -2,10 +2,10 @@
 // @name        bbc-weather
 // @description make weather more readable
 // @namespace   https://github.com/james-zerty/
-// @version     2
 // @author      2010+, james_zerty
-// @grant       none
+// @version     2
 // @noframes
+// @grant       none
 // @include     https://www.bbc.co.uk/weather/*
 // @require     https://rawgit.com/james-zerty/user-web/master/scripts/utils.js
 // @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-3.3.1.min.js

@@ -2,10 +2,10 @@
 // @name        template-script
 // @description template user script
 // @namespace   https://github.com/james-zerty/
-// @version     1
 // @author      2010+, james_zerty
-// @grant       none
+// @version     1
 // @noframes
+// @grant       none
 // @include     /^https://.*/whatever/.*/
 // @match       https://whatever.com/*
 // @match       https://xxlocalhost/*
