@@ -45,20 +45,22 @@ try {
             });
         };
 
-        me.googleSite = function(site) {
-            var query = site == null ? "" : "site:" + site + "+"
-            document.location.href = "https://www.google.co.uk/search?q=" + query +
-                $("#lst-ib").val()
-                    .replace(/ /g, "+")
-                    .replace(/#/g, "%23")
-                    .replace(/=/g, "%3D")
-                    .replace(/\?/g, "%3F")
-                    .replace(/&/g, "%26")
-                    .replace(/site\:[^\+]*\+/g, "");
-        }
+        me.googleSite = function (site) {
+            var query = site == null ? "" : "site:" + site + "+";
+            var val = $("#lst-ib, input[name='q']")
+                .val()
+                .replace(/ /g, "+")
+                .replace(/#/g, "%23")
+                .replace(/=/g, "%3D")
+                .replace(/\?/g, "%3F")
+                .replace(/&/g, "%26")
+                .replace(/site\:[^\+]*\+/g, "");
+            var url = "https://www.google.co.uk/search?q=" + query + val;
+
+            document.location.href = url;
+        };
 
         me.addLink = function (parent, baseUrl, param, text) {
-            // log("addLink");
             parent.append(
                 $("<a>")
                     .text(text)
@@ -68,24 +70,24 @@ try {
         };
 
         me.addJsLink = function (parent, text, fn) {
-            // log("addLink");
             parent.append(
                 $("<a>")
                     .text(text)
                     .addClass("q qs")
-                    .click(function() {
+                    .click(function() { me.run( function() {
                         fn();
-                    })
+                    })})
             );
         };
-
-        me.addElement = function (parent, html) {
-            parent.append(
-                $(html)
-                    .addClass("q qs")
-            );
+        
+        me.run = function(fn) {
+            try {
+                fn();
+            }
+            catch (ex) {
+                log(ex);
+            }
         };
-
     }();
 
     /* ================================================== */
