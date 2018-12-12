@@ -79,7 +79,7 @@ try {
                     })})
             );
         };
-        
+
         me.run = function(fn) {
             try {
                 fn();

@@ -51,3 +51,8 @@ footer {
     float: none !important;
     vertical-align: baseline !important;
 }
+
+.l-side-margins::after,
+.l-side-margins::before {
+    border: 0 !important;
+}

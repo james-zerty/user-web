@@ -4,15 +4,17 @@
     <title>user-web - dev</title>
     <link rel="stylesheet" href="styles/dev.css">
     <style type="text/css">
-        @media (max-width: 1000px) {
+        @media (max-width: 10000px) {
             .wrapper {
-                min-width: 0px;
+                min-width: 0px !important;
+                max-width: 800px !important;
             }
             .middle {
-                border-right: 0px
+                border-right: 0px !important;
+                max-width: 800px !important;
             }
             .right-sidebar {
-                display:none;
+                display:none !important;
             }
         }
         .nav li {
@@ -51,145 +53,168 @@
         <div class="middle">
             <div class="container">
                 <main class="content">
-                    <p>
-                        <a href="https://en.wikipedia.org/wiki/Visual_FoxPro">Visual FoxPro</a> is a discontinued data-centric,
-                        object-oriented, procedural, programming language produced by
-                        Microsoft. It was derived from FoxPro (originally known as FoxBASE) which was developed by Fox Software
-                        beginning in 1984. Fox Technologies merged with Microsoft in 1992, after which the software acquired further
-                        features and the prefix "Visual". FoxPro 2.6 worked on Mac OS, DOS, Windows, and Unix. Visual FoxPro 3.0, the
-                        first "Visual" version, reduced platform support to only Mac and Windows, and later versions 5, 6, 7, 8 and 9
-                        were Windows-only. The current version of Visual FoxPro is COM-based and Microsoft has stated that they do
-                        not intend to create a Microsoft .NET version.
-                    </p>
-                    <p>
-                        Visual FoxPro, commonly abbreviated as VFP, is tightly integrated with its own relational database engine,
-                        which extends FoxPro's xBase capabilities to support SQL query and data manipulation. Unlike most database
-                        management systems, Visual FoxPro is a full-featured, dynamic programming language that does not require the
-                        use of an additional general-purpose programming environment. It can be used to write not just traditional
-                        "fat client" applications, but also middleware and web applications.
-                    </p>
-                    <p>
-                        Version 9.0, released in 2004 and updated in 2007, is the final version of the product.
-                    </p>
-                    <p>
-                        Visual FoxPro <a href="https://en.wikipedia.org/wiki/Visual_FoxPro">originated</a> as a member of the class of languages commonly referred to as "xBase" languages.
-                    </p>
-                    <p>
-                        Other members of the xBase language family include Clipper and Recital.
-                    </p>
-                    <p>
-                        In late 2002, it was demonstrated that Visual FoxPro can run on Linux under the Wine Windows compatibility
-                        suite. In 2003, this led to complaints by Microsoft.
-                    </p>
-                    <p>
-                        It was claimed that the deployment of runtime FoxPro code on non-Windows machines violates the End User
-                        License Agreement.
-                    </p>
-                    <p>
-                        Visual FoxPro had a rapid rise and fall in popularity as measured by the TIOBE Programming Community Index.
-                        In December 2005, VFP broke into the top 20 for the first time. In June 2006 it peaked at position 12, making
-                        it (at the time) a "B" language. By September 2010, FoxPro and its variants had fallen out of the top 50, where
-                        it has remained ever since.
-                    </p>
-                    <p>
-                        In March 2007, Microsoft announced that there will be no VFP 10, thus making VFP9 (released to manufacturing
-                        on December 17, 2004) the last commercial VFP release from Microsoft. The support of Version 9 ended on December 31, 2015.
-                    </p>
-                    <p>
-                        At the time of the end of life announcement, work on the next release codenamed Sedna (named after a recently
-                        discovered dwarf planet) which was built on top of the VFP9 codebase had already begun. "Sedna" is a set of
-                        add-ons to VFP 9.0 of xBase components to support a number of interoperability scenarios with various Microsoft
-                        technologies including SQL Server 2005, .NET Framework, Windows Vista, Office 2007, Windows Search and Team
-                        Foundation Server (TFS). Microsoft released Sedna under the Shared source license on the CodePlex site.
-                        Microsoft has clarified that the VFP core will still remain closed source. Sedna was released on January 25,
-                        2008. As of March 2008, all xBase components of the VFP 9 SP2 (including Sedna) were available for
-                        community-development on CodePlex.
-                    </p>
-                    <p>
-                        In late March 2007 a grassroots campaign was started by the Spanish-speaking FoxPro community at MásFoxPro
-                        ("MoreFoxPro" in English) to sign a petition to Microsoft to continue updating Visual FoxPro or release it to
-                        the community as Open Source. On April 3, 2007 the movement was noted by the technical press.
-                        On April 3, 2007, Microsoft responded to the petition with this statement from Alan Griver:
-                        "We're very aware of the FoxPro community and that played a large part in what we announced on March 13th. It's
-                        never an easy decision to announce that we're not going to release another version of a product and it's one
-                        that we consider very carefully.
-                    </p>
-                    <p>
-                        "We're not announcing the end of FoxPro: Obviously, FoxPro applications will continue to work. By some of our
-                        internal estimates, there are more applications running in FoxPro 2.6 than there are in VFP and FoxPro 2.6
-                        hasn't been supported in many years. Visual FoxPro 9 will be supported by Microsoft through 2015.
-                    </p>
-                    <p>
-                        "For Microsoft to continue to evolve the FoxPro base, we would need to look at creating a 64-bit development
-                        environment and that would involve an almost complete rewrite of the core product. We've also invested in
-                        creating a scalable database with SQL Server, including the freely available SQL Server Express Edition. As
-                        far as forming a partnership with a third-party is concerned, we've heard from a number of large FoxPro
-                        customers that this would make it impossible for them to continue to use FoxPro since it would no longer
-                        be from an approved vendor. We felt that putting the environment into open source on CodePlex, which
-                        balances the needs of both the community and the large customers, was the best path forward."
-                    </p>
-                    <p>
-                        In November 2009, a researcher at the Rey Juan Carlos University in Madrid (Spain) found that the
-                        English Wikipedia had lost 49,000 editors during the first three months of 2009.
-                    </p>
-                    <p>
-                        In comparison, the project lost only 4,900 editors during the same period in 2008.
-                    </p>
-                    <p>
-                        The Wall Street Journal cited the array of rules applied to editing and disputes related to
-                        such content among the reasons for this trend.
-                    </p>
-                    <p>
-                        Wales disputed these claims in 2009, denying the decline and questioning the methodology of the study.
-                    </p>
-                    <p class="narrow">
-                        <strong>Content:</strong> Sed placerat accumsan ligula. Aliquam felis magna, congue quis, tempus eu,
-                        aliquam vitae, ante. Cras neque justo, ultrices at, rhoncus a, facilisis eget, nisl. Quisque vitae pede.
-                        Nam et augue. Sed a elit. Ut vel massa. Suspendisse nibh pede, ultrices vitae, ultrices nec, mollis non,
-                        nibh. In sit amet pede quis leo vulputate hendrerit. Cras laoreet leo et justo auctor condimentum.
-                        Integer id enim. Suspendisse egestas, dui ac egestas mollis, libero orci hendrerit lacus, et malesuada
-                        lorem neque ac libero. Morbi tempor pulvinar pede. Donec vel elit.
-                    </p>
-                    <p class="narrow">
-                        Sed placerat accumsan ligula. Aliquam felis magna, congue quis, tempus eu,
-                        aliquam vitae, ante. Cras neque justo, ultrices at, rhoncus a, facilisis eget, nisl. Quisque vitae pede.
-                        Nam et augue. Sed a elit. Ut vel massa. Suspendisse nibh pede, ultrices vitae, ultrices nec, mollis non,
-                        nibh. In sit amet pede quis leo vulputate hendrerit. Cras laoreet leo et justo auctor condimentum.
-                        Integer id enim. Suspendisse egestas, dui ac egestas mollis, libero orci hendrerit lacus, et malesuada
-                        lorem neque ac libero. Morbi tempor pulvinar pede. Donec vel elit.
-                    </p>
-                    <p>
-                        <strong>Wikipedia</strong> began as a complementary project for Nupedia, a free online
-                        English-language encyclopedia project whose articles were written by experts and reviewed under a formal
-                        process. <a href="http://m.bbc.co.uk/news">Nupedia was founded on March 9, 2000</a>, under the ownership
-                        of Bomis, a web portal company. Its main figures were the Bomis CEO Jimmy Wales and Larry Sanger,
-                        editor-in-chief for Nupedia and later Wikipedia. Nupedia was licensed initially under its own Nupedia
-                        Open Content License, switching to the GNU Free Documentation License before Wikipedia's founding at the
-                        urging of Richard Stallman. Sanger and Wales founded Wikipedia. While Wales is credited with defining
-                        the goal of making a publicly editable encyclopedia, Sanger is credited with the strategy of using a
-                        wiki to reach that goal. On January 10, 2001, Sanger proposed on the Nupedia mailing list to create a
-                        wiki as a "feeder" project for Nupedia.
-                    </p>
-                    <div style="display:none">none</div>
-                    <h3>Heading 3</h3>
-                    <p>
-                        Wikipedia was formally launched on January 15, 2001, as a single English-language edition at
-                        www.wikipedia.com, and announced by Sanger on the Nupedia mailing list. Wikipedia's policy of
-                        "neutral point-of-view" was codified in its first months. Otherwise, there were relatively few rules
-                        initially and Wikipedia operated independently of Nupedia. Originally, Bomis intended to make
-                        Wikipedia a business for profit.
-                    </p>
-                    <p>
-                        Wikipedia gained early contributors from Nupedia, Slashdot postings, and web search engine
-                        indexing. By August 8, 2001, Wikipedia had over 8,000 articles. On September 25, 2001, Wikipedia had
-                        over 13,000 articles. And by the end of 2001 it had grown to approximately 20,000 articles and 18
-                        language editions. It had reached 26 language editions by late 2002, 46 by the end of 2003, and 161
-                        by the final days of 2004. Nupedia and Wikipedia coexisted until the former's servers were taken
-                        down permanently in 2003, and its text was incorporated into Wikipedia. English Wikipedia passed the
-                        mark of two million articles on September 9, 2007, making it the largest encyclopedia ever
-                        assembled, surpassing even the 1408 Yongle Encyclopedia, which had held the record for almost 600
-                        years.
-                    </p>
+                    <section>
+                        <p>The last question was asked for the first time, half in jest, on May 21, 2061, at a time when humanity first stepped into the light. The question came about as a result of a five dollar bet over highballs, and it happened this way:</p>
+                        <p>Alexander Adell and Bertram Lupov were two of the faithful attendants of Multivac. As well as any human beings could, they knew what lay behind the cold, clicking, flashing face -- miles and miles of face -- of that giant computer. They had at least a vague notion of the general plan of relays and circuits that had long since grown past the point where any single human could possibly have a firm grasp of the whole.</p>
+                        <p>Multivac was self-adjusting and self-correcting. It had to be, for nothing human could adjust and correct it quickly enough or even adequately enough -- so Adell and Lupov attended the monstrous giant only lightly and superficially, yet as well as any men could. They fed it data, adjusted questions to its needs and translated the answers that were issued. Certainly they, and all others like them, were fully entitled to share In the glory that was Multivac's.</p>
+                        <p>For decades, Multivac had helped design the ships and plot the trajectories that enabled man to reach the Moon, Mars, and Venus, but past that, Earth's poor resources could not support the ships. Too much energy was needed for the long trips. Earth exploited its coal and uranium with increasing efficiency, but there was only so much of both.</p>
+                        <p>But slowly Multivac learned enough to answer deeper questions more fundamentally, and on May 14, 2061, what had been theory, became fact.</p>
+                        <p>The energy of the sun was stored, converted, and utilized directly on a planet-wide scale. All Earth turned off its burning coal, its fissioning uranium, and flipped the switch that connected all of it to a small station, one mile in diameter, circling the Earth at half the distance of the Moon. All Earth ran by invisible beams of sunpower.</p>
+                        <p>Seven days had not sufficed to dim the glory of it and Adell and Lupov finally managed to escape from the public function, and to meet in quiet where no one would think of looking for them, in the deserted underground chambers, where portions of the mighty buried body of Multivac showed. Unattended, idling, sorting data with contented lazy clickings, Multivac, too, had earned its vacation and the boys appreciated that. They had no intention, originally, of disturbing it.</p>
+                        <p>They had brought a bottle with them, and their only concern at the moment was to relax in the company of each other and the bottle.</p>
+                        <p>"It's amazing when you think of it," said Adell. His broad face had lines of weariness in it, and he stirred his drink slowly with a glass rod, watching the cubes of ice slur clumsily about. "All the energy we can possibly ever use for free. Enough energy, if we wanted to draw on it, to melt all Earth into a big drop of impure liquid iron, and still never miss the energy so used. All the energy we could ever use, forever and forever and forever."</p>
+                        <p>Lupov cocked his head sideways. He had a trick of doing that when he wanted to be contrary, and he wanted to be contrary now, partly because he had had to carry the ice and glassware. "Not forever," he said.</p>
+                        <p>"Oh, hell, just about forever. Till the sun runs down, Bert."</p>
+                        <p>"That's not forever."</p>
+                        <p>"All right, then. Billions and billions of years. Twenty billion, maybe. Are you satisfied?"</p>
+                        <p>Lupov put his fingers through his thinning hair as though to reassure himself that some was still left and sipped gently at his own drink. "Twenty billion years isn't forever."</p>
+                        <p>"Will, it will last our time, won't it?"</p>
+                        <p>"So would the coal and uranium."</p>
+                        <p>"All right, but now we can hook up each individual spaceship to the Solar Station, and it can go to Pluto and back a million times without ever worrying about fuel. You can't do THAT on coal and uranium. Ask Multivac, if you don't believe me."</p>
+                    </section>
+                    <section>
+                        <p>
+                            <a href="https://en.wikipedia.org/wiki/Visual_FoxPro">Visual FoxPro</a> is a discontinued data-centric,
+                            object-oriented, procedural, programming language produced by
+                            Microsoft. It was derived from FoxPro (originally known as FoxBASE) which was developed by Fox Software
+                            beginning in 1984. Fox Technologies merged with Microsoft in 1992, after which the software acquired further
+                            features and the prefix "Visual". FoxPro 2.6 worked on Mac OS, DOS, Windows, and Unix. Visual FoxPro 3.0, the
+                            first "Visual" version, reduced platform support to only Mac and Windows, and later versions 5, 6, 7, 8 and 9
+                            were Windows-only. The current version of Visual FoxPro is COM-based and Microsoft has stated that they do
+                            not intend to create a Microsoft .NET version.
+                        </p>
+                        <p>
+                            Visual FoxPro, commonly abbreviated as VFP, is tightly integrated with its own relational database engine,
+                            which extends FoxPro's xBase capabilities to support SQL query and data manipulation. Unlike most database
+                            management systems, Visual FoxPro is a full-featured, dynamic programming language that does not require the
+                            use of an additional general-purpose programming environment. It can be used to write not just traditional
+                            "fat client" applications, but also middleware and web applications.
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            Version 9.0, released in 2004 and updated in 2007, is the final version of the product.
+                        </p>
+                        <p>
+                            Visual FoxPro <a href="https://en.wikipedia.org/wiki/Visual_FoxPro">originated</a> as a member of the class of languages commonly referred to as "xBase" languages.
+                        </p>
+                        <p>
+                            Other members of the xBase language family include Clipper and Recital.
+                        </p>
+                        <p>
+                            In late 2002, it was demonstrated that Visual FoxPro can run on Linux under the Wine Windows compatibility
+                            suite. In 2003, this led to complaints by Microsoft.
+                        </p>
+                        <p>
+                            It was claimed that the deployment of runtime FoxPro code on non-Windows machines violates the End User
+                            License Agreement.
+                        </p>
+                        <p>
+                            Visual FoxPro had a rapid rise and fall in popularity as measured by the TIOBE Programming Community Index.
+                            In December 2005, VFP broke into the top 20 for the first time. In June 2006 it peaked at position 12, making
+                            it (at the time) a "B" language. By September 2010, FoxPro and its variants had fallen out of the top 50, where
+                            it has remained ever since.
+                        </p>
+                        <p>
+                            In March 2007, Microsoft announced that there will be no VFP 10, thus making VFP9 (released to manufacturing
+                            on December 17, 2004) the last commercial VFP release from Microsoft. The support of Version 9 ended on December 31, 2015.
+                        </p>
+                        <p>
+                            At the time of the end of life announcement, work on the next release codenamed Sedna (named after a recently
+                            discovered dwarf planet) which was built on top of the VFP9 codebase had already begun. "Sedna" is a set of
+                            add-ons to VFP 9.0 of xBase components to support a number of interoperability scenarios with various Microsoft
+                            technologies including SQL Server 2005, .NET Framework, Windows Vista, Office 2007, Windows Search and Team
+                            Foundation Server (TFS). Microsoft released Sedna under the Shared source license on the CodePlex site.
+                            Microsoft has clarified that the VFP core will still remain closed source. Sedna was released on January 25,
+                            2008. As of March 2008, all xBase components of the VFP 9 SP2 (including Sedna) were available for
+                            community-development on CodePlex.
+                        </p>
+                        <p>
+                            In late March 2007 a grassroots campaign was started by the Spanish-speaking FoxPro community at MásFoxPro
+                            ("MoreFoxPro" in English) to sign a petition to Microsoft to continue updating Visual FoxPro or release it to
+                            the community as Open Source. On April 3, 2007 the movement was noted by the technical press.
+                            On April 3, 2007, Microsoft responded to the petition with this statement from Alan Griver:
+                            "We're very aware of the FoxPro community and that played a large part in what we announced on March 13th. It's
+                            never an easy decision to announce that we're not going to release another version of a product and it's one
+                            that we consider very carefully.
+                        </p>
+                        <p>
+                            "We're not announcing the end of FoxPro: Obviously, FoxPro applications will continue to work. By some of our
+                            internal estimates, there are more applications running in FoxPro 2.6 than there are in VFP and FoxPro 2.6
+                            hasn't been supported in many years. Visual FoxPro 9 will be supported by Microsoft through 2015.
+                        </p>
+                        <p>
+                            "For Microsoft to continue to evolve the FoxPro base, we would need to look at creating a 64-bit development
+                            environment and that would involve an almost complete rewrite of the core product. We've also invested in
+                            creating a scalable database with SQL Server, including the freely available SQL Server Express Edition. As
+                            far as forming a partnership with a third-party is concerned, we've heard from a number of large FoxPro
+                            customers that this would make it impossible for them to continue to use FoxPro since it would no longer
+                            be from an approved vendor. We felt that putting the environment into open source on CodePlex, which
+                            balances the needs of both the community and the large customers, was the best path forward."
+                        </p>
+                        <p>
+                            In November 2009, a researcher at the Rey Juan Carlos University in Madrid (Spain) found that the
+                            English Wikipedia had lost 49,000 editors during the first three months of 2009.
+                        </p>
+                        <p>
+                            In comparison, the project lost only 4,900 editors during the same period in 2008.
+                        </p>
+                        <p>
+                            The Wall Street Journal cited the array of rules applied to editing and disputes related to
+                            such content among the reasons for this trend.
+                        </p>
+                        <p>
+                            Wales disputed these claims in 2009, denying the decline and questioning the methodology of the study.
+                        </p>
+                        <p class="narrow">
+                            <strong>Content:</strong> Sed placerat accumsan ligula. Aliquam felis magna, congue quis, tempus eu,
+                            aliquam vitae, ante. Cras neque justo, ultrices at, rhoncus a, facilisis eget, nisl. Quisque vitae pede.
+                            Nam et augue. Sed a elit. Ut vel massa. Suspendisse nibh pede, ultrices vitae, ultrices nec, mollis non,
+                            nibh. In sit amet pede quis leo vulputate hendrerit. Cras laoreet leo et justo auctor condimentum.
+                            Integer id enim. Suspendisse egestas, dui ac egestas mollis, libero orci hendrerit lacus, et malesuada
+                            lorem neque ac libero. Morbi tempor pulvinar pede. Donec vel elit.
+                        </p>
+                        <p class="narrow">
+                            Sed placerat accumsan ligula. Aliquam felis magna, congue quis, tempus eu,
+                            aliquam vitae, ante. Cras neque justo, ultrices at, rhoncus a, facilisis eget, nisl. Quisque vitae pede.
+                            Nam et augue. Sed a elit. Ut vel massa. Suspendisse nibh pede, ultrices vitae, ultrices nec, mollis non,
+                            nibh. In sit amet pede quis leo vulputate hendrerit. Cras laoreet leo et justo auctor condimentum.
+                            Integer id enim. Suspendisse egestas, dui ac egestas mollis, libero orci hendrerit lacus, et malesuada
+                            lorem neque ac libero. Morbi tempor pulvinar pede. Donec vel elit.
+                        </p>
+                        <p>
+                            <strong>Wikipedia</strong> began as a complementary project for Nupedia, a free online
+                            English-language encyclopedia project whose articles were written by experts and reviewed under a formal
+                            process. <a href="http://m.bbc.co.uk/news">Nupedia was founded on March 9, 2000</a>, under the ownership
+                            of Bomis, a web portal company. Its main figures were the Bomis CEO Jimmy Wales and Larry Sanger,
+                            editor-in-chief for Nupedia and later Wikipedia. Nupedia was licensed initially under its own Nupedia
+                            Open Content License, switching to the GNU Free Documentation License before Wikipedia's founding at the
+                            urging of Richard Stallman. Sanger and Wales founded Wikipedia. While Wales is credited with defining
+                            the goal of making a publicly editable encyclopedia, Sanger is credited with the strategy of using a
+                            wiki to reach that goal. On January 10, 2001, Sanger proposed on the Nupedia mailing list to create a
+                            wiki as a "feeder" project for Nupedia.
+                        </p>
+                        <div style="display:none">none</div>
+                        <h3>Heading 3</h3>
+                        <p>
+                            Wikipedia was formally launched on January 15, 2001, as a single English-language edition at
+                            www.wikipedia.com, and announced by Sanger on the Nupedia mailing list. Wikipedia's policy of
+                            "neutral point-of-view" was codified in its first months. Otherwise, there were relatively few rules
+                            initially and Wikipedia operated independently of Nupedia. Originally, Bomis intended to make
+                            Wikipedia a business for profit.
+                        </p>
+                        <p>
+                            Wikipedia gained early contributors from Nupedia, Slashdot postings, and web search engine
+                            indexing. By August 8, 2001, Wikipedia had over 8,000 articles. On September 25, 2001, Wikipedia had
+                            over 13,000 articles. And by the end of 2001 it had grown to approximately 20,000 articles and 18
+                            language editions. It had reached 26 language editions by late 2002, 46 by the end of 2003, and 161
+                            by the final days of 2004. Nupedia and Wikipedia coexisted until the former's servers were taken
+                            down permanently in 2003, and its text was incorporated into Wikipedia. English Wikipedia passed the
+                            mark of two million articles on September 9, 2007, making it the largest encyclopedia ever
+                            assembled, surpassing even the 1408 Yongle Encyclopedia, which had held the record for almost 600
+                            years.
+                        </p>
+                    </section>
                     <p>
                         Citing fears of commercial advertising and lack of control in Wikipedia, users of the Spanish
                         Wikipedia forked from Wikipedia to create the Enciclopedia Libre in February 2002. These moves
@@ -342,9 +367,11 @@
     <script type="text/javascript" src="scripts/jquery/jquery.cookie.js"></script>
     <script type="text/javascript" id="ScriptLocalUtils" src="scripts/utils.js"></script>
     <script type="text/javascript" id="ScriptLocalUw"></script>
+    <script type="text/javascript" id="ScriptLocalFontEdit"></script>
     <script type="text/javascript">
         //$("#ScriptLocalUtils").attr("src", "scripts/utils.js?" + new Date().valueOf());
         $("#ScriptLocalUw").attr("src", "scripts/user-web.user.js?" + new Date().valueOf());
+        //$("#ScriptLocalFontEdit").attr("src", "scripts/font-edit.user.js?" + new Date().valueOf());
 
         // $("body").bind("click.tester", function (e) {
         //     $("body").append(

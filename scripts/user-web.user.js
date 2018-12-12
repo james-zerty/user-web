@@ -20,7 +20,7 @@ try {
     var url = document.location.href;
     setupLog("[user-web]");
 
-    var settings = { localUrls: 0, uniqueUrls: 0, reloader: 0, autoShow: 0, handleErrors: 1 };
+    var settings = { localUrls: 0, uniqueUrls: 0, reloader: 0, autoRun: 0, autoShow: 0, handleErrors: 1 };
 
     log("url", url.substr(0, 100));
     // log("loaded", new Date());
@@ -49,10 +49,10 @@ try {
                 { exp: /wikipedia\.org/i, custom: function() { me.addWikipediaRandom(); } },
             ];
 
-            //fnt
+            //fnt //qq
             me.fontA = { size: 14, height: 20, sizeS: 13, heightS: 18, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0,  face: 'Verdana' };
             me.fontB = { size: 18, height: 25, sizeS: 15, heightS: 19, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 10, face: 'Corbel' };
-            me.fontC = { size: 19, height: 30, sizeS: 15, heightS: 23, weight: '400', color: '#555', serif: 1, fixed: 0, indent: 15, face: 'Georgia' };
+            me.fontC = { size: 17, height: 27, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 15, face: 'Lora' };
 
             me.marked = $();
             me.forced = $();
@@ -63,33 +63,54 @@ try {
             me.siteConfig();
             me.loadUserStyle();
             me.readLite();
-            
-            //scripts on bbc video pages will clear events so we wait 1 second...
-            window.self.setTimeout(function() {
-                me.setEvents();
-            }, 1000);
-        };
-
-        me.setEvents = function() {
-            me.bindPageMouse();
-            me.bindPageKeyDown();
 
             // me.tidyUp();
             if (me.tidyIsOn()) {
                 me.tidyUp();
             }
 
-            if (settings.autoShow) {
-                me.run(function() {
-                    // me.readLite();
-                    // me.addStyles(); me.doMarkAuto();
-                    // me.doReadAuto();
-                    // me.doPopoutAuto();
-                    // throw new Error("test!");
-                    me.showMenu([]); //also need to stop hideMenu
-                });
+            if (settings.autoRun) {
+                me.editFonts(); //qq
+                // me.doReadAuto();
+                // me.readLite();
+                // me.addStyles(); me.doMarkAuto();
+                // me.doPopoutAuto();
+                // throw new Error("test!");
             }
+
+            if (settings.autoShow) {
+                me.showMenu([]);
+            }
+
+            window.self.setTimeout(function() {
+                me.setEvents();
+            }, 1000);
+
+            //scripts on bbc video pages will clear events so we wait 5 seconds...
+            window.self.setTimeout(function() { //qq
+                try {
+                    var events = $._data( $("html")[0], "events" ).mouseup;
+                    for (var i = 0; i < events.length; i++) {
+                        if (events[i].data == "user-web") {
+                            log("events", "mouseup found");
+                            return;
+                        }
+                    }
+                }
+                catch(ex) {
+                    log(ex);
+                }
+
+                log("events", "mouseup not found! setEvents again...");
+                me.setEvents();
+            }, 5000);
         };
+
+        me.setEvents = function() {
+            me.bindPageMouse();
+            me.bindPageKeyDown();
+        };
+
         /*** custom functions ***************************************************************************************** */
 
         me.switchWikipediaLinks = function() { //used on google search results...
@@ -111,22 +132,21 @@ try {
 
         /*** page events ********************************************************************************************** */
 
-        me.bindPageMouse = function() {
-            $("html").mouseup(function(e) {
+        me.bindPageMouse = function() { //qq
+            $("html").mouseup("user-web", function(e) {
                 me.onPageMouseUp(e);
             }).dblclick(function(e) {
                 me.onPageDblClick(e);
             });
         };
-        
+
         me.onPageDblClick = function(e) {
             me.run(function() {
                 if (me.menuShowing) {
-                    log("dbl", "skip");
                     return;
                 }
 
-                log("dbl", "go");
+                log("dblclick", "showMenu");
                 me.showMenu(e);
                 e.preventDefault();
                 e.stopPropagation();
@@ -141,7 +161,7 @@ try {
                 }
                 if (me.saveSelection(e)) {
                     if (me.menuShowing) {
-                        log("mu", "skip");
+                        log("skip", "mouseup");
                         me.hideMenu();
                         return;
                     }
@@ -151,12 +171,11 @@ try {
                     switch (tagName) {
                         case "IMG":  //img doesn't clear selection
                         case "HTML": //scrollbar
-                            log("not showing!", e.target.tagName, " ", e.target, " ", e.pageX, " ", e.pageY);
+                            log("onPageMouseUp", "not showing for: ", e.target.tagName);
                             me.hideMenu();
                             return;
                     }
 
-                    log("mu", "go");
                     me.showMenu(e);
                     e.preventDefault();
                     e.stopPropagation();
@@ -219,7 +238,18 @@ try {
                 switch (e.keyCode) { //qq
                     case 13: // enter
                         if (e.ctrlKey) {
-                            me.doPopoutAuto();
+                            if (me.activePopout) {
+                                if (me.readingState == 4) {
+                                    me.undoPopout();
+                                    me.undoRead();
+                                }
+                                else {
+                                    me.setFontC();
+                                }
+                            }
+                            else {
+                                me.doPopoutAuto();
+                            }
                         }
                         break;
                     case 192: // ` firefox
@@ -277,7 +307,7 @@ try {
 
                         return me.cancelEvent(e);
                     case 113: // F2
-                        log("F2", "mark");
+                        log("F2", "mark"); //qqqqq
                         me.markElementAndBind(me.marked);
                         return me.cancelEvent(e);
                     case 37: // left
@@ -479,9 +509,9 @@ try {
 
             var row3 = me.addEl(tbl, "tr");
             var td = me.addEl(row3, "td"); td.attr("colspan", 2);
-            me.ulReader = me.addEl(td, "ul", "uw-menu-left");
+            var ulLeft = me.addEl(td, "ul", "uw-menu-left");
             var td = me.addEl(row3, "td"); td.attr("colspan", 2);
-            me.ulSearch = me.addEl(td, "ul", "uw-menu-right");
+            var ulRight = me.addEl(td, "ul", "uw-menu-right");
 
             me.menu.hover(
                 function() { // on hover
@@ -501,113 +531,108 @@ try {
 
             //--------------------------------------------------------------------------------------
 
-            me.lnkScrollTop =
-                me.addCellLink(row1, "Top", function() { //qqqq
-                    me.scrollToY(0);
-                }, null, "Scroll to top");
-            me.lnkScrollBottom =
-                me.addCellLink(row2, "Bottom", function() {
-                    me.scrollToY($(document).height());
-                }, null, "Scroll to bottom");
-            me.lnkPopoutAuto =
-                me.addCellLink(row1, "Popout", function() {
-                    me.doPopoutAuto();
-                }, null, "Auto popout");
-            me.lnkRunReadrFind =
-                me.addCellLink(row2, "Find", function() {
-                    me.startFind();
-                }, null, "Find an element then choose to read, popout or delete - see help for more info");
+            me.addCellLink(row1, "Read B", function() {
+                var el = $(me.clickEvent.target);
+                me.doReadFromElement(el);
+                me.setFontB();
+                me.clearSelection();
+                me.markElementAndBind(el);
+            }, null, "Read B");
+            me.addCellLink(row2, "Read C", function() {
+                var el = $(me.clickEvent.target);
+                me.doReadFromElement(el);
+                me.setFontC();
+                me.clearSelection();
+                me.markElementAndBind(el);
+            }, null, "Read C");
 
-            me.lnkMarkElement =
-                me.addCellLink(row1, "Mark", function() {
-                    var el = $(me.clickEvent.target);
-                    me.markElementAndBind(el);
-                });
-            me.lnkHighlightElement =
-                me.addCellLink(row2, "Highlight", function() {
-                    me.highlightElement($(me.clickEvent.target));
-                });
+            me.addCellLink(row1, "Pop B", function() {
+                me.doPopoutAuto();
+            }, null, "Auto popout B");
+            me.addCellLink(row2, "Pop C", function() {
+                me.doPopoutAuto();
+                me.setFontC();
+            }, null, "Auto popout C");
 
             me.addCellLink(row1, "Copy", function() {
                 me.setClipboard();
             });
+            me.addCellLink(row2, "Mark", function() {
+                var el = $(me.clickEvent.target);
+                me.markElementAndBind(el);
+            });
+
+            me.addCellLink(row1, "Top", function() {
+                me.scrollToY(0);
+            }, null, "Scroll to top");
+            me.addCellLink(row2, "Bottom", function() {
+                me.scrollToY($(document).height());
+            }, null, "Scroll to bottom");
+
+            //--------------------------------------------------------
+
+            me.addLink(ulLeft, "Find", function() {
+                me.startFind();
+            }, null, "Find an element then choose to read, popout or delete - see help for more info");
+
+            me.addLink(ulLeft, "Highlight", function() {
+                me.highlightElement($(me.clickEvent.target));
+            });
+
             me.lnkTidyOff =
-                me.addCellLink(row2, "Tidy off", function() {
-                    $.cookie("tidy", "off", { path: '/' });
+                me.addLink(ulLeft, "Tidy off", function() {
+                    $.cookie("tidy", null, { path: '/' });
                     document.location.reload(true);
                 }, null, "Turn tidy off and reload").hide();
             me.lnkTidyOn =
-                me.addCellLink(row2, "Tidy on", function() {
+                me.addLink(ulLeft, "Tidy on", function() {
                     $.cookie("tidy", "on", { path: '/' });
                     me.tidyUp();
                     me.refreshMenu();
                 }, null, "Turn tidy on");
 
-            //--------------------------------------------------------------------------------------
+            me.addLink(ulLeft, "Undo read", function() {
+                me.undoPopout();
+                me.undoRead();
+            }, null, "Remove reading styles, highlights and popout");
 
-            me.lnkLevelUp =
-                me.addLink(me.ulReader, "Up", function() {
-                    me.levelUp();
-                }, null, "Got to URL parent");
+            me.addSeparator(ulLeft); //--------------------------------------------------------
 
-            me.lnkClose =
-                me.addLink(me.ulReader, "Close", function() {
-                    document.location.href = "about:blank";
-                }, null, "Got to new tab");
-
-            me.addSeparator(me.ulReader); //--------------------------------------------------------
-
-            me.lnkEnableSelect =
-                me.addLink(me.ulReader, "Enable selection", function() {
-                    me.enableSelect();
-                }, null, "Allow selection of text");
+            me.addLink(ulLeft, "Enable selection", function() {
+                me.enableSelect();
+            }, null, "Allow selection of text");
 
             me.lnkShowImages =
-                me.addLink(me.ulReader, "Show images", function() {
+                me.addLink(ulLeft, "Show images", function() {
                     me.showImages();
                 }, null, "Redisplay hidden images").hide();
-
             me.lnkHideImages =
-                me.addLink(me.ulReader, "Hide images", function() {
+                me.addLink(ulLeft, "Hide images", function() {
                     me.hideImages();
                 }, null, "Hide all images in the page");
 
-            me.lnkShowLinks =
-                me.addLink(me.ulReader, "Show links", function() {
-                    me.showLinks();
-                }, null, "Show hidden links").hide();
+            me.addLink(ulLeft, "Show links", function() {
+                me.showLinks();
+            }, null, "Show hidden links");
 
-            me.lnkHideLinks =
-                me.addLink(me.ulReader, "Hide links", function() {
-                    me.hideLinks();
-                }, null, "Hide link underlines");
+            me.addLink(ulLeft, "Hide links", function() {
+                me.hideLinks();
+            }, null, "Hide link underlines");
 
-            me.addSeparator(me.ulReader); //--------------------------------------------------------
+            me.addLink(ulLeft, "Edit fonts", function() { //qq
+                me.editFonts();
+            }, null, "Edit user fonts");
 
-            me.lnkRunReadrFull =
-                me.addLink(me.ulReader, "Read", function() { //normal = hide fixed + style all p's
-                    var el = $(me.clickEvent.target);
-                    me.doReadFromElement(el);
-                    me.clearSelection();
-                    me.scrollToElement(el);
-                }, null, "Tidy + set font for elements with same width");
-
-            me.lnkUndoReadr =
-                me.addLink(me.ulReader, "Undo read", function() {
-                    me.undoPopout();
-                    me.undoRead();
-                }, null, "Remove reading styles, highlights and popout");
-
-            me.userStyleSeparator = me.addSeparator(me.ulReader); //--------------------------------
+            me.userStyleSeparator = me.addSeparator(ulLeft); //--------------------------------
 
             me.lnkReloadStyle =
-                me.addLink(me.ulReader, "Reload style", function() {
+                me.addLink(ulLeft, "Reload style", function() {
                     settings.uniqueUrls = 1;
                     me.loadUserStyle();
                 }, null, "Reload the user style");
 
             me.lnkReloadStyleOnDblClick =
-                me.addLink(me.ulReader, "Reload dblclick", function() {
+                me.addLink(ulLeft, "Reload dblclick", function() {
                     $("body").bind("dblclick.uw-find", function() {
                         me.run(function() {
                             settings.uniqueUrls = 1;
@@ -626,56 +651,67 @@ try {
                 }, null, "Reload the user style on dblclick");
 
             me.lnkReloadStyleOnDblClickOff =
-                me.addLink(me.ulReader, "Reload cancel", function() {
+                me.addLink(ulLeft, "Reload cancel", function() {
                     $("body").unbind("dblclick.uw-find");
                     me.lnkReloadStyleOnDblClick.show();
                     me.lnkReloadStyleOnDblClickOff.hide();
                 }, null, "Stop reloading the user style on dblclick").hide();
 
             me.lnkOpenStyle =
-                me.addLink(me.ulReader, "Open style", function() {
+                me.addLink(ulLeft, "Open style", function() {
                     me.openUserStyle();
                 }, null, "Open user style in new tab");
 
             me.lnkUnloadStyle =
-                me.addLink(me.ulReader, "Unload style", function() {
+                me.addLink(ulLeft, "Unload style", function() {
                     me.unloadUserStyle();
                 }, null, "Unload the user style");
 
-            me.addSeparator(me.ulReader); //--------------------------------------------------------
+            me.addSeparator(ulLeft); //--------------------------------------------------------
 
-            me.addLink(me.ulReader, "Help", function() {
+            me.addLink(ulLeft, "Help", function() {
                 me.showHelp();
             });
+
+            //--------------------------------------------------------------------------------------
+
+            me.addLink(ulRight, "Up", function() {
+                me.levelUp();
+            }, null, "Got to URL parent");
+            me.addLink(ulRight, "Close", function() {
+                document.location.href = "about:blank";
+            }, null, "Go to new tab");
+
+            me.addSeparator(ulRight); //--------------------------------------------------------
 
             var u = encodeURIComponent(window.location.href);
             var title = encodeURIComponent(window.document.title);
             var prefix = "https://getpocket.com/edit?";
             var pocketUrl = prefix + "url=" + u + "&title=" + title;
-            me.addLink(me.ulSearch, "Add to Pocket", null, pocketUrl);
-            me.addLink(me.ulSearch, "Browse URL", function() { me.navigateTo(me.selectedText); });
+            me.addLink(ulRight, "Add to Pocket", null, pocketUrl);
+            me.addLink(ulRight, "Browse URL", function() { me.navigateTo(me.selectedText); });
 
-            me.addSeparator(me.ulSearch); //--------------------------------------------------------
-            me.addLink(me.ulSearch, "Google", function() { me.openSearch("https://www.google.co.uk/search?q=TESTSEARCH"); });
-            me.addLink(me.ulSearch, "Google Define", function() { me.openSearch("https://www.google.co.uk/search?q=define:TESTSEARCH"); });
-            me.addLink(me.ulSearch, "Google Maps", function() { me.openSearch("https://maps.google.co.uk/maps?q=TESTSEARCH"); });
-            me.addLink(me.ulSearch, "Google Images", function() { me.openSearch("https://www.google.co.uk/search?tbm=isch&q=TESTSEARCH"); });
+            me.addSeparator(ulRight); //--------------------------------------------------------
+            me.addLink(ulRight, "Google", function() { me.openSearch("https://www.google.co.uk/search?q=TESTSEARCH"); });
+            me.addLink(ulRight, "Google Define", function() { me.openSearch("https://www.google.co.uk/search?q=define:TESTSEARCH"); });
+            me.addLink(ulRight, "Google Maps", function() { me.openSearch("https://maps.google.co.uk/maps?q=TESTSEARCH"); });
+            me.addLink(ulRight, "Google Images", function() { me.openSearch("https://www.google.co.uk/search?tbm=isch&q=TESTSEARCH"); });
 
-            me.addSeparator(me.ulSearch); //--------------------------------------------------------
-            me.addLink(me.ulSearch, "Stack Overflow", function() { me.openSearch("https://www.google.co.uk/search?q=site%3Astackoverflow.com+TESTSEARCH"); });
-            me.addLink(me.ulSearch, "Super User", function() { me.openSearch("https://www.google.co.uk/search?q=site%3Asuperuser.com+TESTSEARCH"); });
-            me.addLink(me.ulSearch, "Stack Exchange", function() { me.openSearch("https://www.google.co.uk/search?q=site%3Astackexchange.com+TESTSEARCH"); });
+            me.addSeparator(ulRight); //--------------------------------------------------------
+            me.addLink(ulRight, "Stack Overflow", function() { me.openSearch("https://www.google.co.uk/search?q=site%3Astackoverflow.com+TESTSEARCH"); });
+            me.addLink(ulRight, "Super User", function() { me.openSearch("https://www.google.co.uk/search?q=site%3Asuperuser.com+TESTSEARCH"); });
+            me.addLink(ulRight, "Stack Exchange", function() { me.openSearch("https://www.google.co.uk/search?q=site%3Astackexchange.com+TESTSEARCH"); });
 
-            me.addSeparator(me.ulSearch); //--------------------------------------------------------
-            me.addLink(me.ulSearch, "Twitter", function() { me.openSearch("https://twitter.com/search?q=TESTSEARCH&src=typd"); });
-            me.addLink(me.ulSearch, "Wikipedia", function() { me.openSearch("https://en.m.wikipedia.org/wiki/Special:Search?search=TESTSEARCH&go=Go"); });
-            me.addLink(me.ulSearch, "Amazon", function() { me.openSearch("http://www.amazon.co.uk/s/ref=nb_sb_noss_1?url=search-alias%3Daps&field-keywords=TESTSEARCH&x=0&y=0"); });
-            me.addLink(me.ulSearch, "Reddit", function() { me.openSearch("https://www.reddit.com/search?q=TESTSEARCH"); });
+            me.addSeparator(ulRight); //--------------------------------------------------------
+            me.addLink(ulRight, "Twitter", function() { me.openSearch("https://twitter.com/search?q=TESTSEARCH&src=typd"); });
+            me.addLink(ulRight, "Wikipedia", function() { me.openSearch("https://en.m.wikipedia.org/wiki/Special:Search?search=TESTSEARCH&go=Go"); });
+            me.addLink(ulRight, "Amazon", function() { me.openSearch("http://www.amazon.co.uk/s/ref=nb_sb_noss_1?url=search-alias%3Daps&field-keywords=TESTSEARCH&x=0&y=0"); });
+            me.addLink(ulRight, "Reddit", function() { me.openSearch("https://www.reddit.com/search?q=TESTSEARCH"); });
 
             me.refreshMenu();
         };
 
-        me.addEl = function(parent, tag, className, text) { //qqq move / replace addElement
+        me.addEl = function(parent, tag, className, text) { //qq move / replace addElement
             var el = $("<" + tag + ">");
 
             if (className != null) {
@@ -693,7 +729,7 @@ try {
             return el;
         };
 
-        me.addCellLink = function(parent, text, fn, href, title) { //qqqq merge
+        me.addCellLink = function(parent, text, fn, href, title) { //qq merge
             var td = $("<td>")
                 .append($("<a>" + text + "</a>")
                     .click(function() { me.run(fn); }));
@@ -736,15 +772,6 @@ try {
                     me.lnkHideImages.show();
                 }
 
-                if (me.linksHidden) {
-                    me.lnkShowLinks.show();
-                    me.lnkHideLinks.hide();
-                }
-                else {
-                    me.lnkShowLinks.hide();
-                    me.lnkHideLinks.show();
-                }
-
                 if (me.foundUserStyle) {
                     me.userStyleSeparator.show();
                     me.lnkReloadStyle.show();
@@ -781,7 +808,7 @@ try {
 
         me.showHelp = function(e) {
             me.addStyles();
-            var pop = $("<div class='uw-help'>"); //qq
+            var pop = $("<div class='uw-help'>");
             pop.html(
                 "<table>" +
                     "<tr><th>General...</th></tr>" +
@@ -911,6 +938,19 @@ try {
 
         /*** menu and reading styles ********************************************************************************** */
 
+        me.editFonts = function() { //qq
+            me.doReadAuto();
+            fontEdit.load();
+        };
+
+        me.addScriptElement = function(id, src) {
+            $(document.head).append(
+                $("<script>")
+                    .attr("id", id)
+                    .attr("type", "text/javascript")
+                    .attr("src", src));
+        };
+
         me.addStyleElement = function(id, css) {
             $(document.head).append(
                 $("<style>")
@@ -946,7 +986,7 @@ try {
                     "text-align: center;" +
                     "user-select: none;" +
                     "border-collapse: collapse !important;" +
-                    "border: solid 1px #000 !important;" + //qqqq
+                    "border: solid 1px #000 !important;" +
                 "}" +
                 "html body .uw-menu, html body .uw-menu *, html body .uw-menu ul li a, html body .uw-help td, html body .uw-help th { " +
                     "font-family: Corbel, Comic Sans MS !important;" +
@@ -981,7 +1021,7 @@ try {
                     "border-top: solid 1px #ddd !important;" +
                     "min-width: 140px !important;" +
                 "}" +
-                "html body .uw-menu li:last-child {" + //qqq
+                "html body .uw-menu li:last-child {" +
                     "border-bottom: solid 1px #ddd !important;" +
                 "}" +
                 "html body .uw-menu .uw-separator {" +
@@ -1059,6 +1099,9 @@ try {
                     "width: 100% !important;" +
                     "max-width: 99999px !important;" +
                     "background-color: #fff !important;" +
+                "}" +
+                "html body .uw-popout img {" +
+                    "height: auto !important;" +
                 "}" + //fnt...
                 "html body .uw-lite {" +
                     "text-align: justify !important;" + /* uw-jfy */
@@ -1222,11 +1265,8 @@ try {
         me.tidyWaiting = false;
         me.tidyLast = new Date().valueOf();
         me.tidyIsOn = function(e) { return $.cookie("tidy") == "on"; };
-        me.tidyIsOff = function(e) { return $.cookie("tidy") == "off"; };
         me.tidyUp = function(e) { //qq
             if (me.tidyUpExclude) return;
-
-            if (me.tidyIsOff()) return;
 
             log("tidyUp", "tidying");
             me.tidyLast = new Date().valueOf();
@@ -1235,7 +1275,7 @@ try {
             $("*").filter(function() {
                 var el = $(this);
                 var pos = el.css("position");
-                var match = (pos === "fixed" || pos === "sticky") && el.prop("tagName") != "PICTURE";
+                var match = (pos === "fixed" || pos === "sticky") && el.prop("tagName") != "PICTURE" && el.attr("id") != "fe-outer";
                 // if (match) log("tidyUp", "found: ", me.elToString(el));
                 return match;
             }).attr("style", "display:none !important");
@@ -1247,7 +1287,7 @@ try {
 
                 $(document).bind("DOMNodeInserted", function(){
                     var now = new Date().valueOf();
-                    log("tidyUp", "DOMNodeInserted ", now);
+                    // log("tidyUp", "DOMNodeInserted ", now);
 
                     if (me.tidyWaiting) return;
 
@@ -1363,7 +1403,7 @@ try {
         me.doPopoutAuto = function() {
             var main = me.getMainAuto();
             if (main && main.length > 0) {
-                me.doPopout(main);
+                me.doPopout(main); //qq
             }
         };
 
@@ -1407,6 +1447,11 @@ try {
             me.refreshMenu();
             me.scrollToY(0);
             me.restoreScroll();
+
+            var el = me.popoutDiv.find("p:first");
+            if (el.length == 0) el = me.popoutDiv.find(":first");
+            if (el.length == 0) el = me.popoutDiv;
+            me.markElementAndBind(el);
         };
 
         me.undoPopout = function() {
@@ -1459,6 +1504,17 @@ try {
             }
             else {
                 var main = sorted[0].el;
+
+                while (true) {
+                    var parent = main.parent();
+                    var parentTag = parent[0].tagName.toUpperCase();
+
+                    if (parent.width() > main.width() + 50 || parentTag.match(/^(HTML|BODY)$/)) {
+                        break;
+                    }
+                    main = parent;
+                }
+
                 return main;
             }
         };
@@ -1613,7 +1669,7 @@ try {
                     return;
                 case "popout":
                     me.forced = el;
-                    me.doPopout(el);
+                    me.doPopout(el); //qqqqq
                     return;
             }
         };
@@ -1628,7 +1684,7 @@ try {
 
         /*** mark and highlight *************************************************************************************** */
 
-        me.markElementAndBind = function(el) {
+        me.markElementAndBind = function(el) { //qqqqq
             if (!me.marking) {
                 me.marking = true;
                 me.addStyles();
@@ -1760,7 +1816,7 @@ try {
             if (el == null || el.length == 0) return;
 
             var wh = $(window).height();
-            var ot = wh / 2 * 0.5;
+            var ot = wh / 2 * 0.25;
 
             if (wh < 800) ot = 0;
 
@@ -1816,3 +1872,336 @@ try {
 catch (ex) {
     log(ex);
 }
+
+
+/*
+    TODO:
+    make it fixed pos > make sure uw doesn't tidy it
+    make style stronger e.g. pocket
+    make it work without uw-container
+    add colour
+    add export
+    include in uw? > no log problems
+*/
+
+var fontEdit = new function () {
+    var me = this;
+
+    me.load = function () {
+        me.url = document.location.href;
+        me.open();
+    };
+
+    me.open = function () {
+
+        if (1) {
+            var norml = [
+                { size: 16, height: 25, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 25, face: 'Arial' },
+                { size: 16, height: 25, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 25, face: 'Verdana' },
+                { size: 19, height: 28, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 19, heightS: 28, face: 'Calibri' },
+                { size: 18, height: 27, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 27, face: 'Calibri Light' },
+                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Century Gothic' },
+                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Corbel' },
+                { size: 18, height: 27, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 27, face: 'Ebrima' },
+                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Gadugi' },
+                { size: 17, height: 27, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 17, heightS: 27, face: 'Lucida Sans Unicode' },
+                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Malgun Gothic' },
+                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Microsoft JhengHei UI' },
+                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Microsoft New Tai Lue' },
+                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Microsoft PhagsPa' },
+                { size: 17, height: 27, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 17, heightS: 27, face: 'MS Reference Sans Serif' },
+                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Nirmala UI' },
+                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Segoe UI' },
+                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Segoe UI Light' },
+                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Segoe UI Symbol' },
+                { size: 17, height: 27, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 17, heightS: 27, face: 'Tahoma' },
+                { size: 16, height: 25, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 25, face: 'Trebuchet MS' },
+            ];
+            var serif = [
+                { size: 18, height: 29, weight: '900', color: '#060', serif: 1, fixed: 0, sizeS: 10, heightS: 20, face: 'Broadway' },
+                { size: 17, height: 27, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 19, heightS: 27, face: 'Lora' },
+                { size: 16, height: 25, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 19, heightS: 27, face: 'Lora' },
+                { size: 17, height: 28, weight: '400', color: '#00f', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'Bookman Old Style' },
+                { size: 19, height: 27, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 19, heightS: 27, face: 'Cambria' },
+                { size: 18, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'Cambria Math' },
+                { size: 20, height: 28, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 20, heightS: 28, face: 'Centaur' },
+                { size: 18, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'Century' },
+                { size: 18, height: 27, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 27, face: 'Constantia' },
+                { size: 20, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 20, heightS: 29, face: 'Garamond' },
+                { size: 17, height: 27, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 17, heightS: 27, face: 'Georgia' },
+                { size: 18, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'High Tower Text' },
+                { size: 17, height: 27, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 17, heightS: 27, face: 'Lucida Bright' },
+                { size: 16, height: 25, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 16, heightS: 25, face: 'Lucida Fax' },
+                { size: 18, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'Mongolian Baiti' },
+                { size: 18, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'Palatino Linotype' },
+                { size: 18, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'SimSun-ExtB' },
+                { size: 18, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'Sylfaen' },
+                { size: 18, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'Times New Roman' },
+            ];
+            var fixed = [
+                { size: 18, height: 22, weight: '400', color: '#333333', serif: 1, fixed: 1, sizeS: 18, heightS: 22, face: 'Courier New' },
+                { size: 15, height: 21, weight: '400', color: '#333333', serif: 0, fixed: 1, sizeS: 15, heightS: 21, face: 'Consolas' },
+                { size: 16, height: 25, weight: '400', color: '#333333', serif: 0, fixed: 1, sizeS: 16, heightS: 25, face: 'Lucida Console' },
+                { size: 18, height: 29, weight: '400', color: '#333333', serif: 1, fixed: 1, sizeS: 18, heightS: 29, face: 'SimSun' },
+            ];
+
+            //from hubble..
+            var norml = [
+                { size: 15, height: 23, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 15, heightS: 23, face: 'Verdana' },
+                { size: 18, height: 24, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 24, face: 'Calibri' },
+                { size: 15, height: 23, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 15, heightS: 23, face: 'Malgun Gothic' },
+                { size: 15, height: 23, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 15, heightS: 23, face: 'Microsoft JhengHei UI' },
+                { size: 16, height: 25, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 25, face: 'Microsoft New Tai Lue' },
+                { size: 16, height: 25, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 25, face: 'Microsoft PhagsPa' },
+                { size: 15, height: 23, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 15, heightS: 23, face: 'MS Reference Sans Serif' },
+                { size: 16, height: 25, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 25, face: 'Nirmala UI' },
+                { size: 16, height: 25, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 25, face: 'Segoe UI' },
+                { size: 16, height: 24, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 24, face: 'Segoe UI Symbol' },
+                { size: 16, height: 24, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 24, face: 'Trebuchet MS' },
+            ];
+
+            me.fonts = norml;
+            me.fonts = serif;
+            // me.fonts = fixed;
+            // me.fonts = norml.concat(serif).concat(fixed);
+        }
+        else if (0) {
+            me.fonts = [ //fnt
+                { size: 16, height: 24, weight: "400", color: "#333", serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: "Open Sans" },
+                { size: 16, height: 24, weight: "300", color: "#222", serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: "Ubuntu" },
+                { size: 19, height: 29, weight: "400", color: "#000", serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: "Yu Mincho" },
+                { size: 18, height: 29, weight: "400", color: "#333", serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: "Georgia"  },
+            ];
+        }
+        else {
+            me.fonts = [];
+            for (var i in me.fonts) {
+                me.fonts.push({ size: 18, height: 29, weight: "normal", color: "#333", sizeS: 18, heightS: 29, face: me.fonts[i] });
+            }
+        }
+
+        var doc = [];
+        doc.push("<div id='fe-outer'>");
+                doc.push("<table><tr>" +
+                            "<td><a class='fe-min'>&plusmn;</a></td>" +
+                            "<td><select id='fe-list'>");
+                for (var i = 0; i < me.fonts.length; i++) {
+                    var f = me.fonts[i];
+                    doc.push("<option>" + f.face + "</option>");
+                }
+                doc.push(       "</select></td>" +
+                            "<td><a class='fe-prev'>&lt;</a><a class='fe-next'>&gt;</a></td>" +
+                            "<td><a class='fe-fsup'>+</a><a class='fe-fsdn'>-</a></td>" +
+                            "<td class='fe-size'></td>" +
+                            "<td>/</td>" +
+                            "<td class='fe-height'></td>" +
+                            "<td><a class='fe-lhup'>+</a><a class='fe-lhdn'>-</a></td>" +
+                            "<td class='fe-weight'></td>" +
+                            "<td><a class='fe-fwup'>+</a><a class='fe-fwdn'>-</a></td>" +
+                            "<td><input type='text' class='fe-color' /></td>" +
+                            "<td class='fe-serif'></td>" +
+                            "<td class='fe-fixed'></td>" +
+                        "</tr></table>");
+
+        doc.push("</div>");
+        var html = doc.join("");
+
+        document.body.insertAdjacentHTML("afterbegin", html);
+
+        me.visible = true;
+        me.div = $("#fe-outer");
+        me.setStyleCommon();
+        me.setEvents();
+    };
+
+    me.setEvents = function () {
+        $("#fe-list").change(function() {
+            var f = me.getFont();
+            me.setStyle(f);
+        });
+
+        $("#fe-list").change();
+        $("#fe-list").focus();
+
+        $(".fe-min").click(function() {
+            if (me.visible) {
+                me.div.css({ width: "27px", overflow: "hidden" });
+            }
+            else {
+                me.div.css({ width: "auto", overflow: "visible" });
+            }
+            me.visible = !me.visible;
+        });
+        $(".fe-prev").click(function() {
+            $("#fe-list")[0].selectedIndex--;
+            $("#fe-list").change();
+        });
+        $(".fe-next").click(function() {
+            $("#fe-list")[0].selectedIndex++;
+            $("#fe-list").change();
+        });
+        $(document.body).keyup(function(e) {
+            if (e.ctrlKey && e.altKey) {
+                if (e.keyCode == 39) { // right
+                    $("#fe-list")[0].selectedIndex++;
+                    $("#fe-list").change();
+                }
+                else if (e.keyCode == 37) { // left
+                    $("#fe-list")[0].selectedIndex--;
+                    $("#fe-list").change();
+                }
+            }
+        });
+        $(".fe-fsup").click(function() {
+            me.incProp(this, "size", 1);
+        });
+        $(".fe-fsdn").click(function() {
+            me.incProp(this, "size", -1);
+        });
+        $(".fe-lhup").click(function() {
+            me.incProp(this, "height", 1);
+        });
+        $(".fe-lhdn").click(function() {
+            me.incProp(this, "height", -1);
+        });
+        $(".fe-fwup").click(function() {
+            me.incProp(this, "weight", 100);
+        });
+        $(".fe-fwdn").click(function() {
+            me.incProp(this, "weight", -100);
+        });
+        $(".fe-color").keyup(function() {
+            me.changeProp(this, "color", this.value);
+        });
+
+        $(".fe-serif.on").prop("checked", true);
+        $(".fe-fixed.on").prop("checked", true);
+    };
+
+    me.addStyleElement = function(id, css) {
+        $("#" + id).remove();
+        $(document.body).append(
+            $("<style>")
+                .attr("id", id)
+                .attr("rel", "stylesheet")
+                .attr("type", "text/css")
+                .text(css));
+    };
+
+    me.getFont = function() {
+        return me.fonts[$("#fe-list")[0].selectedIndex];
+    };
+
+    me.incProp = function (el, prop, inc) {
+        var f = me.getFont();
+        var val = f[prop];
+        var num = parseInt(val, 10);
+        num = num + inc;
+        f[prop] = num;
+
+        me.setStyle(f);
+        me.clearSelection();
+    };
+
+    me.changeProp = function (el, prop, val) {
+        var f = me.getFont();
+        f[prop] = val;
+
+        me.setStyle(f);
+        me.clearSelection();
+    };
+
+    me.setStyleCommon = function() {
+        me.addStyleElement("fe-css",
+            "html body div#fe-outer { " +
+                "position: fixed !important; " +
+                "top: 10px !important; " +
+                "left: 10px !important; " +
+                "border: solid 1px #000 !important; " +
+                "font: 12px/18px Verdana !important; " +
+                "color: #000 !important; " +
+                "background-color: #fff !important; " +
+                "z-index: 9999999 !important; " +
+                "padding: 10px !important;" +
+            "}" +
+            "html body div#fe-outer table { " +
+                "border-collapse: collapse !important; " +
+            "}" +
+            "html body div#fe-outer table tbody tr * { " +
+                "font: 12px/18px Verdana !important; " +
+            "}" +
+            "html body div#fe-outer table tbody tr td { " +
+                "padding: 0 5px 0 !important; " +
+            "}" +
+            "html body div#fe-outer table tbody tr td a { " +
+                "cursor: pointer !important; " +
+                "border: solid 1px #bbb !important; " +
+                "min-width: 20px !important; " +
+                "min-height: 20px !important; " +
+                "display: table-cell !important; " +
+                "text-align: center !important; " +
+                "text-decoration: none !important; " +
+            "}" +
+            "html body div#fe-outer table tbody tr td .fe-color { " +
+                "padding: 0 2px !important;" +
+                "width: 66px !important; " +
+            "}" +
+            "html body div#fe-outer table tbody tr .fe-serif, " +
+            "html body div#fe-outer table tbody tr .fe-fixed { " +
+                "text-align: center !important; " +
+                "width: 52px !important; " +
+            "}"
+        );
+    };
+
+    me.setStyle = function(f) {
+        me.addStyleElement("fe-css-i",
+            "html body .uw-container *, " +
+            "html body .uw-container p { " +
+                "font-family: " + f.face + ", Comic Sans MS !important; " +
+                "font-size: " + f.size + "px !important; " +
+                "line-height: " + f.height + "px !important; " +
+                "font-weight: " + f.weight + " !important; " +
+                "color: " + f.color + " !important; " +
+                "text-align: justify !important; " +
+                "text-indent: 15px !important; " +
+            "} " +
+            "@media (max-width: 800px) {" +
+                "html body .uw-container * { " +
+                    "font-size: " + f.sizeS + "px !important; " +
+                    "line-height: " + f.heightS + "px !important; " +
+                "}" +
+            "}"
+        );
+
+        $(".fe-size").text(f.size);
+        $(".fe-height").text(f.height);
+        $(".fe-weight").text(f.weight);
+        $(".fe-color").val(f.color);
+        $(".fe-serif").text(f.serif? "serif" : "");
+        $(".fe-fixed").text(f.fixed? "fixed" : "");
+    };
+
+    me.clearSelection = function(e) {
+        if (window.getSelection) {
+            try {
+                window.getSelection().removeAllRanges();
+            }
+            catch (ex) {
+                //happens on IE during enableAutoReadr
+            }
+        }
+        else if (document.selection) {
+            document.selection.empty();
+        }
+    };
+
+    me.rgb2hex = function(rgb) {
+        rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+        function hex(x) {
+            return ("0" + parseInt(x).toString(16)).slice(-2);
+        }
+        return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+    }
+
+}();
