@@ -84,7 +84,7 @@ try {
 
             window.self.setTimeout(function() {
                 me.setEvents();
-            }, 1000);
+            }, 100);
 
             //scripts on bbc video pages will clear events so we wait 5 seconds...
             window.self.setTimeout(function() { //qq
@@ -531,6 +531,13 @@ try {
 
             //--------------------------------------------------------------------------------------
 
+            me.addCellLink(row1, "Top", function() {
+                me.scrollToY(0);
+            }, null, "Scroll to top");
+            me.addCellLink(row2, "Bottom", function() {
+                me.scrollToY($(document).height());
+            }, null, "Scroll to bottom");
+
             me.addCellLink(row1, "Read B", function() {
                 var el = $(me.clickEvent.target);
                 me.doReadFromElement(el);
@@ -561,13 +568,6 @@ try {
                 var el = $(me.clickEvent.target);
                 me.markElementAndBind(el);
             });
-
-            me.addCellLink(row1, "Top", function() {
-                me.scrollToY(0);
-            }, null, "Scroll to top");
-            me.addCellLink(row2, "Bottom", function() {
-                me.scrollToY($(document).height());
-            }, null, "Scroll to bottom");
 
             //--------------------------------------------------------
 

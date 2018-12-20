@@ -1,6 +1,7 @@
 /* reading... */
 .story-body p,
 .story-body li,
+.story-body a,
 .story-body p *,
 .layout-main p,
 .layout-main p *,
@@ -35,7 +36,7 @@
 
 .story-body figure {
     max-width: 785px !important;
-    margin: 0 auto !important;
+    margin: 10px auto !important;
 }
 
 .story-body figure.body-narrow-width {
