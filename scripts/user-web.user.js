@@ -50,9 +50,9 @@ try {
             ];
 
             //fnt //qq
-            me.fontA = { size: 14, height: 20, sizeS: 13, heightS: 18, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0,  face: 'Verdana' };
-            me.fontB = { size: 18, height: 25, sizeS: 15, heightS: 19, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 10, face: 'Corbel' };
-            me.fontC = { size: 17, height: 27, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 15, face: 'Lora' };
+            me.fontA = { size: 14, height: 20, sizeS: 13, heightS: 18, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Verdana' };
+            me.fontB = { size: 18, height: 25, sizeS: 15, heightS: 19, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Corbel' };
+            me.fontC = { size: 16, height: 24, sizeS: 13, heightS: 19, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Lora' };
 
             me.marked = $();
             me.forced = $();
@@ -69,12 +69,12 @@ try {
                 me.tidyUp();
             }
 
-            if (settings.autoRun) {
-                me.editFonts(); //qq
+            if (settings.autoRun) { //qq
+                // me.editFonts();
                 // me.doReadAuto();
                 // me.readLite();
                 // me.addStyles(); me.doMarkAuto();
-                // me.doPopoutAuto();
+                me.doPopoutAuto();
                 // throw new Error("test!");
             }
 
@@ -82,31 +82,24 @@ try {
                 me.showMenu([]);
             }
 
-            window.self.setTimeout(function() {
-                me.setEvents();
-            }, 100);
+            var loadEvents = url.indexOf("bbc.") == -1 || 
+                $("#mediaContainer, .player-with-placeholder, .vxp-media__error-message, .lx-c-media-player").length == 0;
 
-            //scripts on bbc video pages will clear events so we wait 5 seconds...
-            window.self.setTimeout(function() { //qq
-                try {
-                    var events = $._data( $("html")[0], "events" ).mouseup;
-                    for (var i = 0; i < events.length; i++) {
-                        if (events[i].data == "user-web") {
-                            log("events", "mouseup found");
-                            return;
-                        }
-                    }
-                }
-                catch(ex) {
-                    log(ex);
-                }
-
-                log("events", "mouseup not found! setEvents again...");
+            if (loadEvents) {
+                // log("events", "no player found, setting events...");
                 me.setEvents();
-            }, 5000);
+            }
+            else {
+                //scripts on bbc video pages will clear events so we wait 5 seconds...
+                log("events", "bbc player found, setting timeout for events");
+                window.self.setTimeout(function() { //qq
+                    me.setEvents();
+                }, 5000);
+            }
         };
 
         me.setEvents = function() {
+            log("events", "loading events");
             me.bindPageMouse();
             me.bindPageKeyDown();
         };
@@ -133,7 +126,8 @@ try {
         /*** page events ********************************************************************************************** */
 
         me.bindPageMouse = function() { //qq
-            $("html").mouseup("user-web", function(e) {
+            $("body").unbind("mouseup.uw-mu");
+            $("body").bind("mouseup.uw-mu", function(e) {
                 me.onPageMouseUp(e);
             }).dblclick(function(e) {
                 me.onPageDblClick(e);
@@ -500,18 +494,18 @@ try {
             me.menu = $("<div id='UserWebMenu' class='uw-menu'>");
             $("body").append(me.menu);
 
-            var tbl = me.addEl(me.menu, "table");
-            var row1 = me.addEl(tbl, "tr");
-            var row2 = me.addEl(tbl, "tr");
+            var tbl = addEl(me.menu, "table");
+            var row1 = addEl(tbl, "tr");
+            var row2 = addEl(tbl, "tr");
 
-            var rowX = me.addEl(tbl, "tr");
-            var td = me.addEl(rowX, "td", "uw-separator"); td.attr("colspan", 4);
+            var rowX = addEl(tbl, "tr");
+            var td = addEl(rowX, "td", "uw-separator"); td.attr("colspan", 4);
 
-            var row3 = me.addEl(tbl, "tr");
-            var td = me.addEl(row3, "td"); td.attr("colspan", 2);
-            var ulLeft = me.addEl(td, "ul", "uw-menu-left");
-            var td = me.addEl(row3, "td"); td.attr("colspan", 2);
-            var ulRight = me.addEl(td, "ul", "uw-menu-right");
+            var row3 = addEl(tbl, "tr");
+            var td = addEl(row3, "td"); td.attr("colspan", 2);
+            var ulLeft = addEl(td, "ul", "uw-menu-left");
+            var td = addEl(row3, "td"); td.attr("colspan", 2);
+            var ulRight = addEl(td, "ul", "uw-menu-right");
 
             me.menu.hover(
                 function() { // on hover
@@ -711,7 +705,7 @@ try {
             me.refreshMenu();
         };
 
-        me.addEl = function(parent, tag, className, text) { //qq move / replace addElement
+        addEl = function(parent, tag, className, text) { //qq move / replace addEl
             var el = $("<" + tag + ">");
 
             if (className != null) {
@@ -965,14 +959,40 @@ try {
             me.addStylesDone = true;
 
             me.addStyleElement("uw-css",
+                "html body .uw-menu, html body .uw-menu *, html body .uw-help, html body .uw-help * { " +
+                    "font-family: Corbel, Comic Sans MS !important;" +
+                    "font-size: 13px !important;" +
+                    "font-style: normal !important;" +
+                    "line-height: 13px !important;" +
+                    "letter-spacing: 0 !important;" +
+                    "color: #000 !important;" +
+                    "background-color: #fff !important;" +
+                    "text-align: left !important;" +
+                    "margin: 0 !important;" +
+                    "padding: 0 !important;" +
+                    "border: 0 !important;" +
+                    "width: auto !important;" +
+                    "text-decoration: none !important;" +
+                    "box-shadow: none !important;" +
+                "}" +
                 "html body .uw-help { " +
-                    "position: absolute; top: 10px; left: 10px; border: solid 1px #000; background-color: #fff; z-index: 9999999; padding: 10px;" +
+                    "position: absolute !important;" +
+                    "top: 10px !important;" +
+                    "left: 10px !important;" +
+                    "border: solid 1px #000 !important;" +
+                    "background-color: #fff !important;" +
+                    "z-index: 9999999 !important;" +
+                    "padding: 10px !important;" +
                 "}" +
                 "html body .uw-help td, html body .uw-help th { " +
-                    "padding: 1px 20px 1px 5px;" +
+                    "padding: 1px 20px 1px 5px !important;" +
                 "}" +
                 "html body .uw-help-button { " +
-                    "border:solid 1px #000; padding:5px; margin-top:20px; text-align:center; cursor:pointer;" +
+                    "border:solid 1px #000 !important;" +
+                    "padding:5px !important;" +
+                    "margin-top:20px !important;" +
+                    "text-align:center !important;" +
+                    "cursor:pointer !important;" +
                 "}" +
                 //----------------------------------------------------------------------------------
                 "html body .uw-menu { " +
@@ -987,17 +1007,6 @@ try {
                     "user-select: none;" +
                     "border-collapse: collapse !important;" +
                     "border: solid 1px #000 !important;" +
-                "}" +
-                "html body .uw-menu, html body .uw-menu *, html body .uw-menu ul li a, html body .uw-help td, html body .uw-help th { " +
-                    "font-family: Corbel, Comic Sans MS !important;" +
-                    "font-size: 13px !important;" +
-                    "font-style: normal !important;" +
-                    "line-height: 13px !important;" +
-                    "letter-spacing: 0 !important;" +
-                    "color: #000 !important;" +
-                    "background-color: #fff !important;" +
-                    "text-align: left !important;" +
-                    "margin: 0 !important;" +
                 "}" +
                 "html body .uw-menu table, html body .uw-menu table td {" +
                     "border-collapse: collapse !important;" +
@@ -1034,6 +1043,7 @@ try {
                     "padding: 2px 10px !important;" +
                     "font-weight: normal !important;" +
                     "display: block !important;" +
+                    "border: 0 !important;" +
                 "}" +
                 "html body .uw-menu a:hover {" +
                     "background-color: #def !important;" +
@@ -1045,6 +1055,7 @@ try {
                 "html body .uw-container a {" +
                     "text-decoration: underline #ccc !important;" + /* uw-uln */
                     "border-bottom: none !important;" + /* uw-btm */
+                    "box-shadow: none !important;" +
                 "}" +
                 "html body.uw-fontB .uw-container a {" +
                     "text-decoration: none !important;" +
@@ -1276,7 +1287,7 @@ try {
                 var el = $(this);
                 var pos = el.css("position");
                 var match = (pos === "fixed" || pos === "sticky") && el.prop("tagName") != "PICTURE" && el.attr("id") != "fe-outer";
-                // if (match) log("tidyUp", "found: ", me.elToString(el));
+                // if (match) log("tidyUp", "found: ", elToString(el));
                 return match;
             }).attr("style", "display:none !important");
 
@@ -1520,17 +1531,17 @@ try {
         };
 
         me.getMainFromElement = function(el, original) {
-            // log("getMainFromElement", me.elToString(el));
+            // log("getMainFromElement", elToString(el));
             var parent = el.parent();
 
             if (parent.length == 0 || parent[0].tagName.toUpperCase() == "BODY") {
-                log("parent null, return", me.elToString(el));
+                log("parent null, return", elToString(el));
                 return el;
             }
 
             if (parent.width() > el.width() + 30) {
                 if (el == original) el = parent;
-                // log("main parent", me.elToString(el));
+                // log("main parent", elToString(el));
                 return el;
             }
 
@@ -1791,32 +1802,11 @@ try {
             }
         };
 
-        me.elToString = function(el) {
-            try {
-                var res = "<" + el.prop("tagName");
-                var id = el.attr("id");
-
-                if (id) {
-                    res += " id='" + id + "'";
-                }
-
-                var class1 = el.prop("class");
-                if (class1) {
-                    res += " class='" + class1 + "'";
-                }
-
-                return res + ">";
-            }
-            catch (ex) {
-                return "failed to log el: " + ex.message;
-            }
-        };
-
         me.scrollToElement = function(el) {
             if (el == null || el.length == 0) return;
 
             var wh = $(window).height();
-            var ot = wh / 2 * 0.25;
+            var ot = 0; //wh / 2 * 0.25; //qq
 
             if (wh < 800) ot = 0;
 
@@ -1896,68 +1886,69 @@ var fontEdit = new function () {
 
         if (1) {
             var norml = [
-                { size: 16, height: 25, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 25, face: 'Arial' },
-                { size: 16, height: 25, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 25, face: 'Verdana' },
-                { size: 19, height: 28, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 19, heightS: 28, face: 'Calibri' },
-                { size: 18, height: 27, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 27, face: 'Calibri Light' },
-                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Century Gothic' },
-                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Corbel' },
-                { size: 18, height: 27, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 27, face: 'Ebrima' },
-                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Gadugi' },
-                { size: 17, height: 27, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 17, heightS: 27, face: 'Lucida Sans Unicode' },
-                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Malgun Gothic' },
-                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Microsoft JhengHei UI' },
-                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Microsoft New Tai Lue' },
-                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Microsoft PhagsPa' },
-                { size: 17, height: 27, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 17, heightS: 27, face: 'MS Reference Sans Serif' },
-                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Nirmala UI' },
-                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Segoe UI' },
-                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Segoe UI Light' },
-                { size: 18, height: 29, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: 'Segoe UI Symbol' },
-                { size: 17, height: 27, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 17, heightS: 27, face: 'Tahoma' },
-                { size: 16, height: 25, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 25, face: 'Trebuchet MS' },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Arial' },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Verdana' },
+                { size: 19, height: 28, sizeS: 19, heightS: 28, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Calibri' },
+                { size: 18, height: 27, sizeS: 18, heightS: 27, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Calibri Light' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Century Gothic' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Corbel' },
+                { size: 18, height: 27, sizeS: 18, heightS: 27, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Ebrima' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Gadugi' },
+                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Lucida Sans Unicode' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Malgun Gothic' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Microsoft JhengHei UI' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Microsoft New Tai Lue' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Microsoft PhagsPa' },
+                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'MS Reference Sans Serif' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Nirmala UI' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Segoe UI' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Segoe UI Light' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Segoe UI Symbol' },
+                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Tahoma' },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Trebuchet MS' },
             ];
             var serif = [
-                { size: 18, height: 29, weight: '900', color: '#060', serif: 1, fixed: 0, sizeS: 10, heightS: 20, face: 'Broadway' },
-                { size: 17, height: 27, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 19, heightS: 27, face: 'Lora' },
-                { size: 16, height: 25, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 19, heightS: 27, face: 'Lora' },
-                { size: 17, height: 28, weight: '400', color: '#00f', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'Bookman Old Style' },
-                { size: 19, height: 27, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 19, heightS: 27, face: 'Cambria' },
-                { size: 18, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'Cambria Math' },
-                { size: 20, height: 28, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 20, heightS: 28, face: 'Centaur' },
-                { size: 18, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'Century' },
-                { size: 18, height: 27, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 27, face: 'Constantia' },
-                { size: 20, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 20, heightS: 29, face: 'Garamond' },
-                { size: 17, height: 27, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 17, heightS: 27, face: 'Georgia' },
-                { size: 18, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'High Tower Text' },
-                { size: 17, height: 27, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 17, heightS: 27, face: 'Lucida Bright' },
-                { size: 16, height: 25, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 16, heightS: 25, face: 'Lucida Fax' },
-                { size: 18, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'Mongolian Baiti' },
-                { size: 18, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'Palatino Linotype' },
-                { size: 18, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'SimSun-ExtB' },
-                { size: 18, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'Sylfaen' },
-                { size: 18, height: 29, weight: '400', color: '#333', serif: 1, fixed: 0, sizeS: 18, heightS: 29, face: 'Times New Roman' },
+                { size: 18, height: 29, sizeS: 10, heightS: 20, weight: '900', color: '#060', serif: 1, fixed: 0, indent: 0, face: 'Broadway' },
+                { size: 16, height: 26, sizeS: 15, heightS: 19, weight: '300', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Merriweather' },
+                { size: 16, height: 24, sizeS: 19, heightS: 27, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Lora' },
+                { size: 15, height: 21, sizeS: 19, heightS: 27, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Lora' },
+                { size: 17, height: 28, sizeS: 18, heightS: 29, weight: '400', color: '#00f', serif: 1, fixed: 0, indent: 0, face: 'Bookman Old Style' },
+                { size: 19, height: 27, sizeS: 19, heightS: 27, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Cambria' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Cambria Math' },
+                { size: 20, height: 28, sizeS: 20, heightS: 28, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Centaur' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Century' },
+                { size: 18, height: 27, sizeS: 18, heightS: 27, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Constantia' },
+                { size: 20, height: 29, sizeS: 20, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Garamond' },
+                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Georgia' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'High Tower Text' },
+                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Lucida Bright' },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Lucida Fax' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Mongolian Baiti' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Palatino Linotype' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'SimSun-ExtB' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Sylfaen' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Times New Roman' },
             ];
             var fixed = [
-                { size: 18, height: 22, weight: '400', color: '#333333', serif: 1, fixed: 1, sizeS: 18, heightS: 22, face: 'Courier New' },
-                { size: 15, height: 21, weight: '400', color: '#333333', serif: 0, fixed: 1, sizeS: 15, heightS: 21, face: 'Consolas' },
-                { size: 16, height: 25, weight: '400', color: '#333333', serif: 0, fixed: 1, sizeS: 16, heightS: 25, face: 'Lucida Console' },
-                { size: 18, height: 29, weight: '400', color: '#333333', serif: 1, fixed: 1, sizeS: 18, heightS: 29, face: 'SimSun' },
+                { size: 18, height: 22, sizeS: 18, heightS: 22, weight: '400', color: '#333', serif: 1, fixed: 1, indent: 0, face: 'Courier New' },
+                { size: 15, height: 21, sizeS: 15, heightS: 21, weight: '400', color: '#333', serif: 0, fixed: 1, indent: 0, face: 'Consolas' },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 0, fixed: 1, indent: 0, face: 'Lucida Console' },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 1, indent: 0, face: 'SimSun' },
             ];
 
             //from hubble..
             var norml = [
-                { size: 15, height: 23, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 15, heightS: 23, face: 'Verdana' },
-                { size: 18, height: 24, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 18, heightS: 24, face: 'Calibri' },
-                { size: 15, height: 23, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 15, heightS: 23, face: 'Malgun Gothic' },
-                { size: 15, height: 23, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 15, heightS: 23, face: 'Microsoft JhengHei UI' },
-                { size: 16, height: 25, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 25, face: 'Microsoft New Tai Lue' },
-                { size: 16, height: 25, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 25, face: 'Microsoft PhagsPa' },
-                { size: 15, height: 23, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 15, heightS: 23, face: 'MS Reference Sans Serif' },
-                { size: 16, height: 25, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 25, face: 'Nirmala UI' },
-                { size: 16, height: 25, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 25, face: 'Segoe UI' },
-                { size: 16, height: 24, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 24, face: 'Segoe UI Symbol' },
-                { size: 16, height: 24, weight: '400', color: '#333333', serif: 0, fixed: 0, sizeS: 16, heightS: 24, face: 'Trebuchet MS' },
+                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Verdana' },
+                { size: 18, height: 24, sizeS: 18, heightS: 24, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Calibri' },
+                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Malgun Gothic' },
+                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Microsoft JhengHei UI' },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Microsoft New Tai Lue' },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Microsoft PhagsPa' },
+                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'MS Reference Sans Serif' },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Nirmala UI' },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Segoe UI' },
+                { size: 16, height: 24, sizeS: 16, heightS: 24, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Segoe UI Symbol' },
+                { size: 16, height: 24, sizeS: 16, heightS: 24, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Trebuchet MS' },
             ];
 
             me.fonts = norml;
@@ -1967,16 +1958,16 @@ var fontEdit = new function () {
         }
         else if (0) {
             me.fonts = [ //fnt
-                { size: 16, height: 24, weight: "400", color: "#333", serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: "Open Sans" },
-                { size: 16, height: 24, weight: "300", color: "#222", serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: "Ubuntu" },
-                { size: 19, height: 29, weight: "400", color: "#000", serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: "Yu Mincho" },
-                { size: 18, height: 29, weight: "400", color: "#333", serif: 0, fixed: 0, sizeS: 18, heightS: 29, face: "Georgia"  },
+                { size: 16, height: 24, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Open Sans" },
+                { size: 16, height: 24, sizeS: 18, heightS: 29, weight: "300", color: "#222", serif: 0, fixed: 0, indent: 0, face: "Ubuntu" },
+                { size: 19, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#000", serif: 0, fixed: 0, indent: 0, face: "Yu Mincho" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Georgia"  },
             ];
         }
         else {
             me.fonts = [];
             for (var i in me.fonts) {
-                me.fonts.push({ size: 18, height: 29, weight: "normal", color: "#333", sizeS: 18, heightS: 29, face: me.fonts[i] });
+                me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "normal", color: "#333", indent: 0, face: me.fonts[i] });
             }
         }
 
@@ -2164,7 +2155,7 @@ var fontEdit = new function () {
                 "font-weight: " + f.weight + " !important; " +
                 "color: " + f.color + " !important; " +
                 "text-align: justify !important; " +
-                "text-indent: 15px !important; " +
+                "text-indent: " + f.indent + "px !important; " +
             "} " +
             "@media (max-width: 800px) {" +
                 "html body .uw-container * { " +
@@ -2205,3 +2196,190 @@ var fontEdit = new function () {
     }
 
 }();
+
+/* == utils BEGIN ============================================================= */
+var logPopup;
+var logPrefix;
+var DO_POP = "DO_POP";
+function setupLog(prefix) {
+    logPrefix = prefix;
+}
+function hidePop() {
+    if (logPopup && logPopup.style) {
+        logPopup.style.display = "none";
+    }
+}
+function pop() {
+    Array.prototype.unshift.call(arguments, DO_POP);
+    log.apply(this, arguments);
+}
+function log() {
+    function tidy(str) {
+        if (str && typeof (str) == "string") {
+            return str.replace(/(?:\r\n|\r|\n)/g, "");
+        }
+
+        return str;
+    }
+
+    function popup(msg) {
+        if (logPopup == null) {
+            var style = "position:absolute; top:0px; left:0px; background-color:#fff; " +
+                        "border:solid 1px #000; padding:10px; z-index:99999999; color:#000; " +
+                        "min-width:400px; font: 12px/18px Consolas, Verdana; text-align: justify;";
+            logPopup = addEl($("body"), "div")[0];
+            logPopup.style = style;
+            logPopup.oncontextmenu = function(e) {
+                logPopup.style.display = "none";
+                return false;
+            };
+        }
+
+        logPopup.innerHTML = logPopup.innerHTML + msg.replace(/(\s)/g, "&nbsp;") + "<br />";
+        logPopup.style.display = "block";
+    }
+
+    var text1 = "", text2 = "", doPop = false;
+
+    if (arguments.length > 0) {
+        if (typeof(arguments[0]) == "object") {
+            var ob = arguments[0];
+            text1 = "object";
+            text2 = ob.toString();
+            if (text2.indexOf("Error") > -1) text1 = "error";
+            for (var key in ob) {
+                text2 += key + ":" + ob[key] + ";";
+            }
+        }
+        else {
+            text1 = tidy(arguments[0]);
+        }
+    }
+
+    if (text1 == DO_POP) {
+        doPop = true;
+        text1 = null;
+        Array.prototype.shift.apply(arguments);
+        if (arguments.length > 0) {
+            text1 = tidy(arguments[0]);
+        }
+    }
+
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            text2 += tidy(arguments[i]);
+        }
+    }
+
+    if (text1 == null) text1 = "";
+    if (text2 == null) text2 = "";
+
+    text1 = trim(text1.toString());
+    text2 = trim(text2.toString()).replace(/( >>$)/g, "");
+
+    var max1 = 20;
+    var max2 = 100;
+
+    if (text2 != null) {
+        if (text1.length < max1) {
+            text1 = text1 + Array(max1 + 1 - text1.length).join(" ");
+        }
+
+        if (text1.length > max1) {
+            text1 = text1.substr(0, max1);
+        }
+
+        text1 = text1 + ": ";
+    }
+
+    if (text1.length > max2) {
+        text1 = text1.substr(0, max2) + "...";
+    }
+
+    try {
+        var dt = getDateStamp() + " ";
+        if (window.console) {
+            window.console.log(dt + logPrefix + " " + text1, text2);
+        }
+        else {
+        }
+
+        if (doPop) {
+            popup(dt + logPrefix + " " + text1 + text2);
+        }
+    }
+    catch (ex) {
+        window.alert(logPrefix + " " + text1 + "\r\r" + ex.message);
+    }
+}
+function addEl(parent, tag, className, text, click, prepend) {
+    var el = $("<" + tag + ">");
+
+    if (className != null) {
+        el.addClass(className);
+    }
+
+    if (text != null) {
+        el.text(text);
+    }
+
+    if (click != null) {
+        el.click(function(e) { return click(e); } );
+    }
+
+    if (parent != null) {
+        if (prepend) {
+            parent.prepend(el);
+        }
+        else {
+            parent.append(el);
+        }
+    }
+
+    return el;
+}
+function elToString(el) {
+    try {
+        var $el = $(el);
+        var res = "<" + $el.prop("tagName");
+        var id = $el.attr("id");
+
+        if (id) {
+            res += " id='" + id + "'";
+        }
+
+        var class1 = $el.prop("class");
+        if (class1) {
+            res += " class='" + class1 + "'";
+        }
+
+        var text = trim($el.text());
+        if (text.length > 30) text = text.substr(0, 30) + "...";
+
+        return res + ">" + text;
+    }
+    catch (ex) {
+        return "failed to log el: " + ex.message;
+    }
+};
+function getDateStamp(dt) {
+    return getDateString(dt).replace(/[-:]/g, "");
+}
+function getDateString(dt) {
+    if (dt == null ) dt = new Date();
+    return dt.getFullYear() + "-" +
+        zeroFill(dt.getMonth() + 1) + "-" +
+        zeroFill(dt.getDate()) + "_" +
+        zeroFill(dt.getHours()) + ":" +
+        zeroFill(dt.getMinutes()) + ":" +
+        zeroFill(dt.getSeconds());
+}
+function zeroFill(val, n) {
+    if (n == null) n = 2;
+    return val.toString().padStart(n, "0");
+}
+function trim(val) {
+    const pattern = /[\0-\x1F\x7F-\x9F\xAD\u0378\u0379\u037F-\u0383\u038B\u038D\u03A2\u0528-\u0530\u0557\u0558\u0560\u0588\u058B-\u058E\u0590\u05C8-\u05CF\u05EB-\u05EF\u05F5-\u0605\u061C\u061D\u06DD\u070E\u070F\u074B\u074C\u07B2-\u07BF\u07FB-\u07FF\u082E\u082F\u083F\u085C\u085D\u085F-\u089F\u08A1\u08AD-\u08E3\u08FF\u0978\u0980\u0984\u098D\u098E\u0991\u0992\u09A9\u09B1\u09B3-\u09B5\u09BA\u09BB\u09C5\u09C6\u09C9\u09CA\u09CF-\u09D6\u09D8-\u09DB\u09DE\u09E4\u09E5\u09FC-\u0A00\u0A04\u0A0B-\u0A0E\u0A11\u0A12\u0A29\u0A31\u0A34\u0A37\u0A3A\u0A3B\u0A3D\u0A43-\u0A46\u0A49\u0A4A\u0A4E-\u0A50\u0A52-\u0A58\u0A5D\u0A5F-\u0A65\u0A76-\u0A80\u0A84\u0A8E\u0A92\u0AA9\u0AB1\u0AB4\u0ABA\u0ABB\u0AC6\u0ACA\u0ACE\u0ACF\u0AD1-\u0ADF\u0AE4\u0AE5\u0AF2-\u0B00\u0B04\u0B0D\u0B0E\u0B11\u0B12\u0B29\u0B31\u0B34\u0B3A\u0B3B\u0B45\u0B46\u0B49\u0B4A\u0B4E-\u0B55\u0B58-\u0B5B\u0B5E\u0B64\u0B65\u0B78-\u0B81\u0B84\u0B8B-\u0B8D\u0B91\u0B96-\u0B98\u0B9B\u0B9D\u0BA0-\u0BA2\u0BA5-\u0BA7\u0BAB-\u0BAD\u0BBA-\u0BBD\u0BC3-\u0BC5\u0BC9\u0BCE\u0BCF\u0BD1-\u0BD6\u0BD8-\u0BE5\u0BFB-\u0C00\u0C04\u0C0D\u0C11\u0C29\u0C34\u0C3A-\u0C3C\u0C45\u0C49\u0C4E-\u0C54\u0C57\u0C5A-\u0C5F\u0C64\u0C65\u0C70-\u0C77\u0C80\u0C81\u0C84\u0C8D\u0C91\u0CA9\u0CB4\u0CBA\u0CBB\u0CC5\u0CC9\u0CCE-\u0CD4\u0CD7-\u0CDD\u0CDF\u0CE4\u0CE5\u0CF0\u0CF3-\u0D01\u0D04\u0D0D\u0D11\u0D3B\u0D3C\u0D45\u0D49\u0D4F-\u0D56\u0D58-\u0D5F\u0D64\u0D65\u0D76-\u0D78\u0D80\u0D81\u0D84\u0D97-\u0D99\u0DB2\u0DBC\u0DBE\u0DBF\u0DC7-\u0DC9\u0DCB-\u0DCE\u0DD5\u0DD7\u0DE0-\u0DF1\u0DF5-\u0E00\u0E3B-\u0E3E\u0E5C-\u0E80\u0E83\u0E85\u0E86\u0E89\u0E8B\u0E8C\u0E8E-\u0E93\u0E98\u0EA0\u0EA4\u0EA6\u0EA8\u0EA9\u0EAC\u0EBA\u0EBE\u0EBF\u0EC5\u0EC7\u0ECE\u0ECF\u0EDA\u0EDB\u0EE0-\u0EFF\u0F48\u0F6D-\u0F70\u0F98\u0FBD\u0FCD\u0FDB-\u0FFF\u10C6\u10C8-\u10CC\u10CE\u10CF\u1249\u124E\u124F\u1257\u1259\u125E\u125F\u1289\u128E\u128F\u12B1\u12B6\u12B7\u12BF\u12C1\u12C6\u12C7\u12D7\u1311\u1316\u1317\u135B\u135C\u137D-\u137F\u139A-\u139F\u13F5-\u13FF\u169D-\u169F\u16F1-\u16FF\u170D\u1715-\u171F\u1737-\u173F\u1754-\u175F\u176D\u1771\u1774-\u177F\u17DE\u17DF\u17EA-\u17EF\u17FA-\u17FF\u180F\u181A-\u181F\u1878-\u187F\u18AB-\u18AF\u18F6-\u18FF\u191D-\u191F\u192C-\u192F\u193C-\u193F\u1941-\u1943\u196E\u196F\u1975-\u197F\u19AC-\u19AF\u19CA-\u19CF\u19DB-\u19DD\u1A1C\u1A1D\u1A5F\u1A7D\u1A7E\u1A8A-\u1A8F\u1A9A-\u1A9F\u1AAE-\u1AFF\u1B4C-\u1B4F\u1B7D-\u1B7F\u1BF4-\u1BFB\u1C38-\u1C3A\u1C4A-\u1C4C\u1C80-\u1CBF\u1CC8-\u1CCF\u1CF7-\u1CFF\u1DE7-\u1DFB\u1F16\u1F17\u1F1E\u1F1F\u1F46\u1F47\u1F4E\u1F4F\u1F58\u1F5A\u1F5C\u1F5E\u1F7E\u1F7F\u1FB5\u1FC5\u1FD4\u1FD5\u1FDC\u1FF0\u1FF1\u1FF5\u1FFF\u200B-\u200F\u202A-\u202E\u2060-\u206F\u2072\u2073\u208F\u209D-\u209F\u20BB-\u20CF\u20F1-\u20FF\u218A-\u218F\u23F4-\u23FF\u2427-\u243F\u244B-\u245F\u2700\u2B4D-\u2B4F\u2B5A-\u2BFF\u2C2F\u2C5F\u2CF4-\u2CF8\u2D26\u2D28-\u2D2C\u2D2E\u2D2F\u2D68-\u2D6E\u2D71-\u2D7E\u2D97-\u2D9F\u2DA7\u2DAF\u2DB7\u2DBF\u2DC7\u2DCF\u2DD7\u2DDF\u2E3C-\u2E7F\u2E9A\u2EF4-\u2EFF\u2FD6-\u2FEF\u2FFC-\u2FFF\u3040\u3097\u3098\u3100-\u3104\u312E-\u3130\u318F\u31BB-\u31BF\u31E4-\u31EF\u321F\u32FF\u4DB6-\u4DBF\u9FCD-\u9FFF\uA48D-\uA48F\uA4C7-\uA4CF\uA62C-\uA63F\uA698-\uA69E\uA6F8-\uA6FF\uA78F\uA794-\uA79F\uA7AB-\uA7F7\uA82C-\uA82F\uA83A-\uA83F\uA878-\uA87F\uA8C5-\uA8CD\uA8DA-\uA8DF\uA8FC-\uA8FF\uA954-\uA95E\uA97D-\uA97F\uA9CE\uA9DA-\uA9DD\uA9E0-\uA9FF\uAA37-\uAA3F\uAA4E\uAA4F\uAA5A\uAA5B\uAA7C-\uAA7F\uAAC3-\uAADA\uAAF7-\uAB00\uAB07\uAB08\uAB0F\uAB10\uAB17-\uAB1F\uAB27\uAB2F-\uABBF\uABEE\uABEF\uABFA-\uABFF\uD7A4-\uD7AF\uD7C7-\uD7CA\uD7FC-\uF8FF\uFA6E\uFA6F\uFADA-\uFAFF\uFB07-\uFB12\uFB18-\uFB1C\uFB37\uFB3D\uFB3F\uFB42\uFB45\uFBC2-\uFBD2\uFD40-\uFD4F\uFD90\uFD91\uFDC8-\uFDEF\uFDFE\uFDFF\uFE1A-\uFE1F\uFE27-\uFE2F\uFE53\uFE67\uFE6C-\uFE6F\uFE75\uFEFD-\uFF00\uFFBF-\uFFC1\uFFC8\uFFC9\uFFD0\uFFD1\uFFD8\uFFD9\uFFDD-\uFFDF\uFFE7\uFFEF-\uFFFB\uFFFE\uFFFF]/g;
+    return val.replace(pattern, "").trim();
+}
+/* == utils END ============================================================= */

@@ -28,7 +28,7 @@ function log() {
             var style = "position:absolute; top:0px; left:0px; background-color:#fff; " +
                         "border:solid 1px #000; padding:10px; z-index:99999999; color:#000; " +
                         "min-width:400px; font: 12px/18px Consolas, Verdana; text-align: justify;";
-            logPopup = addElement(document.body, "div");
+            logPopup = addEl($("body"), "div")[0];
             logPopup.style = style;
             logPopup.oncontextmenu = function(e) {
                 logPopup.style.display = "none";
@@ -113,23 +113,56 @@ function log() {
         window.alert(logPrefix + " " + text1 + "\r\r" + ex.message);
     }
 }
-function addElement(parent, tag, className, text) {
-    var el = document.createElement(tag);
+function addEl(parent, tag, className, text, click, prepend) {
+    var el = $("<" + tag + ">");
 
     if (className != null) {
-        el.class = className;
+        el.addClass(className);
     }
 
     if (text != null) {
-        el.innerText = text;
+        el.text(text);
+    }
+
+    if (click != null) {
+        el.click(function(e) { return click(e); } );
     }
 
     if (parent != null) {
-        parent.appendChild(el);
+        if (prepend) {
+            parent.prepend(el);
+        }
+        else {
+            parent.append(el);
+        }
     }
 
     return el;
 }
+function elToString(el) {
+    try {
+        var $el = $(el);
+        var res = "<" + $el.prop("tagName");
+        var id = $el.attr("id");
+
+        if (id) {
+            res += " id='" + id + "'";
+        }
+
+        var class1 = $el.prop("class");
+        if (class1) {
+            res += " class='" + class1 + "'";
+        }
+
+        var text = trim($el.text());
+        if (text.length > 30) text = text.substr(0, 30) + "...";
+
+        return res + ">" + text;
+    }
+    catch (ex) {
+        return "failed to log el: " + ex.message;
+    }
+};
 function getDateStamp(dt) {
     return getDateString(dt).replace(/[-:]/g, "");
 }
