@@ -1,4 +1,4 @@
-/* reading... */
+﻿/* reading... */
 .story-body p,
 .story-body li,
 .story-body a,
@@ -7,13 +7,13 @@
 .layout-main p *,
 .story-body h2,
 .layout-main h2 {
-    font-family: Verdana !important; /* uw-fnt-a */
-    font-size: 14px !important; /* uw-sz-alg */
-    line-height: 20px !important; /* uw-lh-alg */
-    font-weight: normal !important; /* uw-wgt */
+    font-family: Ubuntu !important; /* uw-fnt-a */
+    font-size: 16px !important; /* uw-sz-alg */
+    line-height: 22px !important; /* uw-lh-alg */
+    font-weight: 300 !important; /* uw-wgt-a */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
-    color: #222 !important; /* uw-clr */
+    color: #000 !important; /* uw-clr-a */
 }
 
 .story-body h2,
@@ -23,7 +23,7 @@
 
 .story-body a,
 .layout-main a {
-    font-weight: normal !important; /* uw-wgt */
+    font-weight: 300 !important; /* uw-wgt */
     text-decoration: underline #ccc !important; /* uw-uln */
     border-bottom: none !important; /* uw-btm */
 }
@@ -86,8 +86,8 @@
     .layout-main p *,
     .story-body h2,
     .layout-main h2 {
-        font-size: 13px !important; /* uw-sz-asm */
-        line-height: 18px !important; /* uw-lh-asm */
+        font-size: 14px !important; /* uw-sz-asm */
+        line-height: 19px !important; /* uw-lh-asm */
     }
 
     .column--primary,

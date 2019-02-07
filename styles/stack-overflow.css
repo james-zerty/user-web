@@ -1,4 +1,4 @@
-#answers,
+﻿#answers,
 #mainbar,
 #question,
 .answer,
@@ -6,13 +6,13 @@
 .post-text,
 .question-status
 {
-    font-family: Verdana !important; /* uw-fnt-a */
-    font-size: 13px !important; /* uw-sz-asm */
-    line-height: 18px !important; /* uw-lh-asm */
-    font-weight: normal !important; /* uw-wgt */
+    font-family: Ubuntu !important; /* uw-fnt-a */
+    font-size: 14px !important; /* uw-sz-asm */
+    line-height: 19px !important; /* uw-lh-asm */
+    font-weight: 300 !important; /* uw-wgt-a */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
-    color: #222 !important; /* uw-clr */
+    color: #000 !important; /* uw-clr-a */
     width: auto !important;
     max-width: 900px !important;
 }

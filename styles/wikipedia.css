@@ -1,12 +1,12 @@
-/* reading... */
+﻿/* reading... */
 body .mw-content-ltr p, body .mw-content-ltr ul {
     font-family: Corbel !important; /* uw-fnt-b */
     font-size: 18px !important; /* uw-sz-blg */
     line-height: 25px !important; /* uw-lh-blg */
-    font-weight: normal !important; /* uw-wgt */
+    font-weight: 300 !important; /* uw-wgt-b */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
-    color: #222 !important; /* uw-clr */
+    color: #000 !important; /* uw-clr-b */
 }
 
 p {
@@ -14,7 +14,7 @@ p {
 }
 
 .mw-content-ltr a {
-    color: #222 !important; /* uw-clr */
+    color: #000 !important; /* uw-clr-b */
     text-decoration: underline #ccc !important; /* uw-uln */
     border-bottom: none !important; /* uw-btm */
 }

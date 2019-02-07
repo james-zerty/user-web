@@ -1,4 +1,4 @@
-.facia-page, .facia-page *, article, article * {
+﻿.facia-page, .facia-page *, article, article * {
     font-family: Corbel !important; /* uw-fnt-b */
 }
 
@@ -6,10 +6,10 @@
     font-family: Corbel !important; /* uw-fnt-b */
     font-size: 18px !important; /* uw-sz-blg */
     line-height: 25px !important; /* uw-lh-blg */
-    font-weight: normal !important; /* uw-wgt */
+    font-weight: 300 !important; /* uw-wgt-b */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
-    color: #222 !important; /* uw-clr */
+    color: #000 !important; /* uw-clr-b */
 }
 
 .content__article-body p {

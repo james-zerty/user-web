@@ -5,8 +5,8 @@
 
 a,
 a:hover {
-    font-weight: normal !important; /* uw-wgt */
+    font-weight: normal !important; /* uw-wgt-a */
     text-decoration: underline #ccc !important; /* uw-uln */
     border-bottom: none !important; /* uw-btm */
-    color: #222 !important; /* uw-clr */
+    color: #222 !important; /* uw-clr-a */
 }

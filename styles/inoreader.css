@@ -1,14 +1,14 @@
-/********** reading... **********/
+﻿/********** reading... **********/
 #reader_pane,
 .article_content,
 .article_content * {
-    font-family: Verdana !important; /* uw-fnt-a */
-    font-size: 14px !important; /* uw-sz-alg */
-    line-height: 20px !important; /* uw-lh-alg */
-    font-weight: normal !important; /* uw-wgt */
+    font-family: Ubuntu !important; /* uw-fnt-a */
+    font-size: 16px !important; /* uw-sz-alg */
+    line-height: 22px !important; /* uw-lh-alg */
+    font-weight: 300 !important; /* uw-wgt-a */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
-    color: #222 !important; /* uw-clr */
+    color: #000 !important; /* uw-clr-a */
 }
 
 .article_content h4 {
@@ -94,8 +94,8 @@
     .article_magazine_title_link,
     .article_magazine_content,
     .article_title {
-        font-size: 13px !important; /* uw-sz-asm */
-        line-height: 18px !important; /* uw-lh-asm */
+        font-size: 14px !important; /* uw-sz-asm */
+        line-height: 19px !important; /* uw-lh-asm */
     }
 
     .article_magazine_content {
@@ -138,7 +138,7 @@
         font-size: 16px !important;
         line-height: 16px !important;
         font-weight: bold !important;
-        color: #222 !important; /* uw-clr */
+        color: #000 !important; /* uw-clr-a */
     }
         
     #article_dialog .article_title {
