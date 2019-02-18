@@ -52,7 +52,7 @@ try {
             //fnt //qq
             me.fontA = { size: 16, height: 22, sizeS: 14, heightS: 19, weight: '300', color: '#000', serif: 0, fixed: 0, indent: 0, face: 'Ubuntu' };
             me.fontB = { size: 18, height: 25, sizeS: 16, heightS: 22, weight: '300', color: '#000', serif: 0, fixed: 0, indent: 0, face: 'Corbel' };
-            me.fontC = { size: 18, height: 27, sizeS: 16, heightS: 24, weight: '400', color: '#000', serif: 1, fixed: 0, indent: 0, face: 'Lora' };
+            me.fontC = { size: 17, height: 24, sizeS: 16, heightS: 24, weight: '400', color: '#000', serif: 1, fixed: 0, indent: 0, face: 'Lora' };
 
             me.marked = $();
             me.forced = $();
@@ -297,7 +297,7 @@ try {
                                     me.readLite();
                                     break;
                                 case 2:
-                                    if (!me.tidyBound) {
+                                    if (!me.tidyBound && !me.tidyUpExclude) {
                                         me.tidyUp();
                                         return;
                                     }

@@ -19,6 +19,8 @@
 .story-body h2,
 .layout-main h2 {
     font-weight: bold !important; /* bld */
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
 .story-body a,
