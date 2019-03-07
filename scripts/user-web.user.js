@@ -23,7 +23,6 @@ try {
     var settings = { localUrls: 0, uniqueUrls: 0, reloader: 0, autoRun: 0, autoShow: 0, handleErrors: 1 };
 
     log("url", url.substr(0, 100));
-    // log("loaded", new Date());
     // log("navigator.userAgent", navigator.userAgent);
 
     var userWeb = new function() {
@@ -31,8 +30,9 @@ try {
 
         me.load = function() {
             me.url = document.location.href;
-            me.tidyUpExcludes = "www.inoreader.com|google.com|getpocket.com|outlook.office.com".replace(/\./g, "\\\.");
+            me.tidyUpExcludes = "localhost|www.inoreader.com|google.com|getpocket.com|outlook.office.com".replace(/\./g, "\\\.");
             me.tidyUpExclude = me.url.match(me.tidyUpExcludes) != null;
+            me.clickEvent = [];
 
             // config...
             me.siteConfigs = [
@@ -49,10 +49,9 @@ try {
                 { exp: /wikipedia\.org/i, custom: function() { me.addWikipediaRandom(); } },
             ];
 
-            //fnt //qq
-            me.fontA = { size: 16, height: 22, sizeS: 14, heightS: 19, weight: '300', color: '#000', serif: 0, fixed: 0, indent: 0, face: 'Ubuntu' };
-            me.fontB = { size: 18, height: 25, sizeS: 16, heightS: 22, weight: '300', color: '#000', serif: 0, fixed: 0, indent: 0, face: 'Corbel' };
-            me.fontC = { size: 17, height: 24, sizeS: 16, heightS: 24, weight: '400', color: '#000', serif: 1, fixed: 0, indent: 0, face: 'Lora' };
+            me.fontA = { size: 16, height: 22, sizeS: 14, heightS: 19, weight: "300", color: "#000", serif: 0, fixed: 0, indent: 0,  face: "Ubuntu" };
+            me.fontB = { size: 17, height: 27, sizeS: 14, heightS: 24, weight: "300", color: "#222", serif: 0, fixed: 0, indent: 10, face: "Ubuntu" };
+            me.fontC = { size: 19, height: 29, sizeS: 15, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Yu Mincho" };
 
             me.marked = $();
             me.forced = $();
@@ -69,21 +68,23 @@ try {
                 me.tidyUp();
             }
 
-            if (settings.autoRun) { //qq
-                // me.editFonts();
-                me.doReadAuto();
-                me.setFontA();
-                // me.readLite();
-                // me.addStyles(); me.doMarkAuto();
-                // me.doPopoutAuto();
-                // throw new Error("test!");
+            if (settings.autoRun) {
+                //me.markElement($("p:nth-child(3)"));
+                //me.markElementAndBind($("p:nth-child(3)"));
+                me.editFonts();
+                //me.doReadAuto();
+                //me.setFontA();
+                //me.readLite();
+                //me.addStyles(); me.doMarkAuto();
+                //me.doPopoutAuto();
+                //throw new Error("test!");
             }
 
             if (settings.autoShow) {
                 me.showMenu([]);
             }
 
-            var loadEvents = url.indexOf("bbc.") == -1 || 
+            var loadEvents = url.indexOf("bbc.") == -1 ||
                 $("#mediaContainer, .player-with-placeholder, .vxp-media__error-message, .lx-c-media-player").length == 0;
 
             if (loadEvents) {
@@ -93,7 +94,7 @@ try {
             else {
                 //scripts on bbc video pages will clear events so we wait 5 seconds...
                 log("events", "bbc player found, setting timeout for events");
-                window.self.setTimeout(function() { //qq
+                window.self.setTimeout(function() {
                     me.setEvents();
                 }, 5000);
             }
@@ -126,7 +127,7 @@ try {
 
         /*** page events ********************************************************************************************** */
 
-        me.bindPageMouse = function() { //qq
+        me.bindPageMouse = function() {
             $("body").unbind("mouseup.uw-mu");
             $("body").bind("mouseup.uw-mu", function(e) {
                 me.onPageMouseUp(e);
@@ -230,7 +231,7 @@ try {
         me.onPageKeyDown = function(e) {
             // log("onPageKeyDown", "key:", e.key, " code:", e.keyCode, " ctrl:", e.ctrlKey, " alt:", e.altKey, " shift:", e.shiftKey);
             me.run(function() {
-                switch (e.keyCode) { //qq
+                switch (e.keyCode) {
                     case 13: // enter
                         if (e.ctrlKey) {
                             if (me.activePopout) {
@@ -252,7 +253,7 @@ try {
                         if (navigator.userAgent.indexOf("Chrome") > -1 && e.keyCode == 192) return;
                         // `                read cycle > Lite, Read, Large, Off
                         // Alt+`            show menu
-                        // F2               mark next clicked element / resume marking
+                        // F2               find for font B
                         // Ctrl+`           find > [DEL/d] delete, [r] read, [m] mark, [h] highlight, [ENTER/p/RC] popout
                         // Shift+`          undo read
                         // Ctrl+Shift+`     toggle user style
@@ -285,7 +286,7 @@ try {
                             if (nextState == 5) nextState = 0;
                             log("Old state", me.readingState);
                             log("Next state", nextState);
-                        
+
                             switch (nextState) { //qq
                                 case 0:
                                     me.undoPopout();
@@ -319,8 +320,9 @@ try {
 
                         return me.cancelEvent(e);
                     case 113: // F2
-                        log("F2", "mark"); //qqqqq
-                        me.markElementAndBind(me.marked);
+                        log("F2", "findRead");
+                        me.findRead = true;
+                        me.startFind();
                         return me.cancelEvent(e);
                     case 37: // left
                     case 39: // right
@@ -393,6 +395,16 @@ try {
         };
 
         /*** menu ui ************************************************************************************************** */
+        
+        me.getTarget = function() {
+            var el = $(me.clickEvent.target);
+            if (el.length == 0) {
+                log("getTarget", "target is null, returning first p");
+                el = $("p:nth-child(1)")
+            }
+            
+            return el;
+        };
 
         me.showMenu = function(e) {
             me.menuShowing = true;
@@ -551,14 +563,14 @@ try {
             }, null, "Scroll to bottom");
 
             me.addCellLink(row1, "Read B", function() {
-                var el = $(me.clickEvent.target);
+                var el = me.getTarget();
                 me.doReadFromElement(el);
                 me.setFontB();
                 me.clearSelection();
                 me.markElementAndBind(el);
             }, null, "Read B");
             me.addCellLink(row2, "Read C", function() {
-                var el = $(me.clickEvent.target);
+                var el = me.getTarget();
                 me.doReadFromElement(el);
                 me.setFontC();
                 me.clearSelection();
@@ -577,79 +589,80 @@ try {
                 me.setClipboard();
             });
             me.addCellLink(row2, "Mark", function() {
-                var el = $(me.clickEvent.target);
+                var el = me.getTarget();
                 me.markElementAndBind(el);
             });
 
             //--------------------------------------------------------
 
-            me.addLink(ulLeft, "Find", function() {
+            me.addListLink(ulLeft, "Find", function() {
                 me.startFind();
             }, null, "Find an element then choose to read, popout or delete - see help for more info");
 
-            me.addLink(ulLeft, "Highlight", function() {
-                me.highlightElement($(me.clickEvent.target));
+            me.addListLink(ulLeft, "Highlight", function() {
+                var el = me.getTarget();
+                me.highlightElement(el);
             });
 
             me.lnkTidyOff =
-                me.addLink(ulLeft, "Tidy off", function() {
+                me.addListLink(ulLeft, "Tidy off", function() {
                     $.cookie("tidy", null, { path: '/' });
                     document.location.reload(true);
                 }, null, "Turn tidy off and reload").hide();
             me.lnkTidyNow =
-                me.addLink(ulLeft, "Tidy now", function() {
+                me.addListLink(ulLeft, "Tidy now", function() {
                     me.tidyUp();
                     me.refreshMenu();
                 }, null, "Tidy now");
             me.lnkTidyOn =
-                me.addLink(ulLeft, "Tidy always", function() {
+                me.addListLink(ulLeft, "Tidy always", function() {
                     $.cookie("tidy", "on", { path: '/' });
                     me.tidyUp();
                     me.refreshMenu();
                 }, null, "Turn tidy on with cookie");
 
-            me.addLink(ulLeft, "Undo read", function() {
+            me.addListLink(ulLeft, "Undo read", function() {
                 me.undoPopout();
                 me.undoRead();
             }, null, "Remove reading styles, highlights and popout");
 
             me.addSeparator(ulLeft); //--------------------------------------------------------
 
-            me.addLink(ulLeft, "Enable selection", function() {
+            me.addListLink(ulLeft, "Enable selection", function() {
                 me.enableSelect();
             }, null, "Allow selection of text");
 
             me.lnkShowImages =
-                me.addLink(ulLeft, "Show images", function() {
+                me.addListLink(ulLeft, "Show images", function() {
                     me.showImages();
                 }, null, "Redisplay hidden images").hide();
             me.lnkHideImages =
-                me.addLink(ulLeft, "Hide images", function() {
+                me.addListLink(ulLeft, "Hide images", function() {
                     me.hideImages();
                 }, null, "Hide all images in the page");
 
-            me.addLink(ulLeft, "Show links", function() {
+            me.addListLink(ulLeft, "Show links", function() {
                 me.showLinks();
             }, null, "Show hidden links");
 
-            me.addLink(ulLeft, "Hide links", function() {
+            me.addListLink(ulLeft, "Hide links", function() {
                 me.hideLinks();
             }, null, "Hide link underlines");
 
-            me.addLink(ulLeft, "Edit fonts", function() { //qq
+            me.addListLink(ulLeft, "Edit fonts", function() {
                 me.editFonts();
             }, null, "Edit user fonts");
 
             me.userStyleSeparator = me.addSeparator(ulLeft); //--------------------------------
 
             me.lnkReloadStyle =
-                me.addLink(ulLeft, "Reload style", function() {
+                me.addListLink(ulLeft, "Reload style", function() {
                     settings.uniqueUrls = 1;
                     me.loadUserStyle();
                 }, null, "Reload the user style");
 
             me.lnkReloadStyleOnDblClick =
-                me.addLink(ulLeft, "Reload dblclick", function() {
+                me.addListLink(ulLeft, "Reload dblclick", function() {
                     $("body").bind("dblclick.uw-find", function() {
                         me.run(function() {
                             settings.uniqueUrls = 1;
@@ -668,34 +681,34 @@ try {
                 }, null, "Reload the user style on dblclick");
 
             me.lnkReloadStyleOnDblClickOff =
-                me.addLink(ulLeft, "Reload cancel", function() {
+                me.addListLink(ulLeft, "Reload cancel", function() {
                     $("body").unbind("dblclick.uw-find");
                     me.lnkReloadStyleOnDblClick.show();
                     me.lnkReloadStyleOnDblClickOff.hide();
                 }, null, "Stop reloading the user style on dblclick").hide();
 
             me.lnkOpenStyle =
-                me.addLink(ulLeft, "Open style", function() {
+                me.addListLink(ulLeft, "Open style", function() {
                     me.openUserStyle();
                 }, null, "Open user style in new tab");
 
             me.lnkUnloadStyle =
-                me.addLink(ulLeft, "Unload style", function() {
+                me.addListLink(ulLeft, "Unload style", function() {
                     me.unloadUserStyle();
                 }, null, "Unload the user style");
 
             me.addSeparator(ulLeft); //--------------------------------------------------------
 
-            me.addLink(ulLeft, "Help", function() {
+            me.addListLink(ulLeft, "Help", function() {
                 me.showHelp();
             });
 
             //--------------------------------------------------------------------------------------
 
-            me.addLink(ulRight, "Up", function() {
+            me.addListLink(ulRight, "Up", function() {
                 me.levelUp();
             }, null, "Got to URL parent");
-            me.addLink(ulRight, "Close", function() {
+            me.addListLink(ulRight, "Close", function() {
                 document.location.href = "about:blank";
             }, null, "Go to new tab");
 
@@ -705,69 +718,44 @@ try {
             var title = encodeURIComponent(window.document.title);
             var prefix = "https://getpocket.com/edit?";
             var pocketUrl = prefix + "url=" + u + "&title=" + title;
-            me.addLink(ulRight, "Add to Pocket", null, pocketUrl);
-            me.addLink(ulRight, "Browse URL", function() { me.navigateTo(me.selectedText); });
+            me.addListLink(ulRight, "Add to Pocket", null, pocketUrl);
+            me.addListLink(ulRight, "Browse URL", function() { me.navigateTo(me.selectedText); });
 
             me.addSeparator(ulRight); //--------------------------------------------------------
-            me.addLink(ulRight, "Google", function() { me.openSearch("https://www.google.co.uk/search?q=TESTSEARCH"); });
-            me.addLink(ulRight, "Google Define", function() { me.openSearch("https://www.google.co.uk/search?q=define:TESTSEARCH"); });
-            me.addLink(ulRight, "Google Maps", function() { me.openSearch("https://maps.google.co.uk/maps?q=TESTSEARCH"); });
-            me.addLink(ulRight, "Google Images", function() { me.openSearch("https://www.google.co.uk/search?tbm=isch&q=TESTSEARCH"); });
+            me.addListLink(ulRight, "Google", function() { me.openSearch("https://www.google.co.uk/search?q=TESTSEARCH"); });
+            me.addListLink(ulRight, "Google Define", function() { me.openSearch("https://www.google.co.uk/search?q=define:TESTSEARCH"); });
+            me.addListLink(ulRight, "Google Maps", function() { me.openSearch("https://maps.google.co.uk/maps?q=TESTSEARCH"); });
+            me.addListLink(ulRight, "Google Images", function() { me.openSearch("https://www.google.co.uk/search?tbm=isch&q=TESTSEARCH"); });
 
             me.addSeparator(ulRight); //--------------------------------------------------------
-            me.addLink(ulRight, "Stack Overflow", function() { me.openSearch("https://www.google.co.uk/search?q=site%3Astackoverflow.com+TESTSEARCH"); });
-            me.addLink(ulRight, "Super User", function() { me.openSearch("https://www.google.co.uk/search?q=site%3Asuperuser.com+TESTSEARCH"); });
-            me.addLink(ulRight, "Stack Exchange", function() { me.openSearch("https://www.google.co.uk/search?q=site%3Astackexchange.com+TESTSEARCH"); });
+            me.addListLink(ulRight, "Stack Overflow", function() { me.openSearch("https://www.google.co.uk/search?q=site%3Astackoverflow.com+TESTSEARCH"); });
+            me.addListLink(ulRight, "Super User", function() { me.openSearch("https://www.google.co.uk/search?q=site%3Asuperuser.com+TESTSEARCH"); });
+            me.addListLink(ulRight, "Stack Exchange", function() { me.openSearch("https://www.google.co.uk/search?q=site%3Astackexchange.com+TESTSEARCH"); });
 
             me.addSeparator(ulRight); //--------------------------------------------------------
-            me.addLink(ulRight, "Twitter", function() { me.openSearch("https://twitter.com/search?q=TESTSEARCH&src=typd"); });
-            me.addLink(ulRight, "Wikipedia", function() { me.openSearch("https://en.m.wikipedia.org/wiki/Special:Search?search=TESTSEARCH&go=Go"); });
-            me.addLink(ulRight, "Amazon", function() { me.openSearch("http://www.amazon.co.uk/s/ref=nb_sb_noss_1?url=search-alias%3Daps&field-keywords=TESTSEARCH&x=0&y=0"); });
-            me.addLink(ulRight, "Reddit", function() { me.openSearch("https://www.reddit.com/search?q=TESTSEARCH"); });
+            me.addListLink(ulRight, "Twitter", function() { me.openSearch("https://twitter.com/search?q=TESTSEARCH&src=typd"); });
+            me.addListLink(ulRight, "Wikipedia", function() { me.openSearch("https://en.m.wikipedia.org/wiki/Special:Search?search=TESTSEARCH&go=Go"); });
+            me.addListLink(ulRight, "Amazon", function() { me.openSearch("http://www.amazon.co.uk/s/ref=nb_sb_noss_1?url=search-alias%3Daps&field-keywords=TESTSEARCH&x=0&y=0"); });
+            me.addListLink(ulRight, "Reddit", function() { me.openSearch("https://www.reddit.com/search?q=TESTSEARCH"); });
 
             me.refreshMenu();
         };
 
-        addEl = function(parent, tag, className, text) { //qq move / replace addEl
-            var el = $("<" + tag + ">");
+        me.addCellLink = function(parent, text, fn, href, title) {
+            return me.addLink(parent, "td", text, fn, href, title);
+        };
+        me.addListLink = function(parent, text, fn, href, title) {
+            return me.addLink(parent, "li", text, fn, href, title);
+        };
+        me.addLink = function(parent, tag, text, fn, href, title) {
+            var lnk = $("<a>" + text + "</a>").click(function() { me.run(fn); });
+            var el = $("<" + tag + ">").append(lnk)
 
-            if (className != null) {
-                el.addClass(className);
-            }
+            if (title != null) el.prop("title", title);
+            if (href != null) lnk.prop("href", href);
 
-            if (text != null) {
-                el.text(text);
-            }
-
-            if (parent != null) {
-                parent.append(el);
-            }
-
+            parent.append(el);
             return el;
-        };
-
-        me.addCellLink = function(parent, text, fn, href, title) { //qq merge
-            var td = $("<td>")
-                .append($("<a>" + text + "</a>")
-                    .click(function() { me.run(fn); }));
-
-            if (href != null) td.find("a").prop("href", href);
-            if (title != null) td.prop("title", title);
-
-            parent.append(td);
-            return td;
-        };
-
-        me.addLink = function(parent, text, fn, href, title) {
-            var li = $("<li>")
-                .append($("<a>" + text + "</a>")
-                    .click(function() { me.run(fn); }));
-
-            if (href != null) li.find("a").prop("href", href);
-            if (title != null) li.prop("title", title);
-
-            parent.append(li);
-            return li;
         };
 
         me.addSeparator = function(parent) {
@@ -831,17 +819,18 @@ try {
             pop.html(
                 "<table>" +
                     "<tr><th>General...</th></tr>" +
+                    "<tr><td>F2</td><td>Find for Font B</td></tr>" +
                     "<tr><td>Ctrl+Enter</td><td>Auto popout</td></tr>" +
                     "<tr><td>`</td><td>Toggle...</td></tr>" +
-                    "<tr><td></td><td>Read lite</td></tr>" +
-                    "<tr><td></td><td>Read</td></tr>" +
-                    "<tr><td></td><td>Read large</td></tr>" +
-                    "<tr><td></td><td>Undo reading</td></tr>" +
+                    "<tr><td></td><td>Justify and Tidy</td></tr>" +
+                    "<tr><td></td><td>Font A</td></tr>" +
+                    "<tr><td></td><td>Font B</td></tr>" +
+                    "<tr><td></td><td>Font C</td></tr>" +
+                    "<tr><td></td><td>Reset</td></tr>" +
                     "<tr><td>Alt+`</td><td>Show menu</td></tr>" +
                     "<tr><td>Ctrl+`</td><td>Find element</td></tr>" +
                     "<tr><td>Shift+`</td><td>Undo read</td></tr>" +
                     "<tr><td>Ctrl+Shift+`</td><td>Toggle user style</td></tr>" +
-                    "<tr><td>F2</td><td>Mark / resume marking</td></tr>" +
                     "<tr><td>Ctrl+Shift+Alt+?</td><td>Show help</td></tr>" +
                     "<tr><td>&nbsp;</td></tr>" +
                     "<tr><th>Marking...</th></tr>" +
@@ -850,7 +839,9 @@ try {
                     "<tr><td>Esc</td><td>Cancel marking</td></tr>" +
                     "<tr><td>&nbsp;</td></tr>" +
                     "<tr><th>Finding...</th></tr>" +
-                    "<tr><td>r</td><td>Read</td></tr>" +
+                    "<tr><td>1</td><td>Font 1</td></tr>" +
+                    "<tr><td>2</td><td>Font 2</td></tr>" +
+                    "<tr><td>3</td><td>Font 3</td></tr>" +
                     "<tr><td>m</td><td>Mark</td></tr>" +
                     "<tr><td>h</td><td>Highlight</td></tr>" +
                     "<tr><td>p / Enter / RC</td><td>Popout</td></tr>" +
@@ -957,8 +948,10 @@ try {
 
         /*** menu and reading styles ********************************************************************************** */
 
-        me.editFonts = function() { //qq
+        me.editFonts = function() {
+            me.markElement(me.getTarget());
             me.doReadAuto();
+            me.setFontA();
             fontEdit.load();
         };
 
@@ -1083,9 +1076,6 @@ try {
                     "border-bottom: none !important;" + /* uw-btm */
                     "box-shadow: none !important;" +
                 "}" +
-                "html body.uw-fontB .uw-container a {" +
-                    "text-decoration: none !important;" +
-                "}" +
                 "html body .uw-container h1, html body .uw-container h2, html body .uw-container h3, html body .uw-container h4 {" +
                     "font-family: " + me.fontA.face + ", Comic Sans MS !important;" +
                     "font-weight: bold !important;" +
@@ -1139,10 +1129,11 @@ try {
                 "}" +
                 "html body .uw-popout img {" +
                     "height: auto !important;" +
-                "}" + //fnt...
+                "}" +
                 "html body .uw-lite {" +
                     "text-align: justify !important;" + /* uw-jfy */
-                "}" + //fnt...
+                    "white-space: normal !important;" +
+                "}" +
                 "html body .uw-container, html body .uw-container * {" +
                     "font-family: " + me.fontA.face + ", Comic Sans MS !important;" +
                     "font-size: " + me.fontA.size + "px !important;" +
@@ -1151,6 +1142,7 @@ try {
                     "color: " + me.fontA.color + " !important;" +
                     "font-style: normal !important;" + /* uw-sty */
                     "text-align: justify !important;" + /* uw-jfy */
+                    "white-space: normal !important;" +
                 "}" +
                 "html body.uw-fontB .uw-container, html body.uw-fontB .uw-container * {" +
                     "font-family: " + me.fontB.face + ", Comic Sans MS !important;" +
@@ -1199,18 +1191,21 @@ try {
         me.setFontA = function() {
             $("body").removeClass("uw-fontB");
             $("body").removeClass("uw-fontC");
+            me.markRefocus();
         };
 
         me.setFontB = function() {
             $("body").removeClass("uw-fontC");
             $("body").addClass("uw-fontB");
             me.readingState = 3;
+            me.markRefocus();
         };
 
         me.setFontC = function() {
             $("body").removeClass("uw-fontB");
             $("body").addClass("uw-fontC");
             me.readingState = 4;
+            me.markRefocus();
         };
 
         /*** user style *********************************************************************************************** */
@@ -1293,7 +1288,7 @@ try {
         };
 
         me.openUserStyle = function() {
-            window.open(me.userStyleSheet.attr("href"));
+            window.open(me.userStyleSheet.attr("href").replace(/\?.*/, ""));
         };
 
         /*** display ************************************************************************************************** */
@@ -1302,7 +1297,7 @@ try {
         me.tidyWaiting = false;
         me.tidyLast = new Date().valueOf();
         me.tidyIsOn = function(e) { return $.cookie("tidy") == "on"; };
-        me.tidyUp = function(e) { //qq
+        me.tidyUp = function(e) {
             if (me.tidyUpExclude) return;
 
             log("tidyUp", "tidying");
@@ -1371,12 +1366,12 @@ try {
 
                         $("link[rel='icon']").remove();
 
-                        var lnk = document.createElement('link');
-                        lnk.rel = 'icon';
+                        var lnk = document.createElement("link");
+                        lnk.rel = "icon";
                         lnk.href = cfg.icon;
-                        lnk.type = 'image/x-icon';
+                        lnk.type = "image/x-icon";
 
-                        document.getElementsByTagName('head')[0].appendChild( lnk );
+                        document.getElementsByTagName("head")[0].appendChild( lnk );
                     }
 
                     if (cfg.custom) {
@@ -1394,7 +1389,7 @@ try {
 
         /*** reading ************************************************************************************************** */
 
-        me.readLite = function() { //qq
+        me.readLite = function() {
             me.addStyles();
             $("p").addClass("uw-lite");
             me.readingState = 1;
@@ -1428,7 +1423,7 @@ try {
             me.readingState = 2;
         };
 
-        me.undoRead = function() { //qq
+        me.undoRead = function() {
             me.activeReadr = false;
             me.setFontA();
             $(".uw-lite").removeClass("uw-lite");
@@ -1443,11 +1438,11 @@ try {
         me.doPopoutAuto = function() {
             var main = me.getMainAuto();
             if (main && main.length > 0) {
-                me.doPopout(main); //qq
+                me.doPopout(main);
             }
         };
 
-        me.doPopout = function(el) { //qq
+        me.doPopout = function(el) {
             me.tidyUp();
             me.addStyles();
             me.setFontB();
@@ -1598,16 +1593,25 @@ try {
                     me.run(function() {
                         $("body").unbind("mouseup.uw-find-first");
                         var el = $(e.target);
-                        me.finder.els.push(el);
-                        el.attr("style", "background-color: orange !important");
-                        log("uw find", "adding bindings");
+                        
+                        if (me.findRead) {
+                            me.findRead = false;
+                            me.doReadFromElement(el);
+                            me.setFontB();
+                            me.markElementAndBind(el);
+                        }
+                        else {
+                            me.finder.els.push(el);
+                            el.attr("style", "background-color: orange !important");
+                            log("uw find", "adding bindings");
 
-                        $("body").bind("keyup.uw-find", me.onFindingKeyUp);
-                        $("body").bind("mouseup.uw-find", me.onFindingMouseUp);
+                            $("body").bind("keyup.uw-find", me.onFindingKeyUp);
+                            $("body").bind("mouseup.uw-find", me.onFindingMouseUp);
 
-                        document.oncontextmenu = function() {
-                            return false;
-                        };
+                            document.oncontextmenu = function() {
+                                return false;
+                            };
+                        }
                     });
                 }
             );
@@ -1617,12 +1621,14 @@ try {
 
         me.onFindingKeyUp = function(e) {
             me.run(function() {
-                switch (e.keyCode) { //qq
+                switch (e.keyCode) {
                     case 27: //esc
                         me.cancelFind();
                         break;
-                    case 82: //r
-                        me.found("force");
+                    case 49: //1
+                    case 50: //2
+                    case 51: //3
+                        me.found(e.key);
                         break;
                     case 68: //d
                     case 46: //DEL
@@ -1693,10 +1699,15 @@ try {
             var el = me.finder.el();
             me.cancelFind();
 
-            switch (option) { //qq
-                case "force":
+            switch (option) {
+                case "1":
+                case "2":
+                case "3":
                     me.forced = el;
                     me.doRead(el);
+                    if (option == "1") me.setFontA();
+                    else if (option == "2") me.setFontB();
+                    else me.setFontC();
                     break;
                 case "mark":
                     me.markElementAndBind(el);
@@ -1709,7 +1720,7 @@ try {
                     return;
                 case "popout":
                     me.forced = el;
-                    me.doPopout(el); //qqqqq
+                    me.doPopout(el);
                     return;
             }
         };
@@ -1724,7 +1735,7 @@ try {
 
         /*** mark and highlight *************************************************************************************** */
 
-        me.markElementAndBind = function(el) { //qqqqq
+        me.markElementAndBind = function(el) {
             if (!me.marking) {
                 me.marking = true;
                 me.addStyles();
@@ -1767,11 +1778,34 @@ try {
             me.setReloader();
         };
 
+        me.markRefocus = function() {
+            if (me.marking) {
+                me.scrollToElement(me.marked, "auto");
+            }
+        };
+
         me.markElement = function(target) {
             me.clearSelection();
             $(".uw-marked").removeClass("uw-marked");
             if (target.prop("tagName") != "P" && target.parent().prop("tagName") == "P") target = target.parent();
             me.marked.addClass("uw-read");
+            
+            var parent = target.parent();
+            while (true) {
+                var parentTag = parent[0].tagName.toUpperCase();
+
+                if (parentTag.match(/^(HTML|BODY)$/)) {
+                    me.doReadFromElement(target);
+                    break;
+                }
+                
+                if (parent.hasClass("uw-container")) {
+                    break;
+                }
+                
+                parent = parent.parent();
+            }
+            
             me.marked = target;
             target.removeClass("uw-read").addClass("uw-marked");
             me.scrollToElement(target);
@@ -1802,7 +1836,7 @@ try {
             target.addClass("uw-highlight");
         };
 
-        /*** utils - qq move some to utils.js *********************************************************************** */
+        /*** utils ****************************************************************************** */
 
         me.getUrl = function(path) {
             var unique = settings.uniqueUrls ? "?" + new Date().valueOf() : "";
@@ -1831,24 +1865,25 @@ try {
             }
         };
 
-        me.scrollToElement = function(el) {
+        me.scrollToElement = function(el, behavior) {
             if (el == null || el.length == 0) return;
 
             var wh = $(window).height();
-            var ot = 0; //wh / 2 * 0.25; //qq
+            var ot = 0;
 
             if (wh < 800) ot = 0;
 
             var top = el.offset().top - 15 - ot;
 
-            me.scrollToY(top);
+            me.scrollToY(top, behavior);
         };
 
-        me.scrollToY = function(y) {
+        me.scrollToY = function(y, behavior) {
+            if (behavior == null) behavior = "smooth";
             window.scroll({
                 top: y,
                 left: 0,
-                behavior: "smooth"
+                behavior: behavior
             });
         };
 
@@ -1907,77 +1942,77 @@ var fontEdit = new function () {
     var me = this;
 
     me.load = function () {
+        me.font = 0;
         me.url = document.location.href;
         me.open();
     };
 
     me.open = function () {
 
-        if (1) {
+        if (0) {
             var norml = [
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Arial' },
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Verdana' },
-                { size: 19, height: 28, sizeS: 19, heightS: 28, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Calibri' },
-                { size: 18, height: 27, sizeS: 18, heightS: 27, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Calibri Light' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Century Gothic' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Corbel' },
-                { size: 18, height: 27, sizeS: 18, heightS: 27, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Ebrima' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Gadugi' },
-                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Lucida Sans Unicode' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Malgun Gothic' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Microsoft JhengHei UI' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Microsoft New Tai Lue' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Microsoft PhagsPa' },
-                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'MS Reference Sans Serif' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Nirmala UI' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Segoe UI' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Segoe UI Light' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Segoe UI Symbol' },
-                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Tahoma' },
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Trebuchet MS' },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Arial" },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Verdana" },
+                { size: 19, height: 28, sizeS: 19, heightS: 28, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Calibri" },
+                { size: 18, height: 27, sizeS: 18, heightS: 27, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Calibri Light" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Century Gothic" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Corbel" },
+                { size: 18, height: 27, sizeS: 18, heightS: 27, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Ebrima" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Gadugi" },
+                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Lucida Sans Unicode" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Malgun Gothic" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Microsoft JhengHei UI" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Microsoft New Tai Lue" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Microsoft PhagsPa" },
+                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "MS Reference Sans Serif" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Nirmala UI" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Segoe UI" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Segoe UI Light" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Segoe UI Symbol" },
+                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Tahoma" },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Trebuchet MS" },
             ];
             var serif = [
-                { size: 18, height: 29, sizeS: 10, heightS: 20, weight: '900', color: '#060', serif: 1, fixed: 0, indent: 0, face: 'Broadway' },
-                { size: 16, height: 26, sizeS: 15, heightS: 19, weight: '300', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Merriweather' },
-                { size: 16, height: 24, sizeS: 19, heightS: 27, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Lora' },
-                { size: 15, height: 21, sizeS: 19, heightS: 27, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Lora' },
-                { size: 17, height: 28, sizeS: 18, heightS: 29, weight: '400', color: '#00f', serif: 1, fixed: 0, indent: 0, face: 'Bookman Old Style' },
-                { size: 19, height: 27, sizeS: 19, heightS: 27, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Cambria' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Cambria Math' },
-                { size: 20, height: 28, sizeS: 20, heightS: 28, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Centaur' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Century' },
-                { size: 18, height: 27, sizeS: 18, heightS: 27, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Constantia' },
-                { size: 20, height: 29, sizeS: 20, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Garamond' },
-                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Georgia' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'High Tower Text' },
-                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Lucida Bright' },
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Lucida Fax' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Mongolian Baiti' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Palatino Linotype' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'SimSun-ExtB' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Sylfaen' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 0, indent: 0, face: 'Times New Roman' },
+                { size: 18, height: 29, sizeS: 10, heightS: 20, weight: "900", color: "#060", serif: 1, fixed: 0, indent: 0, face: "Broadway" },
+                { size: 16, height: 26, sizeS: 15, heightS: 19, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Merriweather" },
+                { size: 16, height: 24, sizeS: 19, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Lora" },
+                { size: 15, height: 21, sizeS: 19, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Lora" },
+                { size: 17, height: 28, sizeS: 18, heightS: 29, weight: "400", color: "#00f", serif: 1, fixed: 0, indent: 0, face: "Bookman Old Style" },
+                { size: 19, height: 27, sizeS: 19, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Cambria" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Cambria Math" },
+                { size: 20, height: 28, sizeS: 20, heightS: 28, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Centaur" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Century" },
+                { size: 18, height: 27, sizeS: 18, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Constantia" },
+                { size: 20, height: 29, sizeS: 20, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Garamond" },
+                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Georgia" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "High Tower Text" },
+                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Lucida Bright" },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Lucida Fax" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Mongolian Baiti" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Palatino Linotype" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "SimSun-ExtB" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Sylfaen" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Times New Roman" },
             ];
             var fixed = [
-                { size: 18, height: 22, sizeS: 18, heightS: 22, weight: '400', color: '#333', serif: 1, fixed: 1, indent: 0, face: 'Courier New' },
-                { size: 15, height: 21, sizeS: 15, heightS: 21, weight: '400', color: '#333', serif: 0, fixed: 1, indent: 0, face: 'Consolas' },
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 0, fixed: 1, indent: 0, face: 'Lucida Console' },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: '400', color: '#333', serif: 1, fixed: 1, indent: 0, face: 'SimSun' },
+                { size: 18, height: 22, sizeS: 18, heightS: 22, weight: "400", color: "#333", serif: 1, fixed: 1, indent: 0, face: "Courier New" },
+                { size: 15, height: 21, sizeS: 15, heightS: 21, weight: "400", color: "#333", serif: 0, fixed: 1, indent: 0, face: "Consolas" },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 1, indent: 0, face: "Lucida Console" },
+                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 1, indent: 0, face: "SimSun" },
             ];
 
-            //from hubble..
             var norml = [
-                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Verdana' },
-                { size: 18, height: 24, sizeS: 18, heightS: 24, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Calibri' },
-                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Malgun Gothic' },
-                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Microsoft JhengHei UI' },
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Microsoft New Tai Lue' },
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Microsoft PhagsPa' },
-                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'MS Reference Sans Serif' },
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Nirmala UI' },
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Segoe UI' },
-                { size: 16, height: 24, sizeS: 16, heightS: 24, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Segoe UI Symbol' },
-                { size: 16, height: 24, sizeS: 16, heightS: 24, weight: '400', color: '#333', serif: 0, fixed: 0, indent: 0, face: 'Trebuchet MS' },
+                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Verdana" },
+                { size: 18, height: 24, sizeS: 18, heightS: 24, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Calibri" },
+                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Malgun Gothic" },
+                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Microsoft JhengHei UI" },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Microsoft New Tai Lue" },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Microsoft PhagsPa" },
+                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "MS Reference Sans Serif" },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Nirmala UI" },
+                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Segoe UI" },
+                { size: 16, height: 24, sizeS: 16, heightS: 24, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Segoe UI Symbol" },
+                { size: 16, height: 24, sizeS: 16, heightS: 24, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Trebuchet MS" },
             ];
 
             me.fonts = norml;
@@ -1985,12 +2020,19 @@ var fontEdit = new function () {
             // me.fonts = fixed;
             // me.fonts = norml.concat(serif).concat(fixed);
         }
-        else if (0) {
-            me.fonts = [ //fnt
-                { size: 16, height: 24, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Open Sans" },
-                { size: 16, height: 24, sizeS: 18, heightS: 29, weight: "300", color: "#222", serif: 0, fixed: 0, indent: 0, face: "Ubuntu" },
-                { size: 19, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#000", serif: 0, fixed: 0, indent: 0, face: "Yu Mincho" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Georgia"  },
+        else if (1) {
+            me.fonts = [
+                { size: 16, height: 22, sizeS: 14, heightS: 19, weight: "300", color: "#000", serif: 0, fixed: 0, indent: 0, face: "Ubuntu" },      //A
+                { size: 17, height: 27, sizeS: 14, heightS: 24, weight: "300", color: "#222", serif: 0, fixed: 0, indent: 0, face: "Ubuntu" },      //B
+
+                { size: 18, height: 25, sizeS: 16, heightS: 22, weight: "300", color: "#000", serif: 0, fixed: 0, indent: 0, face: "Corbel" },      //B?
+                { size: 16, height: 24, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Open Sans" },   //B?
+                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Verdana" },     //B?
+                { size: 18, height: 24, sizeS: 18, heightS: 24, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Calibri" },     //B?
+
+                { size: 19, height: 29, sizeS: 15, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Yu Mincho" },   //C
+                { size: 18, height: 29, sizeS: 16, heightS: 24, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Lora" },        //C?
+
             ];
         }
         else {
@@ -2002,25 +2044,28 @@ var fontEdit = new function () {
 
         var doc = [];
         doc.push("<div id='fe-outer'>");
-                doc.push("<table><tr>" +
-                            "<td><a class='fe-min'>&plusmn;</a></td>" +
-                            "<td><select id='fe-list'>");
-                for (var i = 0; i < me.fonts.length; i++) {
-                    var f = me.fonts[i];
-                    doc.push("<option>" + f.face + "</option>");
-                }
-                doc.push(       "</select></td>" +
+                doc.push("<table>" +
+                          "<tr>" +
                             "<td><a class='fe-prev'>&lt;</a><a class='fe-next'>&gt;</a></td>" +
+                            "<td align=right><a class='fe-close'>X</a></td>" +
+                          "</tr>" +
+                          "<tr>" +
+                            "<td colspan=2><input type='text' id='fe-list'></td>" +
+                          "</tr>" +
+                          "<tr>" +
                             "<td><a class='fe-fsup'>+</a><a class='fe-fsdn'>-</a></td>" +
                             "<td class='fe-size'></td>" +
-                            "<td>/</td>" +
-                            "<td class='fe-height'></td>" +
+                          "</tr>" +
+                          "<tr>" +
                             "<td><a class='fe-lhup'>+</a><a class='fe-lhdn'>-</a></td>" +
-                            "<td class='fe-weight'></td>" +
+                            "<td class='fe-height'></td>" +
+                          "</tr>" +
+                          "<tr>" +
                             "<td><a class='fe-fwup'>+</a><a class='fe-fwdn'>-</a></td>" +
-                            "<td><input type='text' class='fe-color' /></td>" +
-                            "<td class='fe-serif'></td>" +
-                            "<td class='fe-fixed'></td>" +
+                            "<td class='fe-weight'></td>" +
+                          "</tr>" +
+                          "<tr>" +
+                            "<td colspan=2><input type='text' class='fe-color' /></td>" +
                         "</tr></table>");
 
         doc.push("</div>");
@@ -2028,47 +2073,38 @@ var fontEdit = new function () {
 
         document.body.insertAdjacentHTML("afterbegin", html);
 
-        me.visible = true;
+        me.feList = $("#fe-list");
         me.div = $("#fe-outer");
         me.setStyleCommon();
         me.setEvents();
     };
 
     me.setEvents = function () {
-        $("#fe-list").change(function() {
-            var f = me.getFont();
-            me.setStyle(f);
+        me.feList.change(function() {
+            me.change();
         });
 
-        $("#fe-list").change();
-        $("#fe-list").focus();
+        me.feList.change();
+        me.feList.focus();
 
-        $(".fe-min").click(function() {
-            if (me.visible) {
-                me.div.css({ width: "27px", overflow: "hidden" });
-            }
-            else {
-                me.div.css({ width: "auto", overflow: "visible" });
-            }
-            me.visible = !me.visible;
+        $(".fe-close").click(function() {
+            $("body").unbind("keyup.fontEdit");
+            me.div.remove();
         });
         $(".fe-prev").click(function() {
-            $("#fe-list")[0].selectedIndex--;
-            $("#fe-list").change();
+            me.feListPrev();
         });
         $(".fe-next").click(function() {
-            $("#fe-list")[0].selectedIndex++;
-            $("#fe-list").change();
+            me.feListNext();
         });
-        $(document.body).keyup(function(e) {
-            if (e.ctrlKey && e.altKey) {
-                if (e.keyCode == 39) { // right
-                    $("#fe-list")[0].selectedIndex++;
-                    $("#fe-list").change();
+
+        $("body").bind("keyup.fontEdit", function(e) {
+            if (e.altKey && e.shiftKey) {
+                if (e.keyCode == 37) { // left
+                    me.feListPrev();
                 }
-                else if (e.keyCode == 37) { // left
-                    $("#fe-list")[0].selectedIndex--;
-                    $("#fe-list").change();
+                else if (e.keyCode == 39) { // right
+                    me.feListNext();
                 }
             }
         });
@@ -2091,11 +2127,40 @@ var fontEdit = new function () {
             me.incProp(this, "weight", -100);
         });
         $(".fe-color").keyup(function() {
-            me.changeProp(this, "color", this.value);
+            if (this.value.length > 3) {
+                me.changeProp(this, "color", this.value);
+            }
         });
+    };
 
-        $(".fe-serif.on").prop("checked", true);
-        $(".fe-fixed.on").prop("checked", true);
+    me.feListPrev = function() {
+        if (me.font > 0) {
+            me.font--;
+            me.feList.change();
+        }
+    };
+
+    me.feListNext = function() {
+        if (me.font < me.fonts.length - 1) {
+            me.font++;
+            me.change();
+        }
+    };
+    
+    me.change = function() {
+        var f = me.getFont();
+        me.setStyle(f);  
+    };
+    
+    me.getFont = function() {
+        // for (var i = 0; i < me.fonts.length; i++) {
+            // if (me.fonts[i].face.toLowerCase() == me.feList.val().toLowerCase()) {
+                // return me.fonts[i];
+            // }
+        // }
+        
+        // log("fontEdit", "font not found: " + me.feList.val());
+        return me.fonts[me.font];
     };
 
     me.addStyleElement = function(id, css) {
@@ -2108,10 +2173,6 @@ var fontEdit = new function () {
                 .text(css));
     };
 
-    me.getFont = function() {
-        return me.fonts[$("#fe-list")[0].selectedIndex];
-    };
-
     me.incProp = function (el, prop, inc) {
         var f = me.getFont();
         var val = f[prop];
@@ -2120,7 +2181,7 @@ var fontEdit = new function () {
         f[prop] = num;
 
         me.setStyle(f);
-        me.clearSelection();
+        userWeb.clearSelection();
     };
 
     me.changeProp = function (el, prop, val) {
@@ -2138,11 +2199,11 @@ var fontEdit = new function () {
                 "top: 10px !important; " +
                 "left: 10px !important; " +
                 "border: solid 1px #000 !important; " +
-                "font: 12px/18px Verdana !important; " +
+                "font: 11px/16px Verdana !important; " +
                 "color: #000 !important; " +
                 "background-color: #fff !important; " +
                 "z-index: 9999999 !important; " +
-                "padding: 10px !important;" +
+                "padding: 0 !important;" +
             "}" +
             "html body div#fe-outer table { " +
                 "border-collapse: collapse !important; " +
@@ -2151,25 +2212,26 @@ var fontEdit = new function () {
                 "font: 12px/18px Verdana !important; " +
             "}" +
             "html body div#fe-outer table tbody tr td { " +
-                "padding: 0 5px 0 !important; " +
+                "padding: 0 !important; " +
+            "}" +
+            "html body div#fe-outer table tbody tr td.fe-size, " +
+            "html body div#fe-outer table tbody tr td.fe-height, " +
+            "html body div#fe-outer table tbody tr td.fe-weight { " +
+                "text-align: right !important; " +
+                "padding-right: 5px !important; " +
             "}" +
             "html body div#fe-outer table tbody tr td a { " +
                 "cursor: pointer !important; " +
                 "border: solid 1px #bbb !important; " +
-                "min-width: 20px !important; " +
-                "min-height: 20px !important; " +
+                "min-width: 16px !important; " +
+                "min-height: 16px !important; " +
                 "display: table-cell !important; " +
                 "text-align: center !important; " +
                 "text-decoration: none !important; " +
             "}" +
-            "html body div#fe-outer table tbody tr td .fe-color { " +
+            "html body div#fe-outer table tbody tr td input { " +
                 "padding: 0 2px !important;" +
                 "width: 66px !important; " +
-            "}" +
-            "html body div#fe-outer table tbody tr .fe-serif, " +
-            "html body div#fe-outer table tbody tr .fe-fixed { " +
-                "text-align: center !important; " +
-                "width: 52px !important; " +
             "}"
         );
     };
@@ -2184,6 +2246,7 @@ var fontEdit = new function () {
                 "font-weight: " + f.weight + " !important; " +
                 "color: " + f.color + " !important; " +
                 "text-align: justify !important; " +
+                "white-space: normal !important;" +
                 "text-indent: " + f.indent + "px !important; " +
             "} " +
             "@media (max-width: 800px) {" +
@@ -2194,25 +2257,14 @@ var fontEdit = new function () {
             "}"
         );
 
+        me.feList.val(f.face);
         $(".fe-size").text(f.size);
         $(".fe-height").text(f.height);
         $(".fe-weight").text(f.weight);
         $(".fe-color").val(f.color);
-        $(".fe-serif").text(f.serif? "serif" : "");
-        $(".fe-fixed").text(f.fixed? "fixed" : "");
-    };
 
-    me.clearSelection = function(e) {
-        if (window.getSelection) {
-            try {
-                window.getSelection().removeAllRanges();
-            }
-            catch (ex) {
-                //happens on IE during enableAutoReadr
-            }
-        }
-        else if (document.selection) {
-            document.selection.empty();
+        if (userWeb.marked) {
+            userWeb.scrollToElement(userWeb.marked, "auto");
         }
     };
 

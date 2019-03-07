@@ -1,15 +1,16 @@
 ﻿.facia-page, .facia-page *, article, article * {
-    font-family: Corbel !important; /* uw-fnt-b */
+    font-family: Ubuntu !important; /* uw-fnt-b */
 }
 
 .content__article-body * {
-    font-family: Corbel !important; /* uw-fnt-b */
-    font-size: 18px !important; /* uw-sz-blg */
-    line-height: 25px !important; /* uw-lh-blg */
+    font-family: Ubuntu !important; /* uw-fnt-b */
+    font-size: 17px !important; /* uw-sz-blg */
+    line-height: 27px !important; /* uw-lh-blg */
     font-weight: 300 !important; /* uw-wgt-b */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
-    color: #000 !important; /* uw-clr-b */
+    text-indent: 10px !important; /* uw-ind-b */
+    color: #222 !important; /* uw-clr-b */
 }
 
 .content__article-body p {

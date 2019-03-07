@@ -1,17 +1,18 @@
 ﻿/********** reading... **********/
 .text_body *,
 .reader_content h1 {
-    font-family: Corbel !important; /* uw-fnt-b */
-    font-size: 18px !important; /* uw-sz-blg */
-    line-height: 25px !important; /* uw-lh-blg */
+    font-family: Ubuntu !important; /* uw-fnt-b */
+    font-size: 17px !important; /* uw-sz-blg */
+    line-height: 27px !important; /* uw-lh-blg */
     font-weight: 300 !important; /* uw-wgt-b */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
-    color: #000 !important; /* uw-clr-b */
+    text-indent: 10px !important; /* uw-ind-b */
+    color: #222 !important; /* uw-clr-b */
 }
 
 body * {
-    font-family: Corbel !important; /* uw-fnt-b */
+    font-family: Ubuntu !important; /* uw-fnt-b */
     font-weight: normal !important; /* uw-wgt */
 }
 
@@ -21,7 +22,7 @@ nav.pkt-nav.readr-container a,
 }
 
 .text_body p {
-    text-indent: 10px !important; /* uw-fnt-bind */
+    text-indent: 10px !important; /* uw-ind-b */
     text-align: justify !important; /* uw-jfy */
     margin: 15px 0 !important; /* uw-pmgn */
 }
@@ -166,8 +167,8 @@ a[href='/a/queue/list/inoreader'], .topic_1 {
 
     .text_body *,
     .reader_content h1 {
-        font-size: 16px !important; /* uw-sz-bsm */
-        line-height: 22px !important; /* uw-lh-bsm */
+        font-size: 14px !important; /* uw-sz-bsm */
+        line-height: 24px !important; /* uw-lh-bsm */
     }
 
     #page_queue * {
@@ -196,7 +197,7 @@ a[href='/a/queue/list/inoreader'], .topic_1 {
     }
 
     .text_body * {
-        color: #000 !important; /* uw-clr-b */
+        color: #222 !important; /* uw-clr-b */
     }
 
     .sub.clearfix {

@@ -1,12 +1,12 @@
 ﻿/* reading... */
 body .mw-content-ltr p, body .mw-content-ltr ul {
-    font-family: Corbel !important; /* uw-fnt-b */
-    font-size: 18px !important; /* uw-sz-blg */
-    line-height: 25px !important; /* uw-lh-blg */
+    font-family: Ubuntu !important; /* uw-fnt-b */
+    font-size: 17px !important; /* uw-sz-blg */
+    line-height: 27px !important; /* uw-lh-blg */
     font-weight: 300 !important; /* uw-wgt-b */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
-    color: #000 !important; /* uw-clr-b */
+    color: #222 !important; /* uw-clr-b */
 }
 
 p {
@@ -14,28 +14,20 @@ p {
 }
 
 .mw-content-ltr a {
-    color: #000 !important; /* uw-clr-b */
+    color: #222 !important; /* uw-clr-b */
     text-decoration: underline #ccc !important; /* uw-uln */
     border-bottom: none !important; /* uw-btm */
 }
 
+html body.mediawiki main .uw-container sup a,
+html body.mediawiki main .uw-container sup *,
 sup,
-sup.reference,
-sup.Inline-Template,
 sup * {
-    font-size: 8px !important;
-    vertical-align: top !important;
-}
-
-.readr-container sup *,
-.readr-container sup a,
-body .mw-content-ltr sup *,
-body .mw-content-ltr sup.reference *,
-body .mw-content-ltr sup.Inline-Template * {
-    font-size: 8px !important;
-    text-decoration: none !important;
     border-bottom: 0 !important;
     color: #ccc !important;
+    font-size: 8px !important;
+    text-decoration: none !important;
+    vertical-align: top !important;
 }
 
 .banner-container {
