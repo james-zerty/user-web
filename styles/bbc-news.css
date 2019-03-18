@@ -25,7 +25,7 @@
 
 .story-body a,
 .layout-main a {
-    font-weight: 300 !important; /* uw-wgt */
+    font-weight: 300 !important; /* uw-wgt-b */
     text-decoration: underline #ccc !important; /* uw-uln */
     border-bottom: none !important; /* uw-btm */
 }

@@ -26,6 +26,7 @@
 .content__main-column {
     max-width: 800px !important;
     margin-right: 0 !important;
+    margin-bottom: 600px !important;
 }
 
 .content__main-column:before {

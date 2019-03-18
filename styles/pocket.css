@@ -13,7 +13,7 @@
 
 body * {
     font-family: Ubuntu !important; /* uw-fnt-b */
-    font-weight: normal !important; /* uw-wgt */
+    font-weight: 300 !important; /* uw-wgt-b */
 }
 
 nav.pkt-nav.readr-container a,
@@ -29,7 +29,7 @@ nav.pkt-nav.readr-container a,
 
 .text_body a,
 .text_body a:hover {
-    font-weight: normal !important; /* uw-wgt */
+    font-weight: 300 !important; /* uw-wgt-b */
     text-decoration: underline #ccc !important; /* uw-uln */
     border-bottom: none !important; /* uw-btm */
 }
