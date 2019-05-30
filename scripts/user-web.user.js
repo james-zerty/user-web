@@ -14,7 +14,7 @@
 // ==/UserScript==
 "use strict";
 try {
-    var $ = window.$;
+    var $$ = window.$; //qq
     var loadAfter = 100;
     var url = document.location.href;
     setupLog("[user-web]");
@@ -29,31 +29,31 @@ try {
 
         me.load = function() {
             me.url = document.location.href;
-            me.tidyUpExcludes = "localhost|www.inoreader.com|google.com|getpocket.com|outlook.office.com".replace(/\./g, "\\\.");
+            me.tidyUpExcludes = "xlocalhost|www.inoreader.com|google.com|getpocket.com|outlook.office.com".replace(/\./g, "\\\."); //qq
             me.tidyUpExclude = me.url.match(me.tidyUpExcludes) != null;
             me.clickEvent = [];
 
             // config...
             me.siteConfigs = [
-                { exp: /localhost:44300/i, filter: ".ad, #ad1", custom: function() { me.switchWikipediaLinks(); } },
+                { exp: /localhost:44300/i, filter: ".ad, #ad1", custom: function() { me.customLocalhost(); } },
                 { exp: /calendar\.google\.com\/calendar/i, icon: "https://calendar.google.com/googlecalendar/images/favicon_v2014_31.ico" },
                 { exp: /bbc\.co\.uk\/weather/i, icon: me.getUrl("styles/icons/bbc-weather-icon.png") },
                 { exp: /bbc\.co.\uk\/news/i, filter: "#breaking-news-container, .share", icon: me.getUrl("styles/icons/bbc-news-icon.png") },
+                { exp: /bbc\.co.\uk\/(iplayer|sounds|programmes|bbcone|bbctwo|tv\/bbcthree|bbcfour)/i, custom: function() { me.iplayerCustom(); } }, //qq
                 { exp: /\/dana\/home\/index\.cgi/i, icon: me.getUrl("styles/icons/net-home.ico") },
-                { exp: /messengernewspapers\.co\.uk/i, filter: "#__nq__hh" },
                 { exp: /(thenib|medium)\.com/i, filter: ".metabar, .postActionsBar, .promoCardWrapper, [data-image-id='1*8Ns0Hg0Tbw8jFjaMLN-qYw.gif']" },
                 { exp: /tumblr\.com/i, filter: ".tumblr_controls, #notes" },
                 { exp: /amazon\.co/i, filter: "#dp-ads-middle-3psl, #tellAFriendBox_feature_div, #quickPromoBucketContent, #quickPromoDivId, #sc-new-upsell, #nav-swmslot, #hqpWrapper, #huc-v2-cobrand-stripe, #nav-upnav, #detail-ilm_div, #navFooter" },
                 { exp: /google\.co/i, custom: function() { me.switchWikipediaLinks(); } },
-                { exp: /wikipedia\.org/i, custom: function() { me.addWikipediaRandom(); } },
+                { exp: /wikipedia\.org/i, custom: function() { me.wikipediaCustom(); } },
             ];
 
-            me.fontA = { size: 16, height: 22, sizeS: 14, heightS: 19, weight: "300", color: "#000", serif: 0, fixed: 0, indent: 0,  face: "Ubuntu" };
+            me.fontA = { size: 16, height: 22, sizeS: 14, heightS: 19, weight: "300", color: "#000", serif: 0, fixed: 0, indent: 0,  face: "Ubuntu" }; //qqqqq
             me.fontB = { size: 17, height: 27, sizeS: 14, heightS: 24, weight: "300", color: "#222", serif: 0, fixed: 0, indent: 10, face: "Ubuntu" };
             me.fontC = { size: 19, height: 29, sizeS: 15, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Yu Mincho" };
 
-            me.marked = $();
-            me.forced = $();
+            me.marked = $$();
+            me.forced = $$();
             me.readingState = 0;
             me.menuTimeoutTime = 1000;
 
@@ -62,63 +62,126 @@ try {
             me.loadUserStyle();
             me.readLite();
 
+            me.setEvents();
+            me.checkedEvents = 0;
+            if (!me.checkEvents()) {
+                return;
+            }
+
             // me.tidyUp();
             if (me.tidyIsOn()) {
                 me.tidyUp();
             }
 
             if (settings.autoRun) {
-                //me.markElement($("p:nth-child(3)"));
-                //me.markElementAndBind($("p:nth-child(3)"));
-                me.editFonts();
-                //me.doReadAuto();
-                //me.setFontA();
+                //me.markElement($$("p:nth-child(3)"));
+                //me.markElementAndBind($$("p:nth-child(3)"));
+                // me.doReadAuto();
+                // me.setFontA();
                 //me.readLite();
                 //me.addStyles(); me.doMarkAuto();
                 //me.doPopoutAuto();
                 //throw new Error("test!");
+
+                //me.doMarkAuto();
+                //var el = me.getTarget();
+                // var el = $$("#readThis");
+                // me.markElementAndBind(el);
+                me.editFonts();
+                // me.setFontA();
             }
 
             if (settings.autoShow) {
                 me.showMenu([]);
             }
 
-            var loadEvents = url.indexOf("bbc.") == -1 ||
-                $("#mediaContainer, .player-with-placeholder, .vxp-media__error-message, .lx-c-media-player").length == 0;
+        };
 
-            if (loadEvents) {
-                // log("events", "no player found, setting events...");
-                me.setEvents();
+        me.setEvents = function() { //qq
+            me.bindPageMouse();
+            me.bindPageKeyDown();
+        };
+
+        me.checkEvents = function() { //qq
+            /*
+            var delayEvents =
+                url.match(/\/iplayer\//i) ||
+                (url.match(/\.bbc\./i) && $("#mediaContainer, .player-with-placeholder, .vxp-media__error-message, .lx-c-media-player").length > 0);
+            */
+
+            var ok = false;
+            try {
+                var evs = $$._data(document.body, 'events');
+                if (evs) {
+                    var mus = evs["mouseup"];
+                    for (var i = 0; i < mus.length; i++) {
+                        var mu = mus[i];
+                        if (mu.namespace == "uw-mu") {
+                            log("checkEvents", "ok");
+                            ok = true;
+                            break;
+                        }
+                    }
+                }
+                else {
+                    log("checkEvents", "NO EVENTS!");
+                }
+            }
+            catch (ex) {
+                log("checkEvents", "ERROR!", ex.message);
+            }
+
+            if (ok) {
+                me.checkedEvents++;
+                if (me.checkedEvents < 10) {
+                    window.self.setTimeout(function() {
+                        me.checkEvents();
+                    }, 1000);
+                }
+                return true;
             }
             else {
-                //scripts on bbc video pages will clear events so we wait 5 seconds...
-                log("events", "bbc player found, waiting 2s...");
-                window.self.setTimeout(function() {
-                    me.setEvents();
-                }, 2000);
+                me.reloadMe();
+                return false;
             }
         };
 
-        me.setEvents = function() { //qqqqq
-            if (document.hidden) {
-                log("events", "tab isn't visible, waiting 2s...");
-                window.self.setTimeout(function() {
-                    me.setEvents();
-                }, 2000);
-            }
-            else {
-                log("events", "loading events");
-                me.bindPageMouse();
-                me.bindPageKeyDown();
-                log("events", "done!");
-            }
+        me.reloadMe = function() { //qq
+            log("RELOADING", "RELOADING!");
+            var sj = document.createElement('script');
+            sj.src = me.getUrl("scripts/jquery/jquery-3.3.1.min.js");
+            sj.onload = function() {
+                me.run(function() {
+                    var su = document.createElement('script');
+                    su.src = me.getUrl("scripts/user-web.user.js");
+                    document.getElementsByTagName('head')[0].appendChild(su);
+                });
+            };
+            document.getElementsByTagName('head')[0].appendChild(sj);
         };
 
         /*** custom functions ***************************************************************************************** */
 
+        me.customLocalhost = function() {
+            // me.testTidy();
+            // me.wikipediaCustom();
+            // me.switchWikipediaLinks();
+            // me.iplayerCustom();
+        };
+
+        me.testTidy = function() { //add fixed element when page scrolls... //qq
+            $$(window).scroll(function() {
+                log("scrolling!");
+                if ($$(".uw-tidy-test").length == 0) {
+                    log("adding!");
+                    $$("body").append("<div class='uw-tidy-test' style='position:fixed; top:10px; left:10px; background-color:yellow;'>Fixed " + new Date() + "</div>");
+                }
+            });
+        };
+
         me.switchWikipediaLinks = function() { //used on google search results...
-            $("body a").each(function() {
-                var el = $(this);
+            $$("body a").each(function() {
+                var el = $$(this);
                 var href = el.attr("href");
                 if (href && href.indexOf("en\.wikipedia") > -1) {
                     log("switching", href);
@@ -128,25 +191,246 @@ try {
             });
         };
 
-        me.addWikipediaRandom = function() { //change wikipedia header to link to a random page...
-            log("wikipedia", "changing header link to random");
-            $("header .branding-box a").attr("href", "/wiki/Special:Random");
+        me.wikipediaCustom = function() {
+            log("wikipedia", "changing header link to random and adding lightboxes");
+
+            //change wikipedia header to link to a random page...
+            $$("header .branding-box a").attr("href", "/wiki/Special:Random");
+
+            //add hi-res lightbox to image clicks...
+            //adapted from https://en.m.wikipedia.org/wiki/User:Rezonansowy/SimpleLightbox
+            $$("a.image, image").bind('mousedown', function(e) {
+                log("e.button", e.button);
+                if (e.button == 2) return;
+                var src = $$(this).find("img").attr("src");
+                log('wikipedia', 'src: ', src);
+
+                if (src.match("/thumb/")) {
+                    src = src.replace("/thumb", "").replace(/\/[\-_.%\w]*$/, "");
+                }
+
+                if (src.indexOf('http') != 0) {
+                    src = 'https:' + src;
+                }
+
+                log('wikipedia', src);
+                if (me.lightbox == null) {
+                    $$("body").append("<div id='uw-lightbox' style='display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);text-align:center;z-index:9999'></div>");
+                    me.lightbox = $$("#uw-lightbox");
+                }
+                me.lightbox
+                    .html("<img src='"+src+"' style='background:#fff;box-shadow: 0 0 25px #111;max-height:100%;max-width:100%;vertical-align:middle;cursor:pointer;' />")
+                    .css("line-height", $$(window).height()+"px")
+                    .fadeIn("fast")
+                    .click(function() { $$(this).fadeOut("fast"); });
+
+                return me.cancelEvent(e);
+            });
+
+            log("wikipedia", "done");
+        };
+
+        me.iplayerCustom = function() { //qq
+            // if ($$(".uw-ip-btns").length > 0) return; //custom runs every 6 hours
+
+            $$(".uw-ip-btns").remove();
+            $$("body").before($$("<div class='uw-ip-btns' style='background-color:black'></div>"));
+
+            // log("IP tst", tst1("yohowdo", /how/i));
+            function tst1(tst, exp) {
+                var res = tst.match(exp);
+                if (res.length == 0) return "";
+                return res[0];
+            }
+
+            if (url.match(/xlocalhost/i)) {
+                me.ipAddButtons("BBC iPlayer - Fleabag",                                  "https://www.bbc.co.uk/programmes/p070npjv");                                               //t0
+                // me.ipAddButtons("BBC iPlayer - Fleabag",                                  "https://www.bbc.co.uk/programmes/p070npjv/episodes/player");                            //t0
+                // me.ipAddButtons("BBC iPlayer - Line of Duty",                             "https://www.bbc.co.uk/iplayer/episodes/p00yzlr0/line-of-duty?seriesId=m0003v98");       //t0
+
+                // me.ipAddButtons("BBC iPlayer - Climate Change - The Facts",               "https://www.bbc.co.uk/iplayer/episode/m00049b1/climate-change-the-facts");              //t1
+                // me.ipAddButtons("BBC iPlayer - Fleabag - Series 2: Episode 1",            "https://www.bbc.co.uk/iplayer/episode/p071bk3f/fleabag-series-2-episode-1");            //t1
+                // me.ipAddButtons("BBC iPlayer - Line of Duty - Series 5: Episode 1",       "https://www.bbc.co.uk/iplayer/episode/m0003v97/line-of-duty-series-5-episode-1");       //t1
+                // me.ipAddButtons("BBC One - Line of Duty, Series 5, Episode 4",            "https://www.bbc.co.uk/programmes/m0004j1h");                                            //t1
+
+                // me.ipAddButtons("BBC Sounds - Jon Ronson On - Available Episodes",        "https://www.bbc.co.uk/sounds/brand/b007mhqc");                                          //r0
+                // me.ipAddButtons("BBC Radio 4 - Jon Ronson On - Available now",            "https://www.bbc.co.uk/programmes/b007mhqc/episodes/player");                            //r0
+                // me.ipAddButtons("BBC Radio 4 - Jon Ronson On - Episode guide",            "https://www.bbc.co.uk/programmes/b007mhqc/episodes/guide");                             //r0
+
+                // me.ipAddButtons("BBC Radio 4 - Jon Ronson On, Series 7, 11:11",           "https://www.bbc.co.uk/programmes/b01rlrjz/");                                           //r1
+                me.ipAddButtons("BBC Radio 4 - Jon Ronson On, Series 7, 11:11",           "https://www.bbc.co.uk/programmes/b01rlrjz");                                               //r1
+                me.ipAddButtons("Jon Ronson On - Series 7 - 11:11 - BBC Sounds",          "https://www.bbc.co.uk/sounds/play/b01rlrjz");                                              //r1
+            }
+            else {
+                me.ipFlatten();
+                me.ipAddButtons(document.title, document.location.href);
+            }
+        };
+
+        me.ipFlatten = function() {
+
+            var progs = $$("<div class='uw-ip-holder uw-ip-progs'></div>");
+            var dupes = $$("<div class='uw-ip-holder uw-ip-dupes'></div>");
+
+            me.addStyleElement(
+                "uw-ip-style",
+                ".uw-ip-holder .content-item {" +
+                    "position: relative;" +
+                    "display: block;" +
+                    "height: auto;" +
+                    "max-width: 200px;" +
+                    "background-color: black;" +
+                    "border-top: solid 1px #f54997;" +
+                    "padding: 10px;" +
+                    "margin: 0 auto;" +
+                "}" +
+                ".uw-ip-holder .content-item * {" +
+                    "text-decoration: none;" +
+                "}" +
+                ".uw-ip-holder .uw-ip-dupes .content-item {" +
+                    "border-bottom: solid 15px green;" +
+                "}"
+            );
+
+            $$("#main").prepend(progs);
+            $$("body").append(dupes);
+            var texts = [];
+
+            $$(".content-item").each(function(x) {
+                var i = $$(this.cloneNode(true));
+                var t = i.text();
+                if (texts.includes(t)) {
+                    dupes.append(i);
+                    log("dupe", t);
+                }
+                else {
+                    progs.append(i);
+                    texts.push(t);
+                }
+            });
+        };
+
+        me.ipAddButtons = function(title, url) {
+            title = title.replace(/BBC (One|Two|Three|Four|Scotland|iPlayer|Sounds|Radio \d+) - | - Available Episodes| - Available now| - Episode guide| - BBC Sounds/gi, "");
+            log("IP url ============", url);
+            log("IP title", title);
+            var media = me.ipGetMedia(url);
+
+            var episode = me.ipGetString(url.match(/\/episode\/[\w\d]+/i), 9) ||
+                            me.ipGetString(url.match(/\/programmes\/[\w\d]+(?=\/*$)/i), 12) ||
+                            me.ipGetString(url.match(/\/play\/[\w\d]+/i), 6);
+
+            //javascript:(function() { console.clear(); if (window.jQuery && jQuery.css) { doIt(); } else { ld("https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-3.3.1.min.js"); window.setTimeout(function() { doIt(); }, 1000); } function doIt() { var $$ = window.jQuery; $$(".uw-ip-btns").remove(); ld("https://localhost:44300/scripts/user-web.user.js?"+new Date().valueOf()); } function ld(u) { var s = document.createElement('script'); s.src = u; document.getElementsByTagName('head')[0].appendChild(s); } })();
+
+            if (episode) {
+                me.ipAddButton(media + "1 " + episode + " " + title);
+            }
+            else {
+                var series = me.ipGetString(url.match(/\/brand\/[\w\d]+/i), 7) ||
+                                me.ipGetString(url.match(/\/programmes\/[\w\d]+/i), 12) ||
+                                me.ipGetString(url.match(/\/episodes\/[\w\d]+/i), 10);
+                if (series)
+                    me.ipAddButton(media + "0 " + series + " " + title);
+            }
+
+            if (series == null) {
+                var seriesLink = $$(".primary-title");
+                var seriesTitle = seriesLink.text() || title;
+
+                if (seriesLink.length == 0) {
+                    seriesLink = $$("a:contains('Programme website')");
+                    seriesTitle = $$(".play-cta__text__title").text() || title;
+                }
+
+                if (seriesLink.length == 0) {
+                    seriesLink = $$(".br-masthead__title a");
+                    seriesTitle = seriesLink.text() || title;
+                }
+
+                if (seriesLink.length > 0) {
+                    var seriesUrl = seriesLink.attr("href");
+                    series = seriesUrl.substr(seriesUrl.indexOf("/programmes/") + 12);
+                    if (series != episode) {
+                        me.ipAddButton(media + "0 " + series + " " + seriesTitle);
+                    }
+                }
+            }
+        };
+
+        me.ipAddButton = function(txt) {
+            log("IP res", txt);
+            var btn = $$("<button class='uw-ip-btn'>" + txt + "</button>");
+            btn.css({
+                color: "white",
+                backgroundColor: "#F54997",
+                padding: "3px 5px",
+                margin: "0 5px 0 0",
+                border: "3px",
+                borderRadius: "2px",
+                fontSize: "12px",
+                fontFamily: "Arial",
+                textDecoration: "none",
+                cursor: "pointer",
+            });
+
+            btn[0].onclick = function() {
+                me.setClipboard(txt);
+            };
+
+            $$(".uw-ip-btns").prepend(btn);
+        };
+
+        me.ipGetString = function(arr, n) { //TODO: nicer way of splitting url strings
+            // log("IP array", arr);
+            if (arr == null || arr[0].length < n) return "";
+            return arr[0].substr(n);
+        };
+
+        me.ipGetMedia = function(url) {
+            var media = "x";
+
+            if (url.match(/\/iplayer\//i)) {
+                media = "t";
+            }
+            else if (url.match(/\/sounds\//i)) {
+                media = "r";
+            }
+            else {
+                var playout = $$(".playout__messagetext");
+                if (playout.text().includes("Listen")) { //TODO: replace indexOf + match with includes!!
+                    media = "r";
+                }
+                else if (playout.text().includes("Watch")) {
+                    media = "t";
+                }
+                else {
+                    var hd = $$(".br-masthead__masterbrand");
+                    if (hd.length > 0) {
+                        media = hd.prop("href").toLowerCase().includes("radio")? "r" : "t";
+                    }
+                }
+            }
+
+            return media;
         };
 
         /*** page events ********************************************************************************************** */
 
-        me.bindPageMouse = function() {
-            $("body").unbind("mouseup.uw-mu");
-            $("body").bind("mouseup.uw-mu", function(e) {
+        me.bindPageMouse = function() { //qq
+            $$("body").unbind("mouseup.uw-mu");
+            $$("body").bind("mouseup.uw-mu", function(e) {
                 me.onPageMouseUp(e);
-            }).dblclick(function(e) {
-                me.onPageDblClick(e);
             });
+
+            //bbc video unloads jq events so we use raw js as a fallback...
+            document.body.ondblclick = function(e) {
+                me.onPageDblClick(e);
+            }
         };
 
         me.onPageDblClick = function(e) {
             me.run(function() {
-                if (me.menuShowing) {
+                if (me.menuShowing || fontEdit.showing) {
                     return;
                 }
 
@@ -171,7 +455,6 @@ try {
                     }
 
                     var tagName = e.target == null ? "UNKNOWN" : e.target.tagName;
-
                     switch (tagName) {
                         case "IMG":  //img doesn't clear selection
                         case "HTML": //scrollbar
@@ -190,7 +473,8 @@ try {
 
         me.saveSelection = function(e) {
             var text = "";
-            if ($(e.target).is("input[type='text']") || $(e.target).is("textarea")) {
+            var el = $$(e.target);
+            if ((el.is("input") && el.prop("type") == "text") || el.is("textarea")) {
                 text = e.target.value.substring(e.target.selectionStart, e.target.selectionEnd);
             }
             else {
@@ -222,7 +506,7 @@ try {
         me.bindPageKeyDown = function() {
             if (!me.isPageKeyDownBound) {
                 me.isPageKeyDownBound = true;
-                $("body").bind("keydown.uw-page", function(e) {
+                $$("body").bind("keydown.uw-page", function(e) {
                     me.run(function() {
                         me.onPageKeyDown(e);
                     });
@@ -295,7 +579,7 @@ try {
                             // log("Old state", me.readingState);
                             // log("Next state", nextState);
 
-                            switch (nextState) { //qqqqq
+                            switch (nextState) { //qq
                                 case 0:
                                     me.undoPopout();
                                     me.undoRead();
@@ -310,8 +594,8 @@ try {
                                         me.tidyUp();
                                         return;
                                     }
-                                    me.setFontA();
                                     me.doReadAuto();
+                                    me.setFontA();
                                     break;
                                 case 3:
                                     me.setFontB();
@@ -336,17 +620,24 @@ try {
                     case 39: // right
                     case 74: // j
                     case 75: // k
+                        if (e.keyCode == 39 && e.altKey && e.shiftKey) { //shift+alt+right //qq
+                            if (fontEdit.showing) return;
+
+                            me.editFonts();
+                            return;
+                        }
+
                         if (me.marking) {
                             if (e.ctrlKey || e.shiftKey || e.altKey) return;
 
                             var fwd = e.keyCode == 39 || e.keyCode == 74;
-                            var curr = $(".uw-marked");
+                            var curr = $$(".uw-marked");
                             var next = fwd? curr.next() : curr.prev();
 
                             function getNext(fwd, curr) {
-                                var ps = $("p");
-                                var index = $.inArray(curr[0], ps);
-                                return fwd? $(ps[index+1]) : $(ps[index-1]);
+                                var ps = $$("p");
+                                var index = $$.inArray(curr[0], ps);
+                                return fwd? $$(ps[index+1]) : $$(ps[index-1]);
                             }
 
                             if (curr.prop("tagName") == "P") {
@@ -405,10 +696,10 @@ try {
         /*** menu ui ************************************************************************************************** */
 
         me.getTarget = function() {
-            var el = $(me.clickEvent.target);
+            var el = $$(me.clickEvent.target);
             if (el.length == 0) {
                 log("getTarget", "target is null, returning first p");
-                el = $("p:nth-child(1)")
+                el = $$("p:nth-child(1)")
             }
 
             return el;
@@ -427,10 +718,10 @@ try {
             var ePageY = e.pageY;
             // log("", "ePageX: ", ePageX, "; ePageY: ", ePageY);
             if (isNaN(ePageY)) {
-                ePageY = $(window).scrollTop();
+                ePageY = $$(window).scrollTop();
             }
             if (isNaN(ePageX)) {
-                ePageX = $(window).scrollLeft();
+                ePageX = $$(window).scrollLeft();
                 adjustX = -10;
             }
             // log("", "ePageX: ", ePageX, "; ePageY: ", ePageY);
@@ -468,9 +759,9 @@ try {
             pos.right = pos.left + pos.width;
 
             var wpos = [];
-            wpos.height = $(window).height();
-            wpos.width = $(window).width();
-            wpos.scrollTop = $(window).scrollTop();
+            wpos.height = $$(window).height();
+            wpos.width = $$(window).width();
+            wpos.scrollTop = $$(window).scrollTop();
             wpos.scrollBottom = wpos.scrollTop + wpos.height;
 
             if (pos.bottom > wpos.scrollBottom) {
@@ -500,7 +791,7 @@ try {
         };
 
         me.menuTimeoutSet = function() {
-            me.menuTimeoutId = setTimeout(function() {
+            me.menuTimeoutId = window.self.setTimeout(function() {
                 me.hideMenu();
             }, me.menuTimeoutTime);
         };
@@ -529,8 +820,8 @@ try {
             }
 
             me.addStyles();
-            me.menu = $("<div id='UserWebMenu' class='uw-menu'>");
-            $("body").append(me.menu);
+            me.menu = $$("<div id='UserWebMenu' class='uw-menu'>");
+            $$("body").append(me.menu);
 
             var tbl = addEl(me.menu, "table");
             var row1 = addEl(tbl, "tr");
@@ -571,12 +862,13 @@ try {
                 me.levelUp();
             }, null, "Got to URL parent");
             me.addCellLink(row3, "Bottom", function() {
-                me.scrollToY($(document).height());
+                me.scrollToY($$(document).height());
             }, null, "Scroll to bottom");
 
             //--------------------------------------------------------------------------------------
             me.addCellLink(row1, "Read A", function() {
                 var el = me.getTarget();
+                me.setFontA();
                 me.markElementAndBind(el);
             });
             me.addCellLink(row2, "Read B", function() {
@@ -609,7 +901,7 @@ try {
 
             //--------------------------------------------------------------------------------------
             me.addCellLink(row1, "Copy", function() {
-                me.setClipboard();
+                me.setClipboard(me.selectedText);
             });
             me.addCellLink(row2, "Help", function() {
                 me.showHelp();
@@ -631,7 +923,7 @@ try {
 
             me.lnkTidyOff =
                 me.addListLink(ulLeft, "Tidy off", function() {
-                    $.cookie("tidy", null, { path: '/' });
+                    if ($$.cookie) $$.cookie("tidy", null, { path: '/' });
                     document.location.reload(true);
                 }, null, "Turn tidy off and reload").hide();
 
@@ -643,7 +935,7 @@ try {
 
             me.lnkTidyOn =
                 me.addListLink(ulLeft, "Tidy always", function() {
-                    $.cookie("tidy", "on", { path: '/' });
+                    if ($$.cookie) $$.cookie("tidy", "on", { path: '/' });
                     me.tidyUp();
                     me.refreshMenu();
                 }, null, "Turn tidy on with cookie");
@@ -690,7 +982,7 @@ try {
 
             me.lnkReloadStyleOnDblClick =
                 me.addListLink(ulLeft, "Reload dblclick", function() {
-                    $("body").bind("dblclick.uw-find", function() {
+                    $$("body").bind("dblclick.uw-find", function() {
                         me.run(function() {
                             settings.uniqueUrls = 1;
                             me.loadUserStyle();
@@ -709,7 +1001,7 @@ try {
 
             me.lnkReloadStyleOnDblClickOff =
                 me.addListLink(ulLeft, "Reload cancel", function() {
-                    $("body").unbind("dblclick.uw-find");
+                    $$("body").unbind("dblclick.uw-find");
                     me.lnkReloadStyleOnDblClick.show();
                     me.lnkReloadStyleOnDblClickOff.hide();
                 }, null, "Stop reloading the user style on dblclick").hide();
@@ -723,6 +1015,12 @@ try {
                 me.addListLink(ulLeft, "Unload style", function() {
                     me.unloadUserStyle();
                 }, null, "Unload the user style");
+
+            me.userStyleSeparator = me.addSeparator(ulLeft); //--------------------------------
+
+            me.addListLink(ulLeft, "Reload me", function() { //qq TODO check every second for $$ and reload if not
+                me.reloadMe();
+            }, null, "Reload the user-web menu and events");
 
             //--------------------------------------------------------------------------------------
 
@@ -748,7 +1046,7 @@ try {
             me.addListLink(ulRight, "Wikipedia", function() { me.openSearch("https://en.m.wikipedia.org/wiki/Special:Search?search=TESTSEARCH&go=Go"); });
             me.addListLink(ulRight, "Twitter", function() { me.openSearch("https://twitter.com/search?q=TESTSEARCH&src=typd"); });
             me.addListLink(ulRight, "Reddit", function() { me.openSearch("https://www.reddit.com/search?q=TESTSEARCH"); });
-            me.addListLink(ulRight, "eBay", function() { me.openSearch("https://www.ebay.co.uk/sch/i.html?_nkw=TESTSEARCH"); });
+            me.addListLink(ulRight, "eBay", function() { me.openSearch("https://www.ebay.co.uk/sch/i.html?_sop=15&LH_BIN=1&_blrs=recall_filtering&_nkw=TESTSEARCH"); }); // LH_BIN=1 > Buy It Now / _sop=15 > Lowest Price + P&P / _blrs=recall_filtering > NOT "We removed some search results to show you the most relevant listings"
             me.addListLink(ulRight, "Amazon", function() { me.openSearch("http://www.amazon.co.uk/s/ref=nb_sb_noss_1?url=search-alias%3Daps&field-keywords=TESTSEARCH&x=0&y=0"); });
 
             me.refreshMenu();
@@ -757,12 +1055,14 @@ try {
         me.addCellLink = function(parent, text, fn, href, title) {
             return me.addLink(parent, "td", text, fn, href, title);
         };
+
         me.addListLink = function(parent, text, fn, href, title) {
             return me.addLink(parent, "li", text, fn, href, title);
         };
+
         me.addLink = function(parent, tag, text, fn, href, title) {
-            var lnk = $("<a>" + text + "</a>").click(function() { me.run(fn); });
-            var el = $("<" + tag + ">").append(lnk)
+            var lnk = $$("<a>" + text + "</a>").click(function() { me.run(fn); });
+            var el = $$("<" + tag + ">").append(lnk)
 
             if (title != null) el.prop("title", title);
             if (href != null) lnk.prop("href", href);
@@ -772,7 +1072,7 @@ try {
         };
 
         me.addSeparator = function(parent) {
-            var li = $("<li>")
+            var li = $$("<li>")
                 .addClass("uw-separator");
 
             parent.append(li);
@@ -828,7 +1128,7 @@ try {
 
         me.showHelp = function(e) {
             me.addStyles();
-            var pop = $("<div class='uw-help'>");
+            var pop = $$("<div class='uw-help'>");
             pop.html(
                 "<table>" +
                     "<tr><th>General...</th></tr>" +
@@ -864,39 +1164,39 @@ try {
                 "</table>"
             );
 
-            var cls = $("<div class='uw-help-button'>")
+            var cls = $$("<div class='uw-help-button'>")
                 .text("Close")
                 .click(function(e) {
                     pop.remove();
                     return false;
                 });
             pop.append(cls);
-            $("body").append(pop);
+            $$("body").append(pop);
         };
 
         /*** menu actions ********************************************************************************************* */
 
         me.hideImages = function() {
-            $("img, video").hide();
+            $$("img, video").hide();
             me.imagesHidden = true;
             me.refreshMenu();
         };
 
         me.showImages = function() {
-            $("img, video").show();
+            $$("img, video").show();
             me.imagesHidden = false;
             me.refreshMenu();
         };
 
         me.hideLinks = function() {
-            $("a").attr("style", "text-decoration: none !important");
+            $$("a").attr("style", "text-decoration: none !important");
             me.linksHidden = true;
             me.refreshMenu();
         };
 
         me.showLinks = function() {
-            $("a").attr("style", "background-color: lime !important");
-            $(".uw-menu a").attr("style", null);
+            $$("a").attr("style", "background-color: lime !important");
+            $$(".uw-menu a").attr("style", null);
             me.linksHidden = false;
             me.refreshMenu();
         };
@@ -910,13 +1210,13 @@ try {
 
         me.enableSelect = function() {
             var styles="*, p, div { user-select:text !important; -moz-user-select:text !important; -webkit-user-select:text !important; }";
-            $("head").append($("<style />").html(styles));
+            $$("head").append($$("<style />").html(styles));
 
             var allowNormal = function() {
                 return true;
             };
 
-            $("*[onselectstart], *[ondragstart], *[oncontextmenu]")
+            $$("*[onselectstart], *[ondragstart], *[oncontextmenu]")
                 .unbind("contextmenu")
                 .unbind("selectstart")
                 .unbind("dragstart")
@@ -931,8 +1231,8 @@ try {
             me.hideMenu();
         };
 
-        me.setClipboard = function(url) {
-            var text = trim(me.selectedText);
+        me.setClipboard = function(txt) {
+            var text = trim(txt);
             try {
                 GM.setClipboard(text);
             }
@@ -942,6 +1242,7 @@ try {
                 }
                 catch(ex2) {
                     log(ex2);
+                    prompt("Can't set clipboard", text);
                 }
             }
         };
@@ -962,23 +1263,25 @@ try {
         /*** menu and reading styles ********************************************************************************** */
 
         me.editFonts = function() {
-            me.markElement(me.getTarget());
-            me.doReadAuto();
-            me.setFontA();
+            if (!userWeb.marking) {
+                me.markElement(me.getTarget());
+                me.doReadAuto();
+                me.setFontA();
+            }
             fontEdit.load();
         };
 
         me.addScriptElement = function(id, src) {
-            $(document.head).append(
-                $("<script>")
+            $$(document.head).append(
+                $$("<script>")
                     .attr("id", id)
                     .attr("type", "text/javascript")
                     .attr("src", src));
         };
 
         me.addStyleElement = function(id, css) {
-            $(document.head).append(
-                $("<style>")
+            $$(document.head).append(
+                $$("<style>")
                     .attr("id", id)
                     .attr("rel", "stylesheet")
                     .attr("type", "text/css")
@@ -986,6 +1289,7 @@ try {
         };
 
         me.addStyles = function() {
+            $$("body").addClass("uw-body"); //this is sometimes lost on pocket so we have to reapply
             if (me.addStylesDone) return;
             me.addStylesDone = true;
 
@@ -1089,16 +1393,12 @@ try {
                     "border-bottom: none !important;" + /* uw-btm */
                     "box-shadow: none !important;" +
                 "}" +
-                "html body .uw-container h1, html body .uw-container h2, html body .uw-container h3, html body .uw-container h4 {" +
-                    "font-family: " + me.fontA.face + ", Comic Sans MS !important;" +
-                    "font-weight: bold !important;" +
-                    "margin-top: 30px !important;" +
-                    "margin-bottom: 10px !important;" +
-                "}" +
                 "html body .uw-container p, html body p.uw-container {" +
+                    "margin: 15px auto !important;" + /* uw-pmgn */
+                    "max-width: 800px !important;" +
+                "}" +
+                "html body.uw-fontA .uw-container p, html body.uw-fontA p.uw-container {" +
                     "text-indent: " + me.fontA.indent + "px !important;" +
-                    "margin-top: 15px !important;" + /* uw-pmgn */
-                    "margin-bottom: 15px !important;" +
                 "}" +
                 "html body.uw-fontB .uw-container p, html body.uw-fontB p.uw-container {" +
                     "text-indent: " + me.fontB.indent + "px !important;" +
@@ -1112,7 +1412,7 @@ try {
                 "html body .uw-marked {" +
                     "border-top: dotted 1px #f8f !important; padding-top: 5px !important;" +
                 "}" +
-                "html body .uw-highlight, html body .uw-popout .uw-highlight {" +
+                "html body .uw-highlight, html body.uw-body .uw-container .uw-highlight {" +
                     "background-color: #ffff80 !important;" +
                 "}" +
                 "html body .uw-popout {" +
@@ -1125,13 +1425,13 @@ try {
                     "padding: 70px;" +
                     "z-index: 99999999;" +
                 "}" +
-                "html body .uw-links h1 {" +
-                    " margin: 0 0 20px !important;" +
-                    " font-size: 20px !important;" +
-                    " font-style: italic !important;" +
+                "html body .uw-popout .uw-links h1 {" +
+                    "margin: 0 0 20px !important;" +
+                    "font-size: 25px !important;" +
+                    "font-style: italic !important;" +
                 "}" +
                 "html body .uw-links a:visited {" +
-                    " color: #222 !important;" + /* uw-clr */
+                    "color: #222 !important;" + /* uw-clr */
                 "}" +
                 "html body .uw-popout * {" +
                     "position: relative !important;" +
@@ -1147,40 +1447,56 @@ try {
                     "text-align: justify !important;" + /* uw-jfy */
                     "white-space: normal !important;" +
                 "}" +
-                "html body .uw-container, html body .uw-container * {" +
-                    "font-family: " + me.fontA.face + ", Comic Sans MS !important;" +
-                    "font-size: " + me.fontA.size + "px !important;" +
-                    "line-height: " + me.fontA.height + "px !important;" +
-                    "font-weight: " + me.fontA.weight + " !important;" +
-                    "color: " + me.fontA.color + " !important;" +
+                "html body.uw-body .uw-container, html body.uw-body .uw-container * {" +
                     "font-style: normal !important;" + /* uw-sty */
                     "text-align: justify !important;" + /* uw-jfy */
                     "white-space: normal !important;" +
+                    "background-color: white !important;" +
+                "}" +
+                "html body.uw-fontA .uw-container, html body.uw-fontA .uw-container * {" +
+                    "font-family: " + me.fontA.face   + ", Comic Sans MS !important;" +
+                    "font-size: "   + me.fontA.size   + "px !important;" +
+                    "line-height: " + me.fontA.height + "px !important;" +
+                    "font-weight: " + me.fontA.weight + " !important;" +
+                    "color: "       + me.fontA.color  + " !important;" +
                 "}" +
                 "html body.uw-fontB .uw-container, html body.uw-fontB .uw-container * {" +
-                    "font-family: " + me.fontB.face + ", Comic Sans MS !important;" +
-                    "font-size: " + me.fontB.size + "px !important;" +
+                    "font-family: " + me.fontB.face   + ", Comic Sans MS !important;" +
+                    "font-size: "   + me.fontB.size   + "px !important;" +
                     "line-height: " + me.fontB.height + "px !important;" +
                     "font-weight: " + me.fontB.weight + " !important;" +
-                    "color: " + me.fontB.color + " !important;" +
+                    "color: "       + me.fontB.color  + " !important;" +
                 "}" +
                 "html body.uw-fontC .uw-container, html body.uw-fontC .uw-container * {" +
-                    "font-family: " + me.fontC.face + ", Comic Sans MS !important;" +
-                    "font-size: " + me.fontC.size + "px !important;" +
+                    "font-family: " + me.fontC.face   + ", Comic Sans MS !important;" +
+                    "font-size: "   + me.fontC.size   + "px !important;" +
                     "line-height: " + me.fontC.height + "px !important;" +
                     "font-weight: " + me.fontC.weight + " !important;" +
-                    "color: " + me.fontC.color + " !important;" +
+                    "color: "       + me.fontC.color  + " !important;" +
                 "}" +
-                "html body.uw-fontB .uw-container, html body.uw-fontB .uw-container h1," +
-                "html body.uw-fontB .uw-container, html body.uw-fontB .uw-container h2," +
-                "html body.uw-fontB .uw-container, html body.uw-fontB .uw-container h3," +
-                "html body.uw-fontB .uw-container, html body.uw-fontB .uw-container h4," +
-                "html body.uw-fontB .uw-container, html body.uw-fontB .uw-container b," +
-                "html body.uw-fontB .uw-container, html body.uw-fontB .uw-container strong {" +
+                "html body.uw-body .uw-container h1," +
+                "html body.uw-body .uw-container h2," +
+                "html body.uw-body .uw-container h3," +
+                "html body.uw-body .uw-container h4 {" +
+                    "margin-top: 30px !important;" +
+                    "margin-bottom: 10px !important;" +
+                "}" +
+                "html body.uw-body .uw-container h1," +
+                "html body.uw-body .uw-container h2," +
+                "html body.uw-body .uw-container h3," +
+                "html body.uw-body .uw-container h4," +
+                "html body.uw-body .uw-container th," +
+                "html body.uw-body .uw-container dt," +
+                "html body.uw-body .uw-container b," +
+                "html body.uw-body .uw-container b *," +
+                "html body.uw-body .uw-container strong," +
+                "html body.uw-body .uw-container strong * {" +
                     "font-weight: bold !important;" +
                 "}" +
-                "html body.uw-fontB .uw-container, html body.uw-fontB .uw-container em," +
-                "html body.uw-fontB .uw-container, html body.uw-fontB .uw-container i {" +
+                "html body.uw-body .uw-container em," +
+                "html body.uw-body .uw-container em *," +
+                "html body.uw-body .uw-container i," +
+                "html body.uw-body .uw-container i * {" +
                     "font-style: italic !important;" +
                 "}" +
                 "@media (max-width: 800px) {" +
@@ -1213,23 +1529,26 @@ try {
             );
         };
 
-        me.setFontA = function() {
-            $("body").removeClass("uw-fontB");
-            $("body").removeClass("uw-fontC");
+        me.setFontA = function() { //qq
+            $$("body").addClass("uw-fontA");
+            $$("body").removeClass("uw-fontB");
+            $$("body").removeClass("uw-fontC");
             me.readingState = 2;
             me.markRefocus();
         };
 
         me.setFontB = function() {
-            $("body").removeClass("uw-fontC");
-            $("body").addClass("uw-fontB");
+            $$("body").removeClass("uw-fontA");
+            $$("body").addClass("uw-fontB");
+            $$("body").removeClass("uw-fontC");
             me.readingState = 3;
             me.markRefocus();
         };
 
         me.setFontC = function() {
-            $("body").removeClass("uw-fontB");
-            $("body").addClass("uw-fontC");
+            $$("body").removeClass("uw-fontA");
+            $$("body").removeClass("uw-fontB");
+            $$("body").addClass("uw-fontC");
             me.readingState = 4;
             me.markRefocus();
         };
@@ -1261,6 +1580,7 @@ try {
                 test: { exp: /(testlocal|home|dev|dev-fonts|testinject|testxx)\.htm/i },
                 tutorials_point: { exp: /tutorialspoint\.com/i },
                 yammer: { exp: /yammer\.com/i },
+                youtube: { exp: /youtube\.com/i },
                 wikipedia: { exp: /wikipedia\.org/i }
             };
 
@@ -1292,15 +1612,15 @@ try {
         me.loadUserStyleSheet = function(name) {
             var url = me.getUrl("styles/" + name + ".css");
 
-            log("inserting style", url);
+            log("inserting style", name);
 
             if (me.userStyleSheet == null) {
-                me.userStyleSheet = $("<link>")
+                me.userStyleSheet = $$("<link>")
                     .attr("id", "uw-css")
                     .attr("rel", "stylesheet")
                     .attr("type", "text/css");
 
-                $(document.head).append(me.userStyleSheet);
+                $$(document.head).append(me.userStyleSheet);
             }
 
             me.userStyleSheet.attr("href", url);
@@ -1322,7 +1642,7 @@ try {
         me.tidyBound = false;
         me.tidyWaiting = false;
         me.tidyLast = new Date().valueOf();
-        me.tidyIsOn = function(e) { return $.cookie("tidy") == "on"; };
+        me.tidyIsOn = function(e) { return $$.cookie && $$.cookie("tidy") == "on"; };
         me.tidyUp = function(e) {
             if (me.tidyUpExclude) {
                 log("tidy", "excluded from tidy");
@@ -1333,13 +1653,13 @@ try {
             me.tidyLast = new Date().valueOf();
             me.tidyWaiting = false;
 
-            $("*").filter(function() {
-                var el = $(this);
+            $$("*").filter(function() { //qq
+                var el = $$(this);
                 var pos = el.css("position");
                 var match = (pos === "fixed" || pos === "sticky") && el.prop("tagName") != "PICTURE" && el.attr("id") != "fe-outer";
                 // if (match) log("tidyUp", "found: ", elToString(el));
                 return match;
-            }).attr("style", "display:none !important");
+            }).remove();
 
             me.restoreScroll();
 
@@ -1349,19 +1669,20 @@ try {
                 var targetNode = document.body;
                 var config = { attributes: false, childList: true, subtree: true };
                 var callback = function(mutationsList, observer) {
-                    log("callback");
-                    if (me.tidyWaiting) return;
-
-                    var now = new Date().valueOf();
-                    if (now - me.tidyLast > 2000) {
-                        me.tidyUp();
-                    }
-                    else {
-                        me.tidyWaiting = true;
-                        window.setTimeout(function() {
-                            me.tidyUp();
-                        }, 2001);
-                    }
+                    me.tidyUp();
+                    // log("callback");
+                    // if (me.tidyWaiting) return;
+                    //
+                    // var now = new Date().valueOf();
+                    // if (now - me.tidyLast > 100) {
+                    //     me.tidyUp();
+                    // }
+                    // else {
+                    //     me.tidyWaiting = true;
+                    //     window.self.setTimeout(function() {
+                    //         me.tidyUp();
+                    //     }, 101);
+                    // }
                 };
                 var observer = new MutationObserver(callback);
                 observer.observe(targetNode, config);
@@ -1377,11 +1698,11 @@ try {
                     if (cfg.filter) {
                         log("site filter", cfg.filter);
 
-                        $(cfg.filter).each(function(i) {
+                        $$(cfg.filter).each(function(i) {
                             var id = this.id; if (id == "") id = "[none]";
                             var className = this.className; if (className == "") className = "[none]";
                             log("removing", "id:", id, "; class:", className, ";");
-                            $(this).remove();
+                            $$(this).remove();
                         });
 
                         me.addStyleElement(
@@ -1391,9 +1712,9 @@ try {
                     }
 
                     if (cfg.icon) {
-                        log("site icon", cfg.icon);
+                        log("site icon", cfg.icon.substr(cfg.icon.lastIndexOf("/") + 1)); //qq
 
-                        $("link[rel='icon']").remove();
+                        $$("link[rel='icon']").remove();
 
                         var lnk = document.createElement("link");
                         lnk.rel = "icon";
@@ -1406,7 +1727,9 @@ try {
                     if (cfg.custom) {
                         log("custom function", cfg.custom);
 
-                        cfg.custom();
+                        me.run(function() { //qq
+                            cfg.custom();
+                        });
                     }
 
                     window.self.setTimeout(function() {
@@ -1418,9 +1741,9 @@ try {
 
         /*** reading ************************************************************************************************** */
 
-        me.readLite = function() {
+        me.readLite = function() { //qq
             me.addStyles();
-            $("p").addClass("uw-lite");
+            $$("p").addClass("uw-lite");
             me.readingState = 1;
         };
 
@@ -1452,13 +1775,15 @@ try {
             me.readingState = 2;
         };
 
-        me.undoRead = function() {
+        me.undoRead = function() { //qq
             me.activeReadr = false;
-            me.setFontA();
-            $(".uw-lite").removeClass("uw-lite");
-            $(".uw-marked").removeClass("uw-marked");
-            $(".uw-read").removeClass("uw-read");
-            $(".uw-container").removeClass("uw-container");
+            $$("body").removeClass("uw-fontA");
+            $$("body").removeClass("uw-fontB");
+            $$("body").removeClass("uw-fontC");
+            $$(".uw-lite").removeClass("uw-lite");
+            $$(".uw-marked").removeClass("uw-marked");
+            $$(".uw-read").removeClass("uw-read");
+            $$(".uw-container").removeClass("uw-container");
             me.markElementCancel();
             me.refreshMenu();
             me.readingState = 0;
@@ -1478,16 +1803,16 @@ try {
             me.activeReadr = true;
 
             var rem = el.find("iframe, script, link, button, input, form, textarea, aside").remove();
-            // rem.each(function() { log($(this).html()); });
+            // rem.each(function() { log($$(this).html()); });
 
             var exclude = /share|sharing|social|twitter|tool|^side|related|comment|discussion|extra|contentWellBottom|kudo|^ad|keywords|secondary-column$|furniture|hidden|embedded-hyper/gi;
             var hid = el.find("*").filter(function() {
                 return (typeof (this.className) == "string" && this.className.match(exclude) !== null) ||
                     (typeof (this.id) == "string" && this.id.match(exclude) !== null) ||
-                    $(this).css("visibility") == "hidden" ||
-                    $(this).css("display") == "none";
+                    $$(this).css("visibility") == "hidden" ||
+                    $$(this).css("display") == "none";
             });
-            // hid.each(function() { log("removed", $(this).html().substr(0, 100)); });
+            // hid.each(function() { log("removed", $$(this).html().substr(0, 100)); });
             hid.remove();
 
             el.find("*").attr("style", "");
@@ -1505,7 +1830,7 @@ try {
             var html = doc.join("");
 
             document.body.insertAdjacentHTML("afterbegin", html);
-            me.popoutDiv = $(".uw-popout");
+            me.popoutDiv = $$(".uw-popout");
             me.forced = me.popoutDiv;
             me.activePopout = true;
             me.refreshMenu();
@@ -1522,9 +1847,9 @@ try {
             if (me.popoutDiv != null) {
                 me.popoutDiv.remove();
                 me.popoutDiv = null;
-                me.scrollToElement($("body"));
-                me.marked = $();
-                me.forced = $();
+                me.scrollToElement($$("body"));
+                me.marked = $$();
+                me.forced = $$();
             }
             me.activePopout = false;
         };
@@ -1536,16 +1861,16 @@ try {
                 return me.forced;
             }
 
-            var ps = $("p");
+            var ps = $$("p");
             var parents = [];
             var parentCounter = [];
 
             //get array of parents of p's...
             ps.each(function() {
-                var el = $(this);
+                var el = $$(this);
                 var elP = el.parent();
 
-                var res = $.grep(parents, function(p, i) {
+                var res = $$.grep(parents, function(p, i) {
                     return p.el[0] == elP[0];
                 });
 
@@ -1617,25 +1942,35 @@ try {
             }();
 
             log("uw binding", "startFind");
-            $("body").bind("mouseup.uw-find-first",
+            $$("body").bind("mouseup.uw-find-first",
                 function(e) {
                     me.run(function() {
-                        $("body").unbind("mouseup.uw-find-first");
-                        var el = $(e.target);
+                        $$("body").unbind("mouseup.uw-find-first");
+                        var el = $$(e.target);
 
-                        if (me.findRead) {
+                        if (me.findRead) { //qq
                             me.findRead = false;
-                            me.doReadFromElement(el);
-                            me.setFontB();
-                            me.markElementAndBind(el);
+                            switch (e.button) {
+                                case 2: //right click
+                                    var main = me.getMainFromElement(el);
+                                    me.doPopout(main);
+                                    me.skipMarkElementCancel = true;
+                                    log("done", "mup");
+                                    break;
+                                default:
+                                    me.doReadFromElement(el);
+                                    me.setFontB();
+                                    me.markElementAndBind(el);
+                                    break;
+                            }
                         }
                         else {
                             me.finder.els.push(el);
                             el.attr("style", "background-color: orange !important");
                             log("uw find", "adding bindings");
 
-                            $("body").bind("keyup.uw-find", me.onFindingKeyUp);
-                            $("body").bind("mouseup.uw-find", me.onFindingMouseUp);
+                            $$("body").bind("keyup.uw-find", me.onFindingKeyUp);
+                            $$("body").bind("mouseup.uw-find", me.onFindingMouseUp);
 
                             document.oncontextmenu = function() {
                                 return false;
@@ -1755,9 +2090,9 @@ try {
         };
 
         me.cancelFind = function() {
-            $(".uw-find-el").css("background-color", "");
+            $$(".uw-find-el").css("background-color", "");
             me.finder.el0().css("background-color", "");
-            $("*").unbind(".uw-find");
+            $$("*").unbind(".uw-find");
             me.setReloader();
             me.finder = null;
         };
@@ -1768,12 +2103,15 @@ try {
             if (!me.marking) {
                 me.marking = true;
                 me.addStyles();
-                $("body").bind("mouseup.uw-marking", me.markElementMouseUp);
-                $("body").bind("keyup.uw-marking", me.markElementKeyUp);
-                $("body").bind("dblclick.uw-marking", me.markElementCancel);
+                $$("body").bind("mouseup.uw-marking", me.markElementMouseUp);
+                $$("body").bind("keyup.uw-marking", me.markElementKeyUp);
+                $$("body").bind("dblclick.uw-marking", me.markElementCancel);
 
                 document.oncontextmenu = function() {
-                    me.markElementCancel();
+                    if (!me.skipMarkElementCancel) {
+                        me.markElementCancel();
+                    }
+                    me.skipMarkElementCancel = false;
                     return false;
                 };
 
@@ -1799,9 +2137,9 @@ try {
             if (me.marking) {
                 log("markElementCancel");
                 me.marking = false;
-                $("body").unbind("mouseup.uw-marking");
-                $("body").unbind("keyup.uw-marking");
-                $("body").unbind("dblclick.uw-marking");
+                $$("body").unbind("mouseup.uw-marking");
+                $$("body").unbind("keyup.uw-marking");
+                $$("body").unbind("dblclick.uw-marking");
             }
 
             me.setReloader();
@@ -1814,8 +2152,10 @@ try {
         };
 
         me.markElement = function(target) {
+            if (fontEdit.showing && target.parents("#fe-outer").length > 0) return;
+
             me.clearSelection();
-            $(".uw-marked").removeClass("uw-marked");
+            $$(".uw-marked").removeClass("uw-marked");
             if (target.prop("tagName") != "P" && target.parent().prop("tagName") == "P") target = target.parent();
             me.marked.addClass("uw-read");
 
@@ -1844,13 +2184,13 @@ try {
             switch (e.button) {
                 case 0: //chrome
                     me.run(function() {
-                        me.markElement($(e.target));
+                        me.markElement($$(e.target));
                     });
                     break;
                 case 1:
                     if (document.all) { //IE
                         me.run(function() {
-                            me.markElement($(e.target));
+                            me.markElement($$(e.target));
                         });
                     }
                     break;
@@ -1877,7 +2217,7 @@ try {
         };
 
         me.isSmall = function() {
-            return $(window).width() < 700;
+            return $$(window).width() < 700;
         };
 
         me.run = function(fn) {
@@ -1897,7 +2237,7 @@ try {
         me.scrollToElement = function(el, behavior) {
             if (el == null || el.length == 0) return;
 
-            var wh = $(window).height();
+            var wh = $$(window).height();
             var ot = 0;
 
             if (wh < 800) ot = 0;
@@ -1917,7 +2257,7 @@ try {
         };
 
         me.restoreScroll = function() {
-            $("html, body").css({overflow: "auto", height: "auto"});
+            $$("html, body").css({overflow: "auto", height: "auto"});
         };
 
         /*** dev ****************************************************************************************************** */
@@ -1956,17 +2296,6 @@ catch (ex) {
     log(ex);
 }
 
-
-/*
-    TODO:
-    make it fixed pos > make sure uw doesn't tidy it
-    make style stronger e.g. pocket
-    make it work without uw-container
-    add colour
-    add export
-    include in uw? > no log problems; or move to separate file?
-*/
-
 var fontEdit = new function () {
     var me = this;
 
@@ -1978,132 +2307,112 @@ var fontEdit = new function () {
 
     me.open = function () {
 
-        if (0) {
-            var norml = [
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Arial" },
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Verdana" },
-                { size: 19, height: 28, sizeS: 19, heightS: 28, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Calibri" },
-                { size: 18, height: 27, sizeS: 18, heightS: 27, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Calibri Light" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Century Gothic" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Corbel" },
-                { size: 18, height: 27, sizeS: 18, heightS: 27, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Ebrima" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Gadugi" },
-                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Lucida Sans Unicode" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Malgun Gothic" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Microsoft JhengHei UI" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Microsoft New Tai Lue" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Microsoft PhagsPa" },
-                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "MS Reference Sans Serif" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Nirmala UI" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Segoe UI" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Segoe UI Light" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Segoe UI Symbol" },
-                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Tahoma" },
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Trebuchet MS" },
-            ];
-            var serif = [
-                { size: 18, height: 29, sizeS: 10, heightS: 20, weight: "900", color: "#060", serif: 1, fixed: 0, indent: 0, face: "Broadway" },
-                { size: 16, height: 26, sizeS: 15, heightS: 19, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Merriweather" },
-                { size: 16, height: 24, sizeS: 19, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Lora" },
-                { size: 15, height: 21, sizeS: 19, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Lora" },
-                { size: 17, height: 28, sizeS: 18, heightS: 29, weight: "400", color: "#00f", serif: 1, fixed: 0, indent: 0, face: "Bookman Old Style" },
-                { size: 19, height: 27, sizeS: 19, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Cambria" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Cambria Math" },
-                { size: 20, height: 28, sizeS: 20, heightS: 28, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Centaur" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Century" },
-                { size: 18, height: 27, sizeS: 18, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Constantia" },
-                { size: 20, height: 29, sizeS: 20, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Garamond" },
-                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Georgia" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "High Tower Text" },
-                { size: 17, height: 27, sizeS: 17, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Lucida Bright" },
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Lucida Fax" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Mongolian Baiti" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Palatino Linotype" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "SimSun-ExtB" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Sylfaen" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Times New Roman" },
-            ];
-            var fixed = [
-                { size: 18, height: 22, sizeS: 18, heightS: 22, weight: "400", color: "#333", serif: 1, fixed: 1, indent: 0, face: "Courier New" },
-                { size: 15, height: 21, sizeS: 15, heightS: 21, weight: "400", color: "#333", serif: 0, fixed: 1, indent: 0, face: "Consolas" },
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 1, indent: 0, face: "Lucida Console" },
-                { size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 1, indent: 0, face: "SimSun" },
-            ];
+        me.showing = true;
+        me.fonts = []; //qqqqq
 
-            var norml = [
-                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Verdana" },
-                { size: 18, height: 24, sizeS: 18, heightS: 24, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Calibri" },
-                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Malgun Gothic" },
-                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Microsoft JhengHei UI" },
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Microsoft New Tai Lue" },
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Microsoft PhagsPa" },
-                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "MS Reference Sans Serif" },
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Nirmala UI" },
-                { size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Segoe UI" },
-                { size: 16, height: 24, sizeS: 16, heightS: 24, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Segoe UI Symbol" },
-                { size: 16, height: 24, sizeS: 16, heightS: 24, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Trebuchet MS" },
-            ];
+        //serif...
+        me.fonts.push(userWeb.fontC);
+        // me.fonts.push({ size: 18, height: 29, sizeS: 10, heightS: 20, weight: "900", color: "#060", serif: 1, fixed: 0, indent: 10, face: "Broadway" });
+        me.fonts.push({ size: 18, height: 28, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Bookman Old Style" });
+        me.fonts.push({ size: 19, height: 30, sizeS: 17, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Georgia" });
+        me.fonts.push({ size: 21, height: 27, sizeS: 20, heightS: 28, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Centaur" });
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Century" });
+        me.fonts.push({ size: 18, height: 27, sizeS: 18, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Constantia" });
+        me.fonts.push({ size: 20, height: 29, sizeS: 20, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Garamond" });
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "High Tower Text" });
+        me.fonts.push({ size: 17, height: 27, sizeS: 17, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Lucida Bright" });
+        me.fonts.push({ size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Lucida Fax" });
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Mongolian Baiti" });
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Palatino Linotype" });
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "SimSun-ExtB" });
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Sylfaen" });
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Times New Roman" });
 
-            me.fonts = norml;
-            me.fonts = serif;
-            // me.fonts = fixed;
-            // me.fonts = norml.concat(serif).concat(fixed);
+        me.fonts.push({ size: 18, height: 27, sizeS: 19, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Lora" });
+        me.fonts.push({ size: 20, height: 28, sizeS: 19, heightS: 27, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Cambria" });
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Cambria Math" });
+        me.fonts.push({ size: 16, height: 26, sizeS: 15, heightS: 19, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Merriweather" });
+
+        //normal...
+
+        me.fonts.push(userWeb.fontA);
+        me.fonts.push(userWeb.fontB);
+        me.fonts.push({ size: 18, height: 29, sizeS: 14, heightS: 24, weight: "300", color: "#222", serif: 0, fixed: 0, indent: 10, face: "Ubuntu" });
+        me.fonts.push({ size: 18, height: 27, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Malgun Gothic" });
+        me.fonts.push({ size: 18, height: 27, sizeS: 18, heightS: 27, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Calibri Light" });
+        me.fonts.push({ size: 17, height: 28, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Century Gothic" });
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "300", color: "#000", serif: 0, fixed: 0, indent: 10, face: "Segoe UI Light" });
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Open Sans" });
+        me.fonts.push({ size: 17, height: 30, sizeS: 17, heightS: 27, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Lucida Sans Unicode" });
+        me.fonts.push({ size: 16, height: 23, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Trebuchet MS" });
+
+        //bold...
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Open Sans" });  //111
+        me.fonts.push({ size: 18, height: 28, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Malgun Gothic" });
+
+        me.fonts.push({ size: 17, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Microsoft JhengHei UI" });
+
+
+        me.fonts.push({ size: 18, height: 27, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Arial" });
+        me.fonts.push({ size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Verdana" });
+        me.fonts.push({ size: 19, height: 28, sizeS: 19, heightS: 28, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Calibri" });
+        me.fonts.push({ size: 19, height: 24, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Corbel" });
+
+        me.fonts.push({ size: 18, height: 27, sizeS: 18, heightS: 27, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Ebrima" });
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Gadugi" });
+        me.fonts.push({ size: 18, height: 27, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Microsoft New Tai Lue" });
+
+        me.fonts.push({ size: 17, height: 27, sizeS: 17, heightS: 27, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "MS Reference Sans Serif" });
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Nirmala UI" });
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Segoe UI" });
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "600", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Segoe UI Light" });
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Segoe UI Symbol" });
+        me.fonts.push({ size: 17, height: 27, sizeS: 17, heightS: 27, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Tahoma" });
+
+        //fixed...
+        me.fonts.push({ size: 18, height: 22, sizeS: 18, heightS: 22, weight: "400", color: "#333", serif: 1, fixed: 1, indent: 10, face: "Courier New" });
+        me.fonts.push({ size: 15, height: 21, sizeS: 15, heightS: 21, weight: "400", color: "#333", serif: 0, fixed: 1, indent: 10, face: "Consolas" });
+        me.fonts.push({ size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 1, indent: 10, face: "Lucida Console" });
+        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 1, indent: 10, face: "SimSun" });
+
+        var opts = "";
+        for (var i = 0; i < me.fonts.length; i++) {
+            var f = me.fonts[i];
+            opts += "<option>" + f.face + "</option>";
         }
-        else if (1) {
-            me.fonts = [
-                { size: 16, height: 22, sizeS: 14, heightS: 19, weight: "300", color: "#000", serif: 0, fixed: 0, indent: 0, face: "Ubuntu" },      //A
-                { size: 17, height: 27, sizeS: 14, heightS: 24, weight: "300", color: "#222", serif: 0, fixed: 0, indent: 0, face: "Ubuntu" },      //B
-
-                { size: 18, height: 25, sizeS: 16, heightS: 22, weight: "300", color: "#000", serif: 0, fixed: 0, indent: 0, face: "Corbel" },      //B?
-                { size: 16, height: 24, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Open Sans" },   //B?
-                { size: 15, height: 23, sizeS: 15, heightS: 23, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Verdana" },     //B?
-                { size: 18, height: 24, sizeS: 18, heightS: 24, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Calibri" },     //B?
-
-                { size: 19, height: 29, sizeS: 15, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 0, indent: 0, face: "Yu Mincho" },   //C
-                { size: 18, height: 29, sizeS: 16, heightS: 24, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 0, face: "Lora" },        //C?
-
-            ];
-        }
-        else {
-            me.fonts = [];
-            for (var i in me.fonts) {
-                me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "normal", color: "#333", indent: 0, face: me.fonts[i] });
-            }
-        }
-
-        var doc = [];
+        var doc = []; //qqqqqq
         doc.push("<div id='fe-outer'>");
-                doc.push("<table>" +
-                          "<tr>" +
-                            "<td><a class='fe-prev'>&lt;</a><a class='fe-next'>&gt;</a></td>" +
-                            "<td align=right><a class='fe-close'>X</a></td>" +
-                          "</tr>" +
-                          "<tr>" +
-                            "<td colspan=2><input type='text' id='fe-list'></td>" +
-                          "</tr>" +
-                          "<tr>" +
-                            "<td><a class='fe-fsup'>+</a><a class='fe-fsdn'>-</a></td>" +
-                            "<td class='fe-size'></td>" +
-                          "</tr>" +
-                          "<tr>" +
-                            "<td><a class='fe-lhup'>+</a><a class='fe-lhdn'>-</a></td>" +
-                            "<td class='fe-height'></td>" +
-                          "</tr>" +
-                          "<tr>" +
-                            "<td><a class='fe-fwup'>+</a><a class='fe-fwdn'>-</a></td>" +
-                            "<td class='fe-weight'></td>" +
-                          "</tr>" +
-                          "<tr>" +
-                            "<td colspan=2><input type='text' class='fe-color' /></td>" +
-                        "</tr></table>");
+            doc.push("<table>" +
+                      "<tr>" +
+                        "<td><a class='fe-prev'>&lt;</a><a class='fe-next'>&gt;</a></td>" +
+                        "<td align=right><a class='fe-close'>X</a></td>" +
+                      "</tr>" +
+                      "<tr>" +
+                        "<td colspan=2><select id='fe-list'>" + opts + "</select></td>" +
+                      "</tr>" +
+                      "<tr>" +
+                        "<td><a class='fe-fsup'>+</a><a class='fe-fsdn'>-</a></td>" +
+                        "<td class='fe-size'></td>" +
+                      "</tr>" +
+                      "<tr>" +
+                        "<td><a class='fe-lhup'>+</a><a class='fe-lhdn'>-</a></td>" +
+                        "<td class='fe-height'></td>" +
+                      "</tr>" +
+                      "<tr>" +
+                        "<td><a class='fe-fwup'>+</a><a class='fe-fwdn'>-</a></td>" +
+                        "<td class='fe-weight'></td>" +
+                      "</tr>" +
+                      "<tr>" +
+                        "<td colspan=2><input type='text' class='fe-color' /></td>" +
+                    "</tr></table>");
 
         doc.push("</div>");
         var html = doc.join("");
 
         document.body.insertAdjacentHTML("afterbegin", html);
 
-        me.feList = $("#fe-list");
-        me.div = $("#fe-outer");
+        me.feList = $$("#fe-list");
+        me.div = $$("#fe-outer");
         me.setStyleCommon();
         me.setEvents();
     };
@@ -2116,18 +2425,19 @@ var fontEdit = new function () {
         me.feList.change();
         me.feList.focus();
 
-        $(".fe-close").click(function() {
-            $("body").unbind("keyup.fontEdit");
+        $$(".fe-close").click(function() {
+            $$("body").unbind("keyup.fontEdit");
             me.div.remove();
+            me.showing = false;
         });
-        $(".fe-prev").click(function() {
+        $$(".fe-prev").click(function() {
             me.feListPrev();
         });
-        $(".fe-next").click(function() {
+        $$(".fe-next").click(function() {
             me.feListNext();
         });
 
-        $("body").bind("keyup.fontEdit", function(e) {
+        $$("body").bind("keyup.fontEdit", function(e) { //qqqqq
             if (e.altKey && e.shiftKey) {
                 if (e.keyCode == 37) { // left
                     me.feListPrev();
@@ -2137,25 +2447,25 @@ var fontEdit = new function () {
                 }
             }
         });
-        $(".fe-fsup").click(function() {
+        $$(".fe-fsup").click(function() {
             me.incProp(this, "size", 1);
         });
-        $(".fe-fsdn").click(function() {
+        $$(".fe-fsdn").click(function() {
             me.incProp(this, "size", -1);
         });
-        $(".fe-lhup").click(function() {
+        $$(".fe-lhup").click(function() {
             me.incProp(this, "height", 1);
         });
-        $(".fe-lhdn").click(function() {
+        $$(".fe-lhdn").click(function() {
             me.incProp(this, "height", -1);
         });
-        $(".fe-fwup").click(function() {
+        $$(".fe-fwup").click(function() {
             me.incProp(this, "weight", 100);
         });
-        $(".fe-fwdn").click(function() {
+        $$(".fe-fwdn").click(function() {
             me.incProp(this, "weight", -100);
         });
-        $(".fe-color").keyup(function() {
+        $$(".fe-color").keyup(function() {
             if (this.value.length > 3) {
                 me.changeProp(this, "color", this.value);
             }
@@ -2165,6 +2475,7 @@ var fontEdit = new function () {
     me.feListPrev = function() {
         if (me.font > 0) {
             me.font--;
+            me.feList[0].selectedIndex--;
             me.feList.change();
         }
     };
@@ -2172,6 +2483,7 @@ var fontEdit = new function () {
     me.feListNext = function() {
         if (me.font < me.fonts.length - 1) {
             me.font++;
+            me.feList[0].selectedIndex++;
             me.change();
         }
     };
@@ -2182,20 +2494,13 @@ var fontEdit = new function () {
     };
 
     me.getFont = function() {
-        // for (var i = 0; i < me.fonts.length; i++) {
-            // if (me.fonts[i].face.toLowerCase() == me.feList.val().toLowerCase()) {
-                // return me.fonts[i];
-            // }
-        // }
-
-        // log("fontEdit", "font not found: " + me.feList.val());
-        return me.fonts[me.font];
+        return me.fonts[me.feList[0].selectedIndex];
     };
 
     me.addStyleElement = function(id, css) {
-        $("#" + id).remove();
-        $(document.body).append(
-            $("<style>")
+        $$("#" + id).remove();
+        $$(document.body).append(
+            $$("<style>")
                 .attr("id", id)
                 .attr("rel", "stylesheet")
                 .attr("type", "text/css")
@@ -2223,6 +2528,12 @@ var fontEdit = new function () {
 
     me.setStyleCommon = function() {
         me.addStyleElement("fe-css",
+            "html body div#fe-outer a { " +
+                "-webkit-user-select: none;" +  /* Chrome all / Safari all */
+                "-moz-user-select: none;" +     /* Firefox all */
+                "-ms-user-select: none;" +      /* IE 10+ */
+                "user-select: none;" +          /* Likely future */
+            "}" +
             "html body div#fe-outer { " +
                 "position: fixed !important; " +
                 "top: 10px !important; " +
@@ -2261,14 +2572,17 @@ var fontEdit = new function () {
             "html body div#fe-outer table tbody tr td input { " +
                 "padding: 0 2px !important;" +
                 "width: 66px !important; " +
+            "}" +
+            "html body div#fe-outer select { " +
+                "max-width: 72px !important; " +
             "}"
         );
     };
 
     me.setStyle = function(f) {
         me.addStyleElement("fe-css-i",
-            "html body .uw-container *, " +
-            "html body .uw-container p { " +
+            "html body.uw-body .uw-container *, " +
+            "html body.uw-body .uw-container p { " +
                 "font-family: " + f.face + ", Comic Sans MS !important; " +
                 "font-size: " + f.size + "px !important; " +
                 "line-height: " + f.height + "px !important; " +
@@ -2287,10 +2601,10 @@ var fontEdit = new function () {
         );
 
         me.feList.val(f.face);
-        $(".fe-size").text(f.size);
-        $(".fe-height").text(f.height);
-        $(".fe-weight").text(f.weight);
-        $(".fe-color").val(f.color);
+        $$(".fe-size").text(f.size);
+        $$(".fe-height").text(f.height);
+        $$(".fe-weight").text(f.weight);
+        $$(".fe-color").val(f.color);
 
         if (userWeb.marked) {
             userWeb.scrollToElement(userWeb.marked, "auto");
@@ -2337,7 +2651,7 @@ function log() {
             var style = "position:absolute; top:0px; left:0px; background-color:#fff; " +
                         "border:solid 1px #000; padding:10px; z-index:99999999; color:#000; " +
                         "min-width:400px; font: 12px/18px Consolas, Verdana; text-align: justify;";
-            logPopup = addEl($("body"), "div")[0];
+            logPopup = addEl($$("body"), "div")[0];
             logPopup.style = style;
             logPopup.oncontextmenu = function(e) {
                 logPopup.style.display = "none";
@@ -2423,7 +2737,7 @@ function log() {
     }
 }
 function addEl(parent, tag, className, text, click, prepend) {
-    var el = $("<" + tag + ">");
+    var el = $$("<" + tag + ">");
 
     if (className != null) {
         el.addClass(className);
@@ -2450,20 +2764,20 @@ function addEl(parent, tag, className, text, click, prepend) {
 }
 function elToString(el) {
     try {
-        var $el = $(el);
-        var res = "<" + $el.prop("tagName");
-        var id = $el.attr("id");
+        var elj = $$(el);
+        var res = "<" + elj.prop("tagName");
+        var id = elj.attr("id");
 
         if (id) {
             res += " id='" + id + "'";
         }
 
-        var class1 = $el.prop("class");
+        var class1 = elj.prop("class");
         if (class1) {
             res += " class='" + class1 + "'";
         }
 
-        var text = trim($el.text());
+        var text = trim(elj.text());
         if (text.length > 30) text = text.substr(0, 30) + "...";
 
         return res + ">" + text;
