@@ -1,12 +1,12 @@
 ﻿/* reading... */
 body .mw-content-ltr p, body .mw-content-ltr ul {
-    font-family: Ubuntu !important; /* uw-fnt-b */
-    font-size: 17px !important; /* uw-sz-blg */
-    line-height: 27px !important; /* uw-lh-blg */
+    font-family: Corbel !important; /* uw-fnt-b */
+    font-size: 20px !important; /* uw-sz-blg */
+    line-height: 30px !important; /* uw-lh-blg */
     font-weight: 300 !important; /* uw-wgt-b */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
-    color: #222 !important; /* uw-clr-b */
+    color: #333 !important; /* uw-clr-b */
 }
 
 p {
@@ -14,7 +14,7 @@ p {
 }
 
 .mw-content-ltr a {
-    color: #222 !important; /* uw-clr-b */
+    color: #333 !important; /* uw-clr-b */
     text-decoration: underline #ccc !important; /* uw-uln */
     border-bottom: none !important; /* uw-btm */
 }

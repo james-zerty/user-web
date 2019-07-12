@@ -26,12 +26,13 @@ try {
             $(document).bind("DOMNodeInserted", function(){
                 me.switchLinks();
             });
-
         };
 
         me.switchLinks = function() {
-            $(".entryholder a").each(function() {
+            $(".entryholder a.title, .entryholder a.secondary").each(function() {
                 var el = $(this);
+                if (el.hasClass("pock-done")) return;
+                el.addClass("pock-done");
                 var href = el.attr("href");
                 if (href) {
                     var prefix = "https://getpocket.com/edit?";
@@ -40,9 +41,8 @@ try {
                     var u = encodeURIComponent(href);
                     //var title = encodeURIComponent(window.document.title);
                     var pocketUrl = prefix + "url=" + u; // + "&title=" + title;
-                            
-                    el.attr("href", pocketUrl);
                     log("switching", el.text(), " : ", href, " to ", pocketUrl);
+                    $("<a href=" + pocketUrl + ">Add to Pocket</a>").insertAfter(el);
                 }
             });
         };

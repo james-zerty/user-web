@@ -48,8 +48,20 @@
     margin: 0 auto !important;
 }
 
-.column--primary, .container, .container-width-only {
+.column--primary,
+.container,
+.container-width-only,
+#responsive-story-page {
     width: 750px !important;
+}
+
+#responsive-story-page {
+    margin: 0 auto !important;
+    display: block;
+}
+
+#story-body {
+    margin: 0 !important;
 }
 
 #bbccookies,
@@ -57,6 +69,7 @@
 .section-header__orb,
 .navigation__orb-stuck,
 .column--secondary,
+.layout__secondary-col--spaced,
 .js-breaking-news-banner,
 .nw-c-breaking-news-banner,
 .pullout,

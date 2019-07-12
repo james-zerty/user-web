@@ -42,10 +42,6 @@ a.hdtb-dd-b {
     height: 19px !important;
 }
 
-#hdtb-msb .hdtb-mitem.hdtb-imb:first-child {
-    margin-left: 150px !important;
-}
-
 .hdtb-tsel {
     color: #4285F4 !important;
 }
@@ -73,12 +69,29 @@ span.mn-dwn-arw {
     border-width: 1px 0 !important;
 }
 
+.HF9Klc.ZYMsjf,
+.more-vert.z1asCe.SaPW2b {
+    display: none !important;
+}
+
 /********** medium window... **********/
 @media (max-width: 1150px) {
     #rhs {
         margin-left: 660px !important;
     }
+    
+    .RNNXgb {
+        width: 350px !important;
+        
+    }
 
+    #hdtb-msb {
+        margin-top: 10px !important;
+    }
+    #hdtb-msb-vis {
+        margin-left: 0 !important;
+    }
+    
     #hdtb-msb .hdtb-mitem.hdtb-msel:first-child,
     #hdtb-msb .hdtb-mitem.hdtb-msel-pre:first-child,
     #hdtb-msb > .hdtb-mitem:first-child,
