@@ -40,7 +40,7 @@ try {
                 { exp: /calendar\.google\.com\/calendar/i, icon: "https://calendar.google.com/googlecalendar/images/favicon_v2014_31.ico" },
                 { exp: /bbc\.co\.uk\/weather/i, icon: me.getUrl("styles/icons/bbc-weather-icon.png") },
                 { exp: /bbc\.co.\uk\/news/i, filter: "#breaking-news-container, .share", icon: me.getUrl("styles/icons/bbc-news-icon.png") },
-                { exp: /bbc\.co.\uk\/(iplayer|sounds|programmes|bbcone|bbctwo|tv\/bbcthree|bbcfour)/i, custom: function() { me.iplayerCustom(); } }, //qq
+                { exp: /bbc\.co.\uk\/(iplayer|sounds|programmes|bbcone|bbctwo|tv\/bbcthree|bbcfour)/i, custom: function() { me.iplayerCustom(); } },
                 { exp: /\/dana\/home\/index\.cgi/i, icon: me.getUrl("styles/icons/net-home.ico") },
                 { exp: /(thenib|medium)\.com/i, filter: ".metabar, .postActionsBar, .promoCardWrapper, [data-image-id='1*8Ns0Hg0Tbw8jFjaMLN-qYw.gif']" },
                 { exp: /tumblr\.com/i, filter: ".tumblr_controls, #notes" },
@@ -76,13 +76,14 @@ try {
             }
 
             if (settings.autoRun) {
-                //me.markElement($$("p:nth-child(3)"));
-                //me.markElementAndBind($$("p:nth-child(3)"));
+                // me.openMaps("OSM");
+                // me.markElement($$("p:nth-child(3)"));
+                // me.markElementAndBind($$("p:nth-child(3)"));
                 // me.doReadAuto();
                 // me.setFontA();
-                //me.readLite();
-                //me.addStyles(); me.doMarkAuto();
-                //me.doPopoutAuto();
+                // me.readLite();
+                // me.addStyles(); me.doMarkAuto();
+                // me.doPopoutAuto();
                 // throw new Error("test!");
                 // me.doMarkAuto();
                 // var el = me.getTarget();
@@ -96,19 +97,18 @@ try {
             if (settings.autoShow) {
                 me.showMenu([]);
             }
-
         };
 
-        me.setEvents = function() { //qq
+        me.setEvents = function() {
             me.bindPageMouse();
             me.bindPageKeyDown();
         };
 
-        me.checkEvents = function() { //qq
+        me.checkEvents = function() {
             /*
             var delayEvents =
                 url.match(/\/iplayer\//i) ||
-                (url.match(/\.bbc\./i) && $("#mediaContainer, .player-with-placeholder, .vxp-media__error-message, .lx-c-media-player").length > 0);
+                (url.match(/\.bbc\./i) && $$("#mediaContainer, .player-with-placeholder, .vxp-media__error-message, .lx-c-media-player").length > 0);
             */
 
             var ok = false;
@@ -148,7 +148,7 @@ try {
             }
         };
 
-        me.reloadMe = function() { //qq
+        me.reloadMe = function() {
             log("RELOADING", "RELOADING!");
             var sj = document.createElement('script');
             sj.src = me.getUrl("scripts/jquery/jquery-3.3.1.min.js");
@@ -171,7 +171,7 @@ try {
             // me.iplayerCustom();
         };
 
-        me.testTidy = function() { //add fixed element when page scrolls... //qq
+        me.testTidy = function() { //add fixed element when page scrolls...
             $$(window).scroll(function() {
                 log("scrolling!");
                 if ($$(".uw-tidy-test").length == 0) {
@@ -193,7 +193,7 @@ try {
             });
         };
 
-        me.wikipediaCustom = function() {
+        me.wikipediaCustom = function() { //qq
             log("wikipedia", "changing header link to random and adding lightboxes");
 
             //change wikipedia header to link to a random page...
@@ -232,7 +232,7 @@ try {
             log("wikipedia", "done");
         };
 
-        me.iplayerCustom = function() { //qq
+        me.iplayerCustom = function() {
             // if ($$(".uw-ip-btns").length > 0) return; //custom runs every 6 hours
 
             $$(".uw-ip-btns").remove();
@@ -332,6 +332,7 @@ try {
                             me.ipGetString(url.match(/\/play\/[\w\d]+/i), 6);
 
             //javascript:(function() { console.clear(); if (window.jQuery && jQuery.css) { doIt(); } else { ld("https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-3.3.1.min.js"); window.setTimeout(function() { doIt(); }, 1000); } function doIt() { var $$ = window.jQuery; $$(".uw-ip-btns").remove(); ld("https://localhost:44300/scripts/user-web.user.js?"+new Date().valueOf()); } function ld(u) { var s = document.createElement('script'); s.src = u; document.getElementsByTagName('head')[0].appendChild(s); } })();
+            //javascript:(function() { console.clear(); if (window.jQuery && jQuery.css) { doIt(); } else { ld("https://localhost:44300/scripts/jquery/jquery-3.3.1.min.js");                        window.setTimeout(function() { doIt(); }, 1000); } function doIt() { var $ = window.jQuery; ld("https://localhost:44300/scripts/talk-talk-router.user.js?"+                     new Date().valueOf()); } function ld(u) { var s = document.createElement('script'); s.src = u; document.getElementsByTagName('head')[0].appendChild(s); } })();
 
             if (episode) {
                 me.ipAddButton(media + "1 " + episode + " " + title);
@@ -427,7 +428,7 @@ try {
 
         /*** page events ********************************************************************************************** */
 
-        me.bindPageMouse = function() { //qq
+        me.bindPageMouse = function() {
             $$("body").unbind("mouseup.uw-mu");
             $$("body").bind("mouseup.uw-mu", function(e) {
                 me.onPageMouseUp(e);
@@ -498,7 +499,7 @@ try {
             }
         };
 
-        me.clearSelection = function(e) {
+        me.clearSelection = function(e) { //qq move to utils
             if (window.getSelection) {
                 try {
                     window.getSelection().removeAllRanges();
@@ -586,8 +587,6 @@ try {
                             }
                             if (nextState == -1) nextState = 0;
                             if (nextState == 5) nextState = 0;
-                            // log("Old state", me.readingState);
-                            // log("Next state", nextState);
 
                             switch (nextState) { //qq
                                 case 0:
@@ -617,7 +616,6 @@ try {
                                     me.undoRead();
                                     break;
                             }
-                            // log("New state", me.readingState);
                         }
 
                         return me.cancelEvent(e);
@@ -651,7 +649,6 @@ try {
                             }
 
                             if (curr.prop("tagName") == "P") {
-                                //log("we're reading p's");
                                 next = getNext(fwd, curr);
                             }
 
@@ -827,6 +824,8 @@ try {
             log("sel.left", sel.left);
             log("sel.right", sel.right);
             log("sel.top", sel.top);
+            log("sel.bottom", sel.bottom);
+            
             log("mnu.top", mnu.top);
             log("mnu.left", mnu.left);
             log("mnu.height", mnu.height);
@@ -1313,11 +1312,35 @@ try {
             window.open(url.replace("TESTSEARCH", encodeURIComponent(trim(me.selectedText)).replace(/%20/g, "+")), "", "");
         };
 
-        me.navigateTo = function(url) {
-            url = trim(url);
-            if (url.indexOf("http") != 0) {
-                url = "http://" + url;
+        me.openMaps = function(type) { //qq
+            var url = document.location.href;
+
+            if (me.url.match(/localhost/)) {
+                url = "https://www.google.co.uk/maps/@-31.8978606,115.8557647,2472m/data=!3m1!1e3";
+                // url = "https://www.google.co.uk/maps/@53.5533928,-2.3777822,17.25z";
+                // url = "https://www.bing.com/maps?osid=93c03dfb-f71d-449d-a5e8-33d609dbd00f&cp=53.407423~-2.345661&lvl=13&style=s&v=2&sV=2&form=S00027";
+                // url = "http://brouter.de/brouter-web/#map=15/54.6728/-3.2478/standard&profile=hiking-beta";
+                // url = "https://www.geocaching.com/play/map/?lat=53.40926&lng=-2.3521799999999757&zoom=16&asc=true&sort=distance&st=m33+4hs";
+                // url = "https://www.openstreetmap.org/#map=15/53.4089/-2.3496&yo";
             }
+
+            log("maps", "1");
+            if (trim(me.selectedText)) {
+                log("maps", "found me.selectedText >", me.selectedText, "<");
+
+                switch (type) {
+                    case "OSM":
+                        //https://www.openstreetmap.org/search?query=TRST#map=12/45.6768/13.7833
+                        me.openSearch("https://www.openstreetmap.org/search?query=TESTSEARCH");
+                        break;
+                    case "GOOGLE":
+                        me.openSearch("https://maps.google.co.uk/maps?q=TESTSEARCH");
+                        break;
+
+                }
+            }
+            else {
+                log("maps", "get coords from url...");
 
                 var coords = "";
                 if (url.match(/openstreetmap/i)) {
@@ -1334,7 +1357,7 @@ try {
                     if (coords) {
                         var tmp = coords[0].split(",");
 
-                        //on google earth / sattelite
+                        //on google earth / satellite
                         // 13.72z > 9906m
                         // 16.97z > 1041m
                         // 17z    >  712m
@@ -1663,7 +1686,7 @@ try {
             );
         };
 
-        me.setFontA = function() { //qq
+        me.setFontA = function() { 
             $$("body").addClass("uw-fontA");
             $$("body").removeClass("uw-fontB");
             $$("body").removeClass("uw-fontC");
@@ -1857,7 +1880,7 @@ try {
                     }
 
                     if (cfg.icon) {
-                        log("site icon", cfg.icon.substr(cfg.icon.lastIndexOf("/") + 1)); //qq
+                        log("site icon", cfg.icon.substr(cfg.icon.lastIndexOf("/") + 1));
 
                         $$("link[rel='icon']").remove();
 
@@ -1872,7 +1895,7 @@ try {
                     if (cfg.custom) {
                         log("custom function", cfg.custom);
 
-                        me.run(function() { //qq
+                        me.run(function() {
                             cfg.custom();
                         });
                     }
@@ -1886,7 +1909,7 @@ try {
 
         /*** reading ************************************************************************************************** */
 
-        me.readLite = function() { //qq
+        me.readLite = function() {
             me.addStyles();
             $$("p").addClass("uw-lite");
             me.readingState = 1;
@@ -1920,7 +1943,7 @@ try {
             me.readingState = 2;
         };
 
-        me.undoRead = function() { //qq
+        me.undoRead = function() {
             me.activeReadr = false;
             $$("body").removeClass("uw-fontA");
             $$("body").removeClass("uw-fontB");
