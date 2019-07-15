@@ -264,7 +264,9 @@ try {
                 me.ipAddButtons("Jon Ronson On - Series 7 - 11:11 - BBC Sounds",          "https://www.bbc.co.uk/sounds/play/b01rlrjz");                                              //r1
             }
             else {
-                me.ipFlatten();
+                if (me.url.match(/bbcone|bbctwo|bbcthree|bbcfour/gi)) {
+                    me.ipFlatten();
+                }
                 me.ipAddButtons(document.title, document.location.href);
             }
         };
@@ -298,10 +300,17 @@ try {
             $$("body").append(dupes);
             var texts = [];
 
-            $$(".content-item").each(function(x) {
+            $$(".content-item").each(function(x) { //qqqqq
                 var i = $$(this.cloneNode(true));
-                var t = i.text();
-                if (texts.includes(t)) {
+                var t = i.find(".content-item__info__text").text();
+            
+                var toLoad = i.find(".rs-image--not-loaded");
+                if (toLoad.length > 0) {
+                    var src = toLoad.text().match(/srcSet=\"[^ ]*/ig)[0].substr(8);
+                    toLoad.append($$("<img src=" + src + " style='width:200px;'>"));
+                }
+                
+                if (texts.includes(t) || t.match(/EastEnders|Holby City|Top Gear|Two Pints of Lager|Summer Heights High|Private School Girl|We Can Be Heroes/gi)) {
                     dupes.append(i);
                     log("dupe", t);
                 }
