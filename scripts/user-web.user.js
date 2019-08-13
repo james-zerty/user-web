@@ -50,9 +50,9 @@ try {
             ];
 
              //qq
-            me.fontA = { size: 16, height: 22, sizeS: 14, heightS: 19, weight: "300", color: "#000", serif: 0, fixed: 0, indent: 0,  face: "Ubuntu" };
-            me.fontB = { size: 20, height: 30, sizeS: 18, heightS: 25, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Corbel" };
-            me.fontC = { size: 20, height: 34, sizeS: 19, heightS: 27, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Lora" };
+            me.fontA = { size: 16, height: 22, weight: "300", color: "#000", sizeS: 14, heightS: 19, serif: 0, fixed: 0, indent: 0,  face: "Ubuntu" };
+            me.fontB = { size: 20, height: 30, weight: "300", color: "#333", sizeS: 18, heightS: 25, serif: 0, fixed: 0, indent: 10, face: "Corbel" };
+            me.fontC = { size: 19, height: 31, weight: "400", color: "#222", sizeS: 15, heightS: 25, serif: 1, fixed: 0, indent: 10, face: "Yu Mincho" };
 
             me.marked = $$();
             me.forced = $$();
@@ -83,14 +83,14 @@ try {
                 // me.setFontA();
                 // me.readLite();
                 // me.addStyles(); me.doMarkAuto();
-                // me.doPopoutAuto();
                 // throw new Error("test!");
                 // me.doMarkAuto();
                 // var el = me.getTarget();
                 // var el = $$("#readThis");
                 // me.markElementAndBind(el);
-                // me.setFontC();
-                // me.editFonts();
+                me.doPopoutAuto();
+                me.setFontC();
+                me.editFonts();
                 // window.scroll({ top: 2620, left: 300 }); //qq
             }
 
@@ -962,7 +962,7 @@ try {
                     me.undoPopout();
                     me.undoRead();
                 }
-            }, null, "Go to new tab");
+            }, null, "Cancel marking or reading");
 
             //--------------------------------------------------------
             //--------------------------------------------------------
@@ -971,7 +971,7 @@ try {
             var title = encodeURIComponent(window.document.title);
             var prefix = "https://getpocket.com/edit?";
             var pocketUrl = prefix + "url=" + u + "&title=" + title;
-            me.addListLink(ulLeft, "Go to", function() { me.navigateTo(me.selectedText); });
+            me.addListLink(ulLeft, "Go", function() { me.navigateTo(me.selectedText); });
             me.addListLink(ulLeft, "Add to Pocket", null, pocketUrl);
 
             me.addSeparator(ulLeft); //--------------------------------------------------------
@@ -1093,9 +1093,10 @@ try {
 
             me.addSeparator(ulRight); //--------------------------------------------------------
             me.addListLink(ulRight, "Google Maps",      function() { me.openMaps("GOOGLE"); });
-            me.addListLink(ulRight, "Geocache",         function() { me.openMaps("GEO"); });
-            me.addListLink(ulRight, "BRouter",          function() { me.openMaps("BROUTER"); });
-            me.addListLink(ulRight, "Bing",             function() { me.openMaps("BING"); });
+            // me.addListLink(ulRight, "Geocache",         function() { me.openMaps("GEO"); });
+            // me.addListLink(ulRight, "BRouter",          function() { me.openMaps("BROUTER"); });
+            me.addListLink(ulRight, "Bing Aerial",      function() { me.openMaps("BING_AERIAL"); });
+            me.addListLink(ulRight, "Bing OS",          function() { me.openMaps("BING_OS"); });
             me.addListLink(ulRight, "OSM",              function() { me.openMaps("OSM"); }); //qq
 
             me.addSeparator(ulRight); //--------------------------------------------------------
@@ -1105,6 +1106,7 @@ try {
 
             me.addSeparator(ulRight); //--------------------------------------------------------
             me.addListLink(ulRight, "Wikipedia",        function() { me.openSearch("https://en.m.wikipedia.org/wiki/Special:Search?search=TESTSEARCH&go=Go"); });
+            me.addListLink(ulRight, "BBC News",         function() { me.openSearch("https://www.bbc.co.uk/search?q=TESTSEARCH"); });
             me.addListLink(ulRight, "Amazon",           function() { me.openSearch("http://www.amazon.co.uk/s/ref=nb_sb_noss_1?url=search-alias%3Daps&field-keywords=TESTSEARCH&x=0&y=0"); });
             me.addListLink(ulRight, "Twitter",          function() { me.openSearch("https://twitter.com/search?q=TESTSEARCH&src=typd"); });
             me.addListLink(ulRight, "Reddit",           function() { me.openSearch("https://www.reddit.com/search?q=TESTSEARCH"); });
@@ -1385,6 +1387,16 @@ try {
                         var u = "https://www.google.co.uk/maps/@" + coords[1] + "," + coords[2] + "," + coords[0] + "z";
                         log("maps", u);
                         break;
+                    case "BING_OS":
+                        //https://www.bing.com/maps?osid=93c03dfb-f71d-449d-a5e8-33d609dbd00f&cp=53.407423~-2.345661&lvl=13&style=s&v=2&sV=2&form=S00027
+                        var u = "https://www.bing.com/maps?osid=93c03dfb-f71d-449d-a5e8-33d609dbd00f&cp=" + coords[1] + "~" + coords[2] + "&lvl=" + coords[0] + "&style=s&v=2&sV=2&form=S00027";
+                        log("maps", u);
+                        break;
+                    case "BING_AERIAL":
+                        //https://www.bing.com/maps?osid=eabf522d-f3eb-400f-a89d-d21d45bd9052&cp=53.403757~-2.363613&lvl=16&style=h&v=2&sV=2&form=S00027
+                        var u = "https://www.bing.com/maps?osid=93c03dfb-f71d-449d-a5e8-33d609dbd00f&cp=" + coords[1] + "~" + coords[2] + "&lvl=" + coords[0] + "&style=h&v=2&sV=2&form=S00027";
+                        log("maps", u);
+                        break;
                 }
 
                 if (me.url.match(/localhost/)) return;
@@ -1490,6 +1502,9 @@ try {
                     "user-select: none;" +
                     "border-collapse: collapse !important;" +
                     "border: solid 1px #000 !important;" +
+                "}" +
+                "html body .uw-menu table {" +
+                    "display: block !important;" +
                 "}" +
                 "html body .uw-menu table, html body .uw-menu table td {" +
                     "border-collapse: collapse !important;" +
@@ -2494,15 +2509,15 @@ var fontEdit = new function () {
         //normal...
         // me.fonts.push({ sep: true, face: "=== Sans Small ===" }); //------------------------------------------------------------------------------------------------------------------
         me.fonts.push(userWeb.fontA); var fontA = me.fonts.length - 1;
-        me.fonts.push({ size: 17, height: 27, sizeS: 14, heightS: 24, weight: "300", color: "#222", serif: 0, fixed: 0, indent: 10, face: "Ubuntu" });
-        me.fonts.push({ size: 19, height: 31, sizeS: 14, heightS: 24, weight: "300", color: "#222", serif: 0, fixed: 0, indent: 10, face: "Ubuntu" });
-        me.fonts.push({ size: 19, height: 32, sizeS: 14, heightS: 24, weight: "400", color: "#555", serif: 0, fixed: 0, indent: 10, face: "Ubuntu" });
+        me.fonts.push({ size: 17, height: 27, weight: "300", color: "#222", sizeS: 14, heightS: 24, serif: 0, fixed: 0, indent: 10, face: "Ubuntu" });
+        me.fonts.push({ size: 19, height: 31, weight: "300", color: "#222", sizeS: 14, heightS: 24, serif: 0, fixed: 0, indent: 10, face: "Ubuntu" });
+        me.fonts.push({ size: 19, height: 32, weight: "400", color: "#555", sizeS: 14, heightS: 24, serif: 0, fixed: 0, indent: 10, face: "Ubuntu" });
         // me.fonts.push({ sep: true, face: "=== Sans Large ===" }); //------------------------------------------------------------------------------------------------------------------
         me.fonts.push(userWeb.fontB); var fontB = me.fonts.length - 1;
-        // me.fonts.push({ size: 18, height: 28, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Open Sans" });
-        // me.fonts.push({ size: 18, height: 28, sizeS: 17, heightS: 27, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Tahoma" });
-        // me.fonts.push({ size: 18, height: 28, sizeS: 19, heightS: 28, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Calibri" });
-        // me.fonts.push({ size: 18, height: 28, sizeS: 18, heightS: 27, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Ebrima" });
+        // me.fonts.push({ size: 18, height: 28, weight: "300", color: "#333", sizeS: 18, heightS: 29, serif: 0, fixed: 0, indent: 10, face: "Open Sans" });
+        // me.fonts.push({ size: 18, height: 28, weight: "300", color: "#333", sizeS: 17, heightS: 27, serif: 0, fixed: 0, indent: 10, face: "Tahoma" });
+        // me.fonts.push({ size: 18, height: 28, weight: "300", color: "#333", sizeS: 19, heightS: 28, serif: 0, fixed: 0, indent: 10, face: "Calibri" });
+        // me.fonts.push({ size: 18, height: 28, weight: "300", color: "#333", sizeS: 18, heightS: 27, serif: 0, fixed: 0, indent: 10, face: "Ebrima" });
         // me.fonts.push({ size: 18, height: 28, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Century Gothic" });
         // me.fonts.push({ size: 18, height: 28, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Segoe UI" });
         // me.fonts.push({ size: 18, height: 28, sizeS: 16, heightS: 25, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Arial" });
@@ -2515,22 +2530,23 @@ var fontEdit = new function () {
         // me.fonts.push({ size: 20, height: 30, sizeS: 18, heightS: 29, weight: "400", color: "#555", serif: 0, fixed: 0, indent: 10, face: "Microsoft JhengHei UI" });
         // me.fonts.push({ size: 20, height: 30, sizeS: 17, heightS: 27, weight: "400", color: "#555", serif: 0, fixed: 0, indent: 10, face: "MS Reference Sans Serif" });
         // me.fonts.push({ size: 20, height: 30, sizeS: 18, heightS: 27, weight: "600", color: "#555", serif: 0, fixed: 0, indent: 10, face: "Calibri Light" });
-        // me.fonts.push({ size: 20, height: 30, sizeS: 18, heightS: 29, weight: "600", color: "#555", serif: 0, fixed: 0, indent: 10, face: "Segoe UI Symbol" });
-        // me.fonts.push({ size: 20, height: 30, sizeS: 18, heightS: 29, weight: "600", color: "#555", serif: 0, fixed: 0, indent: 10, face: "Segoe UI Light" });
+        // me.fonts.push({ size: 20, height: 30, weight: "600", color: "#555", sizeS: 18, heightS: 29, serif: 0, fixed: 0, indent: 10, face: "Segoe UI Symbol" });
+        // me.fonts.push({ size: 20, height: 30, weight: "600", color: "#555", sizeS: 18, heightS: 29, serif: 0, fixed: 0, indent: 10, face: "Segoe UI Light" });
         
         // me.fonts.push({ sep: true, face: "=== Serif Small ===" }); //-----------------------------------------------------------------------------------------------------------------
         // me.fonts.push({ sep: true, face: "=== Serif Big ===" }); //-------------------------------------------------------------------------------------------------------------------
-        me.fonts.push(userWeb.fontC); var fontC = me.fonts.length - 1;
-        me.fonts.push({ size: 17, height: 26, sizeS: 19, heightS: 27, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Lora" });
-        me.fonts.push({ size: 22, height: 38, sizeS: 17, heightS: 27, weight: "400", color: "#000", serif: 1, fixed: 0, indent: 10, face: "Cardo" });
-        me.fonts.push({ size: 20, height: 34, sizeS: 19, heightS: 27, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Cambria" });
-        me.fonts.push({ size: 20, height: 34, sizeS: 15, heightS: 19, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Merriweather" });
-        me.fonts.push({ size: 20, height: 34, sizeS: 17, heightS: 27, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Georgia" });
-        me.fonts.push({ size: 20, height: 34, sizeS: 15, heightS: 25, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Yu Mincho" });
+        me.fonts.push(userWeb.fontC); var fontC = me.fonts.length - 1; //qqqq
+        me.fonts.push({ size: 18, height: 31, weight: "300", color: "#222", sizeS: 19, heightS: 27, serif: 1, fixed: 0, indent: 10, face: "Lora" });
+        me.fonts.push({ size: 19, height: 34, weight: "300", color: "#444", sizeS: 17, heightS: 27, serif: 1, fixed: 0, indent: 10, face: "Georgia" });
+                                                                            
+        me.fonts.push({ size: 17, height: 26, weight: "300", color: "#333", sizeS: 19, heightS: 27, serif: 1, fixed: 0, indent: 10, face: "Lora" });
+        me.fonts.push({ size: 22, height: 38, weight: "400", color: "#000", sizeS: 17, heightS: 27, serif: 1, fixed: 0, indent: 10, face: "Cardo" });
+        me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 19, heightS: 27, serif: 1, fixed: 0, indent: 10, face: "Cambria" });
+        me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 15, heightS: 19, serif: 1, fixed: 0, indent: 10, face: "Merriweather" });
         /*
-        me.fonts.push({ size: 20, height: 34, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Bookman Old Style" });
-        me.fonts.push({ size: 20, height: 34, sizeS: 20, heightS: 28, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Centaur" });
-        me.fonts.push({ size: 20, height: 34, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Century" });
+        me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 18, heightS: 29, serif: 1, fixed: 0, indent: 10, face: "Bookman Old Style" });
+        me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 20, heightS: 28, serif: 1, fixed: 0, indent: 10, face: "Centaur" });
+        me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 18, heightS: 29, serif: 1, fixed: 0, indent: 10, face: "Century" });
         me.fonts.push({ size: 20, height: 34, sizeS: 18, heightS: 27, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Constantia" });
         me.fonts.push({ size: 20, height: 34, sizeS: 20, heightS: 29, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Garamond" });
         me.fonts.push({ size: 20, height: 34, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "High Tower Text" });
@@ -2778,7 +2794,7 @@ var fontEdit = new function () {
                 "z-index: 9999999 !important; " +
                 "padding: 0 !important;" +
                 "width: 100px !important;" +
-                "display: flex !important;" +
+                "display: flex;" +
                 "flex-direction: column !important;" +
             "}" +
             "html body div#uw-fe-outer * { " +
