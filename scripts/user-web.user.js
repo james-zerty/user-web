@@ -88,9 +88,9 @@ try {
                 // var el = me.getTarget();
                 // var el = $$("#readThis");
                 // me.markElementAndBind(el);
-                me.doPopoutAuto();
-                me.setFontC();
-                me.editFonts();
+                // me.doPopoutAuto();
+                // me.setFontC();
+                // me.editFonts();
                 // window.scroll({ top: 2620, left: 300 }); //qq
             }
 
@@ -193,7 +193,7 @@ try {
             });
         };
 
-        me.wikipediaCustom = function() { //qq
+        me.wikipediaCustom = function() {
             log("wikipedia", "changing header link to random and adding lightboxes");
 
             //change wikipedia header to link to a random page...
@@ -300,16 +300,16 @@ try {
             $$("body").append(dupes);
             var texts = [];
 
-            $$(".content-item").each(function(x) { //qqqqq
+            $$(".content-item").each(function(x) {
                 var i = $$(this.cloneNode(true));
                 var t = i.find(".content-item__info__text").text();
-            
+
                 var toLoad = i.find(".rs-image--not-loaded");
                 if (toLoad.length > 0) {
                     var src = toLoad.text().match(/srcSet=\"[^ ]*/ig)[0].substr(8);
                     toLoad.append($$("<img src=" + src + " style='width:200px;'>"));
                 }
-                
+
                 if (texts.includes(t) || t.match(/EastEnders|Holby City|Top Gear|Two Pints of Lager|Summer Heights High|Private School Girl|We Can Be Heroes/gi)) {
                     dupes.append(i);
                     log("dupe", t);
@@ -724,16 +724,16 @@ try {
             else {
                 me.menu.show();
             }
-            
+
             var mnu = {
-                height: me.menu.height(), 
+                height: me.menu.height(),
                 width: me.menu.width(),
                 left: 0,
                 top: 0
             };
 
             //window viewport
-            var view = { 
+            var view = {
                 top: $$(window).scrollTop(),
                 left: $$(window).scrollLeft()
             };
@@ -751,7 +751,7 @@ try {
             if (isNaN(ev.x)) {
                 ev.x = view.left;
             }
-            
+
             var sel = { top: view.top, left: view.left, height: 0, bottom: view.top, right: view.left };
             var selection = window.getSelection();
 
@@ -762,28 +762,28 @@ try {
             else {
                 var range = selection.getRangeAt(0).cloneRange();
                 var rects = range.getClientRects();
-                
+
                 if (rects.length == 0) {
                     sel.top = sel.bottom = ev.y; // + view.top;
                     sel.left = sel.right = ev.x; // + view.left;
                 }
                 else {
                     var rect = rects[0];
-                    
+
                     if (ev.y > rect.bottom + view.top) {
                         rect = rects[rects.length - 1];
                     }
-                    
+
                     // hit alt+` after show!!
-                    
-                    sel = { 
-                        top: rect.top + view.top, 
+
+                    sel = {
+                        top: rect.top + view.top,
                         left: rect.left + view.left,
-                        height: rect.height, 
-                        bottom: rect.bottom + view.top, 
+                        height: rect.height,
+                        bottom: rect.bottom + view.top,
                         right: rect.right + view.left
                     };
-                    
+
                     for (var i = 0; i < rects.length; i++) {
                         var rect = rects[i];
                         if (rect.top + view.top == sel.top) {
@@ -793,17 +793,17 @@ try {
                     }
                 }
             }
-            
+
             sel.width = sel.right - sel.left;
             if (sel.width > mnu.width) {
                 sel.right = ev.x;// - mnu.width / 2;
                 sel.left = ev.x;// - mnu.width / 2;
             }
-            
+
             if (sel.bottom + mnu.height < view.bottom) { //fits below...
                 mnu.top = sel.bottom;
             }
-            else { //can't fit below...                
+            else { //can't fit below...
                 if (sel.top - mnu.height > view.top) { //fits above...
                     mnu.top = sel.top - mnu.height;
                 }
@@ -811,7 +811,7 @@ try {
                     mnu.top = view.bottom - mnu.height - 20;
                 }
             }
-            
+
             mnu.left = sel.left + ((sel.right - sel.left)/2) - mnu.width/2;
             if (mnu.left + mnu.width > view.right - 2) {
                 mnu.left = view.right - 2 - mnu.width;
@@ -825,13 +825,13 @@ try {
             log("sel.right", sel.right);
             log("sel.top", sel.top);
             log("sel.bottom", sel.bottom);
-            
+
             log("mnu.top", mnu.top);
             log("mnu.left", mnu.left);
             log("mnu.height", mnu.height);
             log("mnu.width", mnu.width);
             */
-            
+
             me.menu.css("top", mnu.top + "px");
             me.menu.css("left", mnu.left + "px");
             me.menuTimeoutClear();
@@ -1093,10 +1093,9 @@ try {
 
             me.addSeparator(ulRight); //--------------------------------------------------------
             me.addListLink(ulRight, "Google Maps",      function() { me.openMaps("GOOGLE"); });
-            // me.addListLink(ulRight, "Geocache",         function() { me.openMaps("GEO"); });
-            // me.addListLink(ulRight, "BRouter",          function() { me.openMaps("BROUTER"); });
             me.addListLink(ulRight, "Bing Aerial",      function() { me.openMaps("BING_AERIAL"); });
             me.addListLink(ulRight, "Bing OS",          function() { me.openMaps("BING_OS"); });
+            me.addListLink(ulRight, "BRouter",          function() { me.openMaps("BROUTER"); });
             me.addListLink(ulRight, "OSM",              function() { me.openMaps("OSM"); }); //qq
 
             me.addSeparator(ulRight); //--------------------------------------------------------
@@ -1314,7 +1313,7 @@ try {
             window.open(url.replace("TESTSEARCH", encodeURIComponent(trim(me.selectedText)).replace(/%20/g, "+")), "", "");
         };
 
-        me.openMaps = function(type) { //qq
+        me.openMaps = function(type) {
             var url = document.location.href;
 
             if (me.url.match(/localhost/)) {
@@ -1322,7 +1321,6 @@ try {
                 // url = "https://www.google.co.uk/maps/@53.5533928,-2.3777822,17.25z";
                 // url = "https://www.bing.com/maps?osid=93c03dfb-f71d-449d-a5e8-33d609dbd00f&cp=53.407423~-2.345661&lvl=13&style=s&v=2&sV=2&form=S00027";
                 // url = "http://brouter.de/brouter-web/#map=15/54.6728/-3.2478/standard&profile=hiking-beta";
-                // url = "https://www.geocaching.com/play/map/?lat=53.40926&lng=-2.3521799999999757&zoom=16&asc=true&sort=distance&st=m33+4hs";
                 // url = "https://www.openstreetmap.org/#map=15/53.4089/-2.3496&yo";
             }
 
@@ -1335,6 +1333,10 @@ try {
                         //https://www.openstreetmap.org/search?query=TRST#map=12/45.6768/13.7833
                         me.openSearch("https://www.openstreetmap.org/search?query=TESTSEARCH");
                         break;
+                    case "BROUTER":
+                        //brouter.de/brouter-web/?benllech
+                        me.openSearch("https://brouter.de/brouter-web/?TESTSEARCH");
+                        break;
                     case "GOOGLE":
                         me.openSearch("https://maps.google.co.uk/maps?q=TESTSEARCH");
                         break;
@@ -1345,7 +1347,7 @@ try {
                 log("maps", "get coords from url...");
 
                 var coords = "";
-                if (url.match(/openstreetmap/i)) {
+                if (url.match(/openstreetmap|brouter/i)) {
                     log("maps", "get coords from OSM url...");
                     coords = url.match(/map=[\d\.\/-]*/i);
                     if (coords) {
@@ -1376,10 +1378,15 @@ try {
 
                 log("maps", "coords from url: ", coords);
 
-                switch (type) {
+                switch (type) { //qqqqq
                     case "OSM":
                         //https://www.openstreetmap.org/#map=15/53.4089/-2.3496
                         var u = "https://www.openstreetmap.org/#map=" + coords[0] + "/" + coords[1] + "/" + coords[2];
+                        log("maps", u);
+                        break;
+                    case "BROUTER":
+                        //https://www.openstreetmap.org/#map=15/53.4089/-2.3496
+                        var u = "http://brouter.de/brouter-web/#map=" + coords[0] + "/" + coords[1] + "/" + coords[2] + "/standard";
                         log("maps", u);
                         break;
                     case "GOOGLE":
@@ -1701,7 +1708,7 @@ try {
             );
         };
 
-        me.setFontA = function() { 
+        me.setFontA = function() {
             $$("body").addClass("uw-fontA");
             $$("body").removeClass("uw-fontB");
             $$("body").removeClass("uw-fontC");
@@ -2338,7 +2345,7 @@ try {
                     return;
                 }
             }
-            
+
             $$(".uw-marked").removeClass("uw-marked");
             me.marked.addClass("uw-read");
 
@@ -2518,27 +2525,27 @@ var fontEdit = new function () {
         // me.fonts.push({ size: 18, height: 28, weight: "300", color: "#333", sizeS: 17, heightS: 27, serif: 0, fixed: 0, indent: 10, face: "Tahoma" });
         // me.fonts.push({ size: 18, height: 28, weight: "300", color: "#333", sizeS: 19, heightS: 28, serif: 0, fixed: 0, indent: 10, face: "Calibri" });
         // me.fonts.push({ size: 18, height: 28, weight: "300", color: "#333", sizeS: 18, heightS: 27, serif: 0, fixed: 0, indent: 10, face: "Ebrima" });
-        // me.fonts.push({ size: 18, height: 28, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Century Gothic" });
-        // me.fonts.push({ size: 18, height: 28, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Segoe UI" });
-        // me.fonts.push({ size: 18, height: 28, sizeS: 16, heightS: 25, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Arial" });
-        // me.fonts.push({ size: 18, height: 28, sizeS: 17, heightS: 27, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Lucida Sans Unicode" });
-        // me.fonts.push({ size: 18, height: 28, sizeS: 16, heightS: 25, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Trebuchet MS" });
-        // me.fonts.push({ size: 18, height: 28, sizeS: 16, heightS: 25, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Verdana" });
-        // me.fonts.push({ size: 18, height: 28, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 0, fixed: 0, indent: 10, face: "Malgun Gothic" });
-        
+        // me.fonts.push({ size: 18, height: 28, weight: "300", color: "#333", sizeS: 18, heightS: 29, serif: 0, fixed: 0, indent: 10, face: "Century Gothic" });
+        // me.fonts.push({ size: 18, height: 28, weight: "300", color: "#333", sizeS: 18, heightS: 29, serif: 0, fixed: 0, indent: 10, face: "Segoe UI" });
+        // me.fonts.push({ size: 18, height: 28, weight: "300", color: "#333", sizeS: 16, heightS: 25, serif: 0, fixed: 0, indent: 10, face: "Arial" });
+        // me.fonts.push({ size: 18, height: 28, weight: "300", color: "#333", sizeS: 17, heightS: 27, serif: 0, fixed: 0, indent: 10, face: "Lucida Sans Unicode" });
+        // me.fonts.push({ size: 18, height: 28, weight: "300", color: "#333", sizeS: 16, heightS: 25, serif: 0, fixed: 0, indent: 10, face: "Trebuchet MS" });
+        // me.fonts.push({ size: 18, height: 28, weight: "300", color: "#333", sizeS: 16, heightS: 25, serif: 0, fixed: 0, indent: 10, face: "Verdana" });
+        // me.fonts.push({ size: 18, height: 28, weight: "300", color: "#333", sizeS: 18, heightS: 29, serif: 0, fixed: 0, indent: 10, face: "Malgun Gothic" });
+
         //me.fonts.push({ sep: true, face: "=== Sans Medium ===" }); //-----------------------------------------------------------------------------------------------------------------
-        // me.fonts.push({ size: 20, height: 30, sizeS: 18, heightS: 29, weight: "400", color: "#555", serif: 0, fixed: 0, indent: 10, face: "Microsoft JhengHei UI" });
-        // me.fonts.push({ size: 20, height: 30, sizeS: 17, heightS: 27, weight: "400", color: "#555", serif: 0, fixed: 0, indent: 10, face: "MS Reference Sans Serif" });
-        // me.fonts.push({ size: 20, height: 30, sizeS: 18, heightS: 27, weight: "600", color: "#555", serif: 0, fixed: 0, indent: 10, face: "Calibri Light" });
+        // me.fonts.push({ size: 20, height: 30, weight: "400", color: "#555", sizeS: 18, heightS: 29, serif: 0, fixed: 0, indent: 10, face: "Microsoft JhengHei UI" });
+        // me.fonts.push({ size: 20, height: 30, weight: "400", color: "#555", sizeS: 17, heightS: 27, serif: 0, fixed: 0, indent: 10, face: "MS Reference Sans Serif" });
+        // me.fonts.push({ size: 20, height: 30, weight: "600", color: "#555", sizeS: 18, heightS: 27, serif: 0, fixed: 0, indent: 10, face: "Calibri Light" });
         // me.fonts.push({ size: 20, height: 30, weight: "600", color: "#555", sizeS: 18, heightS: 29, serif: 0, fixed: 0, indent: 10, face: "Segoe UI Symbol" });
         // me.fonts.push({ size: 20, height: 30, weight: "600", color: "#555", sizeS: 18, heightS: 29, serif: 0, fixed: 0, indent: 10, face: "Segoe UI Light" });
-        
+
         // me.fonts.push({ sep: true, face: "=== Serif Small ===" }); //-----------------------------------------------------------------------------------------------------------------
         // me.fonts.push({ sep: true, face: "=== Serif Big ===" }); //-------------------------------------------------------------------------------------------------------------------
         me.fonts.push(userWeb.fontC); var fontC = me.fonts.length - 1; //qqqq
         me.fonts.push({ size: 18, height: 31, weight: "300", color: "#222", sizeS: 19, heightS: 27, serif: 1, fixed: 0, indent: 10, face: "Lora" });
         me.fonts.push({ size: 19, height: 34, weight: "300", color: "#444", sizeS: 17, heightS: 27, serif: 1, fixed: 0, indent: 10, face: "Georgia" });
-                                                                            
+
         me.fonts.push({ size: 17, height: 26, weight: "300", color: "#333", sizeS: 19, heightS: 27, serif: 1, fixed: 0, indent: 10, face: "Lora" });
         me.fonts.push({ size: 22, height: 38, weight: "400", color: "#000", sizeS: 17, heightS: 27, serif: 1, fixed: 0, indent: 10, face: "Cardo" });
         me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 19, heightS: 27, serif: 1, fixed: 0, indent: 10, face: "Cambria" });
@@ -2547,27 +2554,27 @@ var fontEdit = new function () {
         me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 18, heightS: 29, serif: 1, fixed: 0, indent: 10, face: "Bookman Old Style" });
         me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 20, heightS: 28, serif: 1, fixed: 0, indent: 10, face: "Centaur" });
         me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 18, heightS: 29, serif: 1, fixed: 0, indent: 10, face: "Century" });
-        me.fonts.push({ size: 20, height: 34, sizeS: 18, heightS: 27, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Constantia" });
-        me.fonts.push({ size: 20, height: 34, sizeS: 20, heightS: 29, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Garamond" });
-        me.fonts.push({ size: 20, height: 34, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "High Tower Text" });
-        me.fonts.push({ size: 20, height: 34, sizeS: 17, heightS: 27, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Lucida Bright" });
-        me.fonts.push({ size: 20, height: 34, sizeS: 16, heightS: 25, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Lucida Fax" });
-        me.fonts.push({ size: 20, height: 34, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Mongolian Baiti" });
-        me.fonts.push({ size: 20, height: 34, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Palatino Linotype" });
-        me.fonts.push({ size: 20, height: 34, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Sylfaen" });
-        me.fonts.push({ size: 20, height: 34, sizeS: 18, heightS: 29, weight: "300", color: "#333", serif: 1, fixed: 0, indent: 10, face: "Times New Roman" });
+        me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 18, heightS: 27, serif: 1, fixed: 0, indent: 10, face: "Constantia" });
+        me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 20, heightS: 29, serif: 1, fixed: 0, indent: 10, face: "Garamond" });
+        me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 18, heightS: 29, serif: 1, fixed: 0, indent: 10, face: "High Tower Text" });
+        me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 17, heightS: 27, serif: 1, fixed: 0, indent: 10, face: "Lucida Bright" });
+        me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 16, heightS: 25, serif: 1, fixed: 0, indent: 10, face: "Lucida Fax" });
+        me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 18, heightS: 29, serif: 1, fixed: 0, indent: 10, face: "Mongolian Baiti" });
+        me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 18, heightS: 29, serif: 1, fixed: 0, indent: 10, face: "Palatino Linotype" });
+        me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 18, heightS: 29, serif: 1, fixed: 0, indent: 10, face: "Sylfaen" });
+        me.fonts.push({ size: 20, height: 34, weight: "300", color: "#333", sizeS: 18, heightS: 29, serif: 1, fixed: 0, indent: 10, face: "Times New Roman" });
         */
-        // me.fonts.push({ size: 18, height: 29, sizeS: 10, heightS: 20, weight: "900", color: "#060", serif: 1, fixed: 0, indent: 10, face: "Broadway" });
+        // me.fonts.push({ size: 18, height: 29, weight: "900", color: "#060", sizeS: 10, heightS: 20, serif: 1, fixed: 0, indent: 10, face: "Broadway" });
 
         //fixed...
         /*
         me.fonts.push({ sep: true, face: "=== Fixed ===" }); //-----------------------------------------------------------------------------------------------------------------------
-        me.fonts.push({ size: 18, height: 22, sizeS: 18, heightS: 22, weight: "400", color: "#333", serif: 1, fixed: 1, indent: 10, face: "Courier New" });
-        me.fonts.push({ size: 15, height: 21, sizeS: 15, heightS: 21, weight: "400", color: "#333", serif: 0, fixed: 1, indent: 10, face: "Consolas" });
-        me.fonts.push({ size: 16, height: 25, sizeS: 16, heightS: 25, weight: "400", color: "#333", serif: 0, fixed: 1, indent: 10, face: "Lucida Console" });
-        me.fonts.push({ size: 18, height: 29, sizeS: 18, heightS: 29, weight: "400", color: "#333", serif: 1, fixed: 0, indent: 10, face: "SimSun" });
+        me.fonts.push({ size: 18, height: 22, weight: "400", color: "#333", sizeS: 18, heightS: 22, serif: 1, fixed: 1, indent: 10, face: "Courier New" });
+        me.fonts.push({ size: 15, height: 21, weight: "400", color: "#333", sizeS: 15, heightS: 21, serif: 0, fixed: 1, indent: 10, face: "Consolas" });
+        me.fonts.push({ size: 16, height: 25, weight: "400", color: "#333", sizeS: 16, heightS: 25, serif: 0, fixed: 1, indent: 10, face: "Lucida Console" });
+        me.fonts.push({ size: 18, height: 29, weight: "400", color: "#333", sizeS: 18, heightS: 29, serif: 1, fixed: 0, indent: 10, face: "SimSun" });
         */
-        
+
         var opts = "";
         for (var i = 0; i < me.fonts.length; i++) {
             var f = me.fonts[i];
@@ -2613,7 +2620,7 @@ var fontEdit = new function () {
 
         me.feList = $$("#fe-list");
         me.div = $$("#uw-fe-outer");
-        
+
         if ($$("body").hasClass("uw-fontA")) {
             me.feList[0].selectedIndex = fontA;
         }
@@ -2626,7 +2633,7 @@ var fontEdit = new function () {
         else {
             me.feList[0].selectedIndex = fontA;
         }
-        
+
         me.setStyleCommon();
         me.setEvents();
     };
@@ -2635,13 +2642,11 @@ var fontEdit = new function () {
         me.feList.change(function() {
             me.change();
         });
-        
+
         me.feList.change();
         me.feList.focus();
 
         $$(".fe-close").click(function() {
-            //$$("body").unbind("keydown.fontEdit");
-            //me.div.remove();
             me.div.hide();
             me.showing = false;
         });
