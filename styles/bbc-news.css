@@ -8,12 +8,13 @@
 .story-body h2,
 .layout-main h2 {
     font-family: Ubuntu !important; /* uw-fnt-a */
-    font-size: 16px !important; /* uw-sz-alg */
-    line-height: 22px !important; /* uw-lh-alg */
-    font-weight: 300 !important; /* uw-wgt-a */
+    font-size: 17px !important; /* uw-sz-alg */
+    line-height: 24px !important; /* uw-lh-alg */
+    font-weight: 400 !important; /* uw-wgt-a */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
-    color: #000 !important; /* uw-clr-a */
+    text-indent: 10px !important; /* uw-ind-a */
+    color: #444 !important; /* uw-clr-a */
 }
 
 .story-body h2,
@@ -25,7 +26,7 @@
 
 .story-body a,
 .layout-main a {
-    font-weight: 300 !important; /* uw-wgt-b */
+    font-weight: 400 !important; /* uw-wgt-b */
     text-decoration: underline #ccc !important; /* uw-uln */
     border-bottom: none !important; /* uw-btm */
 }
@@ -101,7 +102,7 @@
     .story-body h2,
     .layout-main h2 {
         font-size: 14px !important; /* uw-sz-asm */
-        line-height: 19px !important; /* uw-lh-asm */
+        line-height: 22px !important; /* uw-lh-asm */
     }
 
     .column--primary,

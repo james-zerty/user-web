@@ -1,16 +1,16 @@
 ﻿.facia-page, .facia-page *, article, article * {
-    font-family: Corbel !important; /* uw-fnt-b */
+    font-family: Ubuntu !important; /* uw-fnt-a */
 }
 
 .content__article-body * {
-    font-family: Corbel !important; /* uw-fnt-b */
-    font-size: 20px !important; /* uw-sz-blg */
-    line-height: 30px !important; /* uw-lh-blg */
-    font-weight: 300 !important; /* uw-wgt-b */
+    font-family: Ubuntu !important; /* uw-fnt-a */
+    font-size: 17px !important; /* uw-sz-alg */
+    line-height: 24px !important; /* uw-lh-alg */
+    font-weight: 400 !important; /* uw-wgt-a */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
-    text-indent: 10px !important; /* uw-ind-b */
-    color: #333 !important; /* uw-clr-b */
+    text-indent: 10px !important; /* uw-ind-a */
+    color: #444 !important; /* uw-clr-a */
 }
 
 .content__article-body p {
@@ -26,13 +26,14 @@
 .content__main-column {
     max-width: 800px !important;
     margin-right: 0 !important;
-    margin-bottom: 600px !important;
+    xxmargin-bottom: 600px !important;
 }
 
 .content__main-column:before {
     background: 0 !important;
 }
 
+.selection-sharing,
 .content__secondary-column, 
 .js-secondary-column,
 .content__meta-container,

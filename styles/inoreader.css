@@ -1,16 +1,80 @@
-﻿/********** reading... **********/
-#reader_pane,
-.article_content,
-.article_content * {
-    font-family: Ubuntu !important; /* uw-fnt-a */
-    font-size: 16px !important; /* uw-sz-alg */
-    line-height: 22px !important; /* uw-lh-alg */
-    font-weight: 300 !important; /* uw-wgt-a */
-    font-style: normal !important; /* uw-sty */
-    text-align: justify !important; /* uw-jfy */
-    color: #000 !important; /* uw-clr-a */
+﻿.article_magazine_content_wraper {
+    padding-left: 0 !important
 }
 
+.article_magazine_picture_wrapper,
+.article_tags,
+.sd,
+.icon-button-email,
+.icon-button-mobilize-empty,
+.icon-button-text-preferences,
+.popularity_div,
+#parent_all_articles {
+    display: none !important;
+}
+
+.tree_add_icon {
+    opacity: 0.5 !important;
+}
+
+.article_footer_main_buttons {
+    width: 90px !important;
+}
+
+/********** scaffold... **********/
+
+.article_footer_placeholder_top {
+    position: absolute !important;
+}
+
+.article_title {
+    font-family: Ubuntu !important; /* uw-fnt-a */
+    text-align: justify !important; /* uw-jfy */
+    font-size: 20px !important;
+    margin: 20px 0 5px !important;
+}
+
+.article_sub_title {
+    margin-top: 0 !important;
+}
+
+.subscriptions_legend {
+    text-transform: none !important;
+}
+
+.inno_dialog_modal_overlay {
+    opacity: 1 !important;
+}
+
+/********** reading... **********/
+.article_magazine_title_content,
+.article_content,
+.article_content *,
+.article_magazine_contentx {
+    font-family: Ubuntu !important; /* uw-fnt-a */
+    font-size: 17px !important; /* uw-sz-alg */
+    line-height: 24px !important; /* uw-lh-alg */
+    font-weight: 400 !important; /* uw-wgt-a */
+    font-style: normal !important; /* uw-sty */
+    text-align: justify !important; /* uw-jfy */
+    color: #444 !important; /* uw-clr-a */
+}
+
+.article_content * {
+    max-width: 100% !important;
+}
+
+.article_content {
+    margin-bottom: 40px !important;
+}
+
+.article_content img {
+    margin: 10px 0 !important;
+}
+
+.article_content h1,
+.article_content h2,
+.article_content h3,
 .article_content h4 {
     font-weight: bold !important; /* bld */
 }
@@ -42,107 +106,14 @@
 /******************************/
 
 /* LHS Tree */
-#subscriptions_fieldset legend span.sf_refresh {
-    margin-left: -6px; !important;
-}
-#subscriptions_fieldset legend span.subscriptions_legend {
-    color: #bbb !important;
-}
-
-#subscription_options_peek_wrapper,
-#parent_dashboard,
-#parent_all_articles,
-#parent_web_pages {
-    display: none !important;
-}
-
-.feed_favicon {
-    display: none;
-}
-
-.tree_node {
-    margin: 0 !important;
-    padding: 0;
-}
-/* */
-
-/* whole page... */
-#wraper {
-    min-width: 0 !important;
-}
-
-#sinner_container {
-    display: none !important;
-}
-
-.inno_dialog_modal_overlay {
-    opacity: 1.0 !important;
-}
-
 
 /********** small window... **********/
 @media (max-width: 800px) {
-    
-    body {
-        background-color: #fff !important;
-    }
-    
-    #reader_pane,
-    .article_content,
-    .article_content *,
-    .article_magazine_title,
-    .article_magazine_title_link,
-    .article_magazine_content,
-    .article_title {
-        font-size: 14px !important; /* uw-sz-asm */
-        line-height: 19px !important; /* uw-lh-asm */
-    }
 
     .article_magazine_content {
-        max-height: none !important;
-    }
-    
-    .article_content img,
-    .article_magazine_picture,
-    .article_content iframe {
-        display: none !important;
-    }
-    
-    #article_dialog_wrapper {
-        width: 100% !important;
-        left: auto !important;
-    }
-    
-    .article_magazine_content_wraper {
-        padding-left: 0 !important;
+        font-size: 14px !important; /* uw-sz-asm */
+        line-height: 22px !important; /* uw-lh-asm */
     }
 
-    .inno_dialog_content {
-        padding: 5px 15px 35px 5px !important;
-    }
-    
-    .inno_dialog, .inno_dialog_content_scrollable {
-        top: 0 !important;
-        height:100% !important;
-    }
-    
-    /* main view top buttons, left tree */
-    #subscriptions_buttons,
-    #sb_rp_tools {
-        display: none !important;
-    }
-    
-    /* article title */
-    .article_title .article_title_link {
-        font-family: Arial !important;
-        font-size: 16px !important;
-        line-height: 16px !important;
-        font-weight: bold !important;
-        color: #000 !important; /* uw-clr-a */
-    }
-        
-    #article_dialog .article_title {
-        padding-right: 50px !important;
-    }
 }
 /******************************/

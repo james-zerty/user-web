@@ -51,11 +51,11 @@ span.st,
 div.st {
     font-family: Ubuntu !important; /* uw-fnt-a */
     font-size: 14px !important; /* uw-sz-asm */
-    line-height: 19px !important; /* uw-lh-asm */
-    font-weight: 300 !important; /* uw-wgt-a */
+    line-height: 22px !important; /* uw-lh-asm */
+    font-weight: 400 !important; /* uw-wgt-a */
     font-style: normal !important; /* uw-sty */
     text-align: justify !important; /* uw-jfy */
-    color: #000 !important; /* uw-clr-a */
+    color: #444 !important; /* uw-clr-a */
     display: block;
     padding-top: 3px;
     padding-bottom: 6px;

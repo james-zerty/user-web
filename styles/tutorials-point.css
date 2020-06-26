@@ -1,7 +1,4 @@
-﻿#leftcol, #rightcol, .sticky-menu-active header {
-    display: none !important;
-}
-
-#middlecol {
-    width: 958px !important;
+﻿#header,
+#logo-menu.sticky {
+    position: absolute !important;
 }
