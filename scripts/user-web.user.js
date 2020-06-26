@@ -10,7 +10,7 @@
 // @include     http*://*/*
 // @exclude     https://localhost:44300/dev*
 // @exclude     http://192.168.1.1/*
-// @require     https://rawgit.com/james-zerty/user-web/master/scripts/scripts/readability.js
+// @require     https://rawgit.com/james-zerty/user-web/master/scripts/readability.js
 // @require     https://rawgit.com/james-zerty/user-web/master/scripts/jquery/jquery-3.3.1.min.js
 // ==/UserScript==
 "use strict";
